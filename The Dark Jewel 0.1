@@ -1,0 +1,1530 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>THE DARK JEWEL — Prototype 0.8</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    margin: 0;
+    background: #070a0e;
+    color: #d7dde3;
+    font-family: Arial, Helvetica, sans-serif;
+    overflow: hidden;
+    touch-action: none;
+}
+
+#game {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background:
+        radial-gradient(circle at center, #17202a 0%, #080b0f 70%);
+}
+
+canvas {
+    width: min(100vw, 1100px);
+    height: min(100vh, 650px);
+    background: #10151a;
+    image-rendering: auto;
+    border: 1px solid #26323c;
+}
+
+/* HUD */
+
+#hud {
+    position: fixed;
+    top: 12px;
+    left: 12px;
+    right: 12px;
+    pointer-events: none;
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    letter-spacing: 1px;
+    text-shadow: 0 2px 4px #000;
+}
+
+.panel {
+    background: rgba(5, 9, 13, .78);
+    border: 1px solid #34424d;
+    padding: 8px 10px;
+}
+
+#alert {
+    color: #77c98a;
+}
+
+#ammo {
+    color: #d6b56a;
+}
+
+#message {
+    position: fixed;
+    left: 50%;
+    bottom: 115px;
+    transform: translateX(-50%);
+    background: rgba(5, 8, 11, .92);
+    border-left: 3px solid #6da8d6;
+    padding: 10px 15px;
+    min-width: 260px;
+    max-width: 85vw;
+    text-align: center;
+    font-size: 13px;
+    letter-spacing: .5px;
+    display: none;
+}
+
+/* Rádio */
+
+#radio {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: min(90vw, 520px);
+    background: rgba(5, 8, 12, .97);
+    border: 1px solid #41505c;
+    box-shadow: 0 0 30px #000;
+    padding: 22px;
+    display: none;
+    z-index: 10;
+}
+
+#radio .channel {
+    color: #73a9d5;
+    font-size: 11px;
+    letter-spacing: 2px;
+}
+
+#radio .speaker {
+    color: #d7dce1;
+    font-weight: bold;
+    margin-top: 12px;
+}
+
+#radio .speech {
+    margin-top: 8px;
+    line-height: 1.5;
+}
+
+.radio-buttons {
+    margin-top: 18px;
+    display: flex;
+    gap: 10px;
+}
+
+button {
+    background: #121a21;
+    color: #dce3e8;
+    border: 1px solid #42505b;
+    padding: 9px 15px;
+    font-weight: bold;
+}
+
+button:active {
+    background: #25333e;
+}
+
+/* Controles móveis */
+
+#controls {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 12px;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 18px;
+    pointer-events: none;
+}
+
+.controlGroup {
+    display: flex;
+    gap: 8px;
+    pointer-events: auto;
+}
+
+.ctrl {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    background: rgba(12, 18, 24, .84);
+    border: 1px solid #43515c;
+    color: #dce3e8;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    user-select: none;
+}
+
+.ctrl:active {
+    background: #2a3945;
+}
+
+#joystick {
+    display: grid;
+    grid-template-columns: repeat(3, 42px);
+    grid-template-rows: repeat(2, 42px);
+    gap: 3px;
+}
+
+.joy {
+    background: rgba(12, 18, 24, .84);
+    border: 1px solid #394852;
+    color: #cbd3d9;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#up {
+    grid-column: 2;
+}
+
+#left {
+    grid-column: 1;
+    grid-row: 2;
+}
+
+#down {
+    grid-column: 2;
+    grid-row: 2;
+}
+
+#right {
+    grid-column: 3;
+    grid-row: 2;
+}
+
+@media (min-width: 800px) {
+    #controls {
+        opacity: .35;
+    }
+
+    #controls:hover {
+        opacity: 1;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div id="game">
+    <canvas id="canvas" width="1100" height="650"></canvas>
+</div>
+
+<div id="hud">
+    <div class="panel">
+        BUCK<br>
+        <span id="health">VIDA 100</span>
+    </div>
+
+    <div class="panel">
+        ALERTA:
+        <span id="alert">VERDE</span>
+    </div>
+
+    <div class="panel">
+        PISTOLA:
+        <span id="ammo">9</span>
+    </div>
+</div>
+
+<div id="message"></div>
+
+<div id="radio">
+    <div class="channel">RADIO // SECURE CHANNEL</div>
+    <div class="speaker">KATHERINE</div>
+    <div class="speech" id="radioText"></div>
+
+    <div class="radio-buttons">
+        <button id="radioYes">SIM</button>
+        <button id="radioNo">NÃO</button>
+    </div>
+</div>
+
+<div id="controls">
+
+    <div id="joystick">
+        <div></div>
+        <div class="joy" id="up">▲</div>
+        <div></div>
+
+        <div class="joy" id="left">◀</div>
+        <div class="joy" id="down">▼</div>
+        <div class="joy" id="right">▶</div>
+    </div>
+
+    <div class="controlGroup">
+        <div class="ctrl" id="crouch">AG</div>
+        <div class="ctrl" id="interact">E</div>
+        <div class="ctrl" id="shoot">●</div>
+    </div>
+
+</div>
+
+<script>
+/* =========================================================
+   THE DARK JEWEL
+   PROTOTYPE 0.8
+   ========================================================= */
+
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+
+const W = canvas.width;
+const H = canvas.height;
+
+let keys = {};
+let gameOver = false;
+let radioOpen = false;
+let alertLevel = 0;
+let messageTimer = 0;
+let externalArea = false;
+
+const player = {
+    x: 90,
+    y: 150,
+    w: 22,
+    h: 34,
+    speed: 150,
+    crouchSpeed: 75,
+    crouching: false,
+    health: 100,
+    ammo: 9,
+    shots: 0,
+    hidden: false
+};
+
+const areas = {
+    office: {
+        x: 0,
+        y: 0,
+        w: 1100,
+        h: 650
+    }
+};
+
+const doors = [
+    {
+        x: 520,
+        y: 105,
+        w: 30,
+        h: 80,
+        open: false
+    },
+    {
+        x: 1040,
+        y: 275,
+        w: 60,
+        h: 90,
+        open: false
+    }
+];
+
+const lockers = [
+    {
+        x: 180,
+        y: 95,
+        w: 55,
+        h: 70,
+        occupied: false
+    },
+    {
+        x: 250,
+        y: 95,
+        w: 55,
+        h: 70,
+        occupied: false
+    }
+];
+
+const obstacles = [
+    // mesa central do escritório
+    { x: 330, y: 110, w: 120, h: 55 },
+
+    // hall
+    { x: 150, y: 300, w: 120, h: 55 },
+    { x: 390, y: 280, w: 100, h: 55 },
+    { x: 650, y: 330, w: 130, h: 60 },
+    { x: 830, y: 230, w: 100, h: 55 },
+
+    // caixas
+    { x: 560, y: 440, w: 55, h: 55 },
+    { x: 620, y: 440, w: 55, h: 55 },
+    { x: 720, y: 470, w: 65, h: 45 }
+];
+
+const enemies = [
+    {
+        x: 670,
+        y: 150,
+        w: 24,
+        h: 38,
+        speed: 48,
+        dir: 1,
+        patrol: 250,
+        startX: 670,
+        startY: 150,
+        hp: 100,
+        alive: true,
+        angle: 0,
+        state: "patrol"
+    },
+    {
+        x: 870,
+        y: 420,
+        w: 24,
+        h: 38,
+        speed: 42,
+        dir: -1,
+        patrol: 210,
+        startX: 870,
+        startY: 420,
+        hp: 100,
+        alive: true,
+        angle: Math.PI,
+        state: "patrol"
+    },
+    {
+        x: 430,
+        y: 500,
+        w: 24,
+        h: 38,
+        speed: 38,
+        dir: 1,
+        patrol: 160,
+        startX: 430,
+        startY: 500,
+        hp: 100,
+        alive: true,
+        angle: 0,
+        state: "patrol"
+    }
+];
+
+/* ============================
+   ÁUDIO
+   ============================ */
+
+let audioContext = null;
+
+function initAudio() {
+    if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    }
+}
+
+function sound(type) {
+
+    initAudio();
+
+    const osc = audioContext.createOscillator();
+    const gain = audioContext.createGain();
+
+    osc.connect(gain);
+    gain.connect(audioContext.destination);
+
+    let freq = 180;
+    let duration = .08;
+
+    if (type === "step") {
+        freq = 80;
+        duration = .055;
+    }
+
+    if (type === "radio") {
+        freq = 420;
+        duration = .18;
+    }
+
+    if (type === "alert") {
+        freq = 650;
+        duration = .18;
+    }
+
+    if (type === "shot") {
+        freq = 110;
+        duration = .07;
+    }
+
+    if (type === "door") {
+        freq = 240;
+        duration = .18;
+    }
+
+    if (type === "damage") {
+        freq = 90;
+        duration = .22;
+    }
+
+    osc.frequency.value = freq;
+    osc.type = type === "radio" ? "sine" : "square";
+
+    gain.gain.setValueAtTime(.045, audioContext.currentTime);
+    gain.gain.exponentialRampToValueAtTime(
+        .001,
+        audioContext.currentTime + duration
+    );
+
+    osc.start();
+    osc.stop(audioContext.currentTime + duration);
+}
+
+/* ============================
+   CONTROLES
+   ============================ */
+
+window.addEventListener("keydown", e => {
+    keys[e.key.toLowerCase()] = true;
+
+    if (e.key.toLowerCase() === "e") {
+        interact();
+    }
+
+    if (e.key.toLowerCase() === " ") {
+        player.crouching = true;
+    }
+
+    if (e.key.toLowerCase() === "f") {
+        shoot();
+    }
+});
+
+window.addEventListener("keyup", e => {
+    keys[e.key.toLowerCase()] = false;
+
+    if (e.key.toLowerCase() === " ") {
+        player.crouching = false;
+    }
+});
+
+function mobileHold(id, key) {
+
+    const element = document.getElementById(id);
+
+    element.addEventListener("touchstart", e => {
+        e.preventDefault();
+        keys[key] = true;
+    });
+
+    element.addEventListener("touchend", e => {
+        e.preventDefault();
+        keys[key] = false;
+    });
+}
+
+mobileHold("up", "w");
+mobileHold("down", "s");
+mobileHold("left", "a");
+mobileHold("right", "d");
+
+document.getElementById("crouch").addEventListener("touchstart", e => {
+    e.preventDefault();
+    player.crouching = true;
+});
+
+document.getElementById("crouch").addEventListener("touchend", e => {
+    e.preventDefault();
+    player.crouching = false;
+});
+
+document.getElementById("interact").addEventListener("touchstart", e => {
+    e.preventDefault();
+    interact();
+});
+
+document.getElementById("shoot").addEventListener("touchstart", e => {
+    e.preventDefault();
+    shoot();
+});
+
+/* ============================
+   UTILIDADES
+   ============================ */
+
+function showMessage(text, time = 2000) {
+    const element = document.getElementById("message");
+
+    element.innerText = text;
+    element.style.display = "block";
+
+    messageTimer = time;
+}
+
+function distance(a, b) {
+    return Math.hypot(a.x - b.x, a.y - b.y);
+}
+
+function rectCollision(a, b) {
+
+    return (
+        a.x < b.x + b.w &&
+        a.x + a.w > b.x &&
+        a.y < b.y + b.h &&
+        a.y + a.h > b.y
+    );
+}
+
+/* ============================
+   MOVIMENTO
+   ============================ */
+
+function movePlayer(dx, dy, dt) {
+
+    const speed = player.crouching
+        ? player.crouchSpeed
+        : player.speed;
+
+    const oldX = player.x;
+    const oldY = player.y;
+
+    player.x += dx * speed * dt;
+    player.y += dy * speed * dt;
+
+    player.x = Math.max(10, Math.min(W - player.w - 10, player.x));
+    player.y = Math.max(10, Math.min(H - player.h - 10, player.y));
+
+    for (const wall of obstacles) {
+
+        if (rectCollision(player, wall)) {
+            player.x = oldX;
+            player.y = oldY;
+        }
+    }
+
+    for (const door of doors) {
+
+        if (!door.open && rectCollision(player, door)) {
+            player.x = oldX;
+            player.y = oldY;
+        }
+    }
+}
+
+function updatePlayer(dt) {
+
+    let dx = 0;
+    let dy = 0;
+
+    if (keys["w"] || keys["arrowup"]) dy -= 1;
+    if (keys["s"] || keys["arrowdown"]) dy += 1;
+    if (keys["a"] || keys["arrowleft"]) dx -= 1;
+    if (keys["d"] || keys["arrowright"]) dx += 1;
+
+    if (dx !== 0 || dy !== 0) {
+
+        const length = Math.hypot(dx, dy);
+
+        dx /= length;
+        dy /= length;
+
+        movePlayer(dx, dy, dt);
+
+        if (Math.random() < .035 && !player.crouching) {
+            sound("step");
+        }
+
+        if (Math.random() < .015 && player.crouching) {
+            sound("step");
+        }
+    }
+}
+
+/* ============================
+   INTERAÇÃO
+   ============================ */
+
+function interact() {
+
+    initAudio();
+
+    /* portas */
+
+    for (const door of doors) {
+
+        const near =
+            Math.abs(player.x - door.x) < 65 &&
+            Math.abs(player.y - door.y) < 80;
+
+        if (near && !door.open) {
+
+            door.open = true;
+            sound("door");
+
+            showMessage("PORTA ABERTA");
+
+            return;
+        }
+    }
+
+    /* armários */
+
+    for (const locker of lockers) {
+
+        const near =
+            Math.abs(player.x - locker.x) < 55 &&
+            Math.abs(player.y - locker.y) < 75;
+
+        if (near) {
+
+            player.hidden = !player.hidden;
+
+            if (player.hidden) {
+                showMessage("BUCK ESCONDIDO");
+            } else {
+                showMessage("BUCK SAIU DO ARMÁRIO");
+            }
+
+            sound("door");
+
+            return;
+        }
+    }
+
+    /* rádio */
+
+    if (Math.abs(player.x - 90) < 100 &&
+        Math.abs(player.y - 150) < 100) {
+
+        openRadio();
+    }
+}
+
+/* ============================
+   RÁDIO
+   ============================ */
+
+function openRadio() {
+
+    radioOpen = true;
+
+    document.getElementById("radio").style.display = "block";
+
+    document.getElementById("radioText").innerText =
+        "Buck... você quer uma dica?";
+
+    sound("radio");
+}
+
+document.getElementById("radioYes").onclick = () => {
+
+    const tips = [
+        "Você pode evitar os inimigos se agachando, isso diminui sua percepção sobre eles.",
+        "Você quer ouvir apenas o som da minha voz? Sério, saia daí...",
+        "Utilize sua arma apenas quando for necessário, mas tente evitar confronto."
+    ];
+
+    const tip = tips[Math.floor(Math.random() * tips.length)];
+
+    document.getElementById("radioText").innerText = tip;
+
+    sound("radio");
+};
+
+document.getElementById("radioNo").onclick = () => {
+
+    document.getElementById("radio").style.display = "none";
+
+    radioOpen = false;
+
+    sound("radio");
+};
+
+/* ============================
+   ARMA
+   ============================ */
+
+function shoot() {
+
+    if (gameOver || radioOpen) return;
+
+    initAudio();
+
+    if (player.ammo <= 0) {
+
+        showMessage("SEM MUNIÇÃO");
+        sound("alert");
+
+        return;
+    }
+
+    player.ammo--;
+
+    player.shots++;
+
+    sound("shot");
+
+    showMessage("TIRO DISPARADO", 600);
+
+    let closest = null;
+    let closestDistance = Infinity;
+
+    for (const enemy of enemies) {
+
+        if (!enemy.alive) continue;
+
+        const d = distance(player, enemy);
+
+        if (d < closestDistance) {
+
+            closestDistance = d;
+            closest = enemy;
+        }
+    }
+
+    if (closest && closestDistance < 150) {
+
+        closest.hp -= 100;
+
+        if (closest.hp <= 0) {
+            closest.alive = false;
+        }
+
+        setAlert(2);
+
+    } else {
+
+        setAlert(Math.max(alertLevel, 1));
+    }
+}
+
+/* ============================
+   ALERTAS
+   ============================ */
+
+function setAlert(level) {
+
+    if (level <= alertLevel) return;
+
+    alertLevel = level;
+
+    const names = [
+        "VERDE",
+        "AMARELO",
+        "LARANJA",
+        "VERMELHO"
+    ];
+
+    document.getElementById("alert").innerText = names[level];
+
+    sound("alert");
+
+    if (level === 3) {
+        showMessage("ALERTA VERMELHO", 1000);
+    }
+}
+
+/* ============================
+   IA
+   ============================ */
+
+function updateEnemies(dt) {
+
+    for (const enemy of enemies) {
+
+        if (!enemy.alive) continue;
+
+        if (alertLevel >= 2) {
+
+            const dx = player.x - enemy.x;
+            const dy = player.y - enemy.y;
+
+            const d = Math.hypot(dx, dy);
+
+            if (d < 300) {
+
+                enemy.state = "search";
+
+                enemy.x += (dx / Math.max(d, 1)) *
+                    enemy.speed * 1.6 * dt;
+
+                enemy.y += (dy / Math.max(d, 1)) *
+                    enemy.speed * 1.6 * dt;
+            }
+        }
+
+        else {
+
+            enemy.x += enemy.dir * enemy.speed * dt;
+
+            if (
+                Math.abs(enemy.x - enemy.startX) >
+                enemy.patrol
+            ) {
+                enemy.dir *= -1;
+            }
+        }
+
+        detectPlayer(enemy);
+    }
+}
+
+function detectPlayer(enemy) {
+
+    if (!enemy.alive || player.hidden) return;
+
+    const dx = player.x - enemy.x;
+    const dy = player.y - enemy.y;
+
+    const d = Math.hypot(dx, dy);
+
+    let detectionDistance = 180;
+
+    if (player.crouching) {
+        detectionDistance = 90;
+    }
+
+    if (d < detectionDistance) {
+
+        let level = 1;
+
+        if (!player.crouching) {
+            level = 2;
+        }
+
+        setAlert(level);
+
+        if (d < 65) {
+            setAlert(3);
+        }
+    }
+
+    if (alertLevel >= 3 && d < 360) {
+
+        damagePlayer(20 * 0.016);
+    }
+}
+
+/* ============================
+   DANO
+   ============================ */
+
+function damagePlayer(amount) {
+
+    if (player.hidden) return;
+
+    player.health -= amount;
+
+    sound("damage");
+
+    if (player.health <= 0) {
+
+        player.health = 0;
+
+        triggerGameOver();
+    }
+}
+
+function triggerGameOver() {
+
+    if (gameOver) return;
+
+    gameOver = true;
+
+    const radio = document.getElementById("radio");
+
+    radio.style.display = "block";
+
+    document.getElementById("radioText").innerText =
+        "— Abortar missão.. Buck.. Buck!\n\n" +
+        "Buck foi descoberto e as ações do Departamento de Defesa Global foram perdidas.";
+
+    document.querySelector(".speaker").innerText =
+        "KATHERINE";
+
+    document.querySelector(".radio-buttons").innerHTML =
+        '<button onclick="restartGame()">REINICIAR MISSÃO</button>';
+
+    sound("radio");
+}
+
+function restartGame() {
+
+    location.reload();
+}
+
+/* ============================
+   DESENHO DO MAPA
+   ============================ */
+
+function drawBackground() {
+
+    if (!externalArea) {
+
+        ctx.fillStyle = "#c6c9c7";
+        ctx.fillRect(0, 0, W, H);
+
+        ctx.fillStyle = "#30363a";
+        ctx.fillRect(0, 270, W, 380);
+
+        ctx.fillStyle = "#22282c";
+        ctx.fillRect(0, 260, W, 15);
+
+        ctx.fillStyle = "#e1e4e3";
+        ctx.fillRect(0, 0, W, 260);
+
+        ctx.fillStyle = "#6e777d";
+        ctx.fillRect(0, 265, W, 5);
+
+        /* iluminação */
+
+        ctx.fillStyle = "rgba(180,210,225,.12)";
+
+        for (let x = 0; x < W; x += 150) {
+            ctx.fillRect(x, 0, 80, 650);
+        }
+
+    } else {
+
+        /* neve */
+
+        ctx.fillStyle = "#dfe8ec";
+        ctx.fillRect(0, 0, W, H);
+
+        ctx.fillStyle = "#b6c5cb";
+
+        for (let i = 0; i < 80; i++) {
+
+            const x = (i * 97) % W;
+            const y = (i * 47) % H;
+
+            ctx.fillRect(x, y, 3, 3);
+        }
+
+        /* chão */
+
+        ctx.fillStyle = "#b5c3c8";
+        ctx.fillRect(0, 300, W, 350);
+
+        /* vento */
+
+        ctx.strokeStyle = "rgba(255,255,255,.4)";
+        ctx.lineWidth = 1;
+
+        for (let y = 40; y < 620; y += 45) {
+
+            ctx.beginPath();
+            ctx.moveTo(0, y);
+            ctx.lineTo(W, y + 20);
+            ctx.stroke();
+        }
+    }
+}
+
+function drawOfficeDetails() {
+
+    /* janela */
+
+    ctx.fillStyle = "#1a252c";
+    ctx.fillRect(760, 55, 180, 120);
+
+    ctx.strokeStyle = "#64727b";
+    ctx.lineWidth = 4;
+    ctx.strokeRect(760, 55, 180, 120);
+
+    ctx.strokeStyle = "#303b43";
+    ctx.lineWidth = 2;
+
+    ctx.beginPath();
+    ctx.moveTo(850, 55);
+    ctx.lineTo(850, 175);
+    ctx.moveTo(760, 115);
+    ctx.lineTo(940, 115);
+    ctx.stroke();
+
+    /* mesa central */
+
+    ctx.fillStyle = "#4b555b";
+    ctx.fillRect(330, 110, 120, 55);
+
+    ctx.fillStyle = "#6a747a";
+    ctx.fillRect(340, 118, 100, 10);
+
+    /* armários */
+
+    for (const locker of lockers) {
+
+        ctx.fillStyle = player.hidden &&
+            Math.abs(player.x - locker.x) < 20
+            ? "#4c6570"
+            : "#4a5359";
+
+        ctx.fillRect(
+            locker.x,
+            locker.y,
+            locker.w,
+            locker.h
+        );
+
+        ctx.strokeStyle = "#78848b";
+        ctx.strokeRect(
+            locker.x,
+            locker.y,
+            locker.w,
+            locker.h
+        );
+    }
+
+    /* aviso da janela */
+
+    if (
+        Math.abs(player.x - 850) < 100 &&
+        Math.abs(player.y - 115) < 90
+    ) {
+
+        ctx.fillStyle = "rgba(5,8,10,.85)";
+        ctx.fillRect(690, 180, 300, 42);
+
+        ctx.fillStyle = "#d8dde0";
+        ctx.font = "12px Arial";
+
+        ctx.fillText(
+            "BUCK: Não posso passar por aqui.",
+            710,
+            198
+        );
+
+        ctx.fillText(
+            "Qualquer disparo pode chamar atenção.",
+            710,
+            215
+        );
+    }
+}
+
+function drawObstacles() {
+
+    for (const wall of obstacles) {
+
+        ctx.fillStyle =
+            wall.y < 200
+                ? "#4e595f"
+                : "#515a5f";
+
+        ctx.fillRect(
+            wall.x,
+            wall.y,
+            wall.w,
+            wall.h
+        );
+
+        ctx.strokeStyle = "#77838a";
+        ctx.strokeRect(
+            wall.x,
+            wall.y,
+            wall.w,
+            wall.h
+        );
+    }
+}
+
+function drawDoors() {
+
+    for (const door of doors) {
+
+        if (door.open) {
+
+            ctx.fillStyle = "#657078";
+
+            ctx.fillRect(
+                door.x,
+                door.y,
+                door.w,
+                door.h
+            );
+
+        } else {
+
+            ctx.fillStyle = "#20282d";
+
+            ctx.fillRect(
+                door.x,
+                door.y,
+                door.w,
+                door.h
+            );
+
+            ctx.fillStyle = "#9eaaaf";
+
+            ctx.fillRect(
+                door.x + 4,
+                door.y + 4,
+                door.w - 8,
+                4
+            );
+        }
+    }
+}
+
+/* ============================
+   PERSONAGENS
+   ============================ */
+
+function drawPlayer() {
+
+    if (player.hidden) return;
+
+    /* sombra */
+
+    ctx.fillStyle = "rgba(0,0,0,.35)";
+    ctx.fillRect(
+        player.x - 3,
+        player.y + player.h - 3,
+        player.w + 6,
+        7
+    );
+
+    /* pernas */
+
+    ctx.fillStyle = "#111417";
+
+    ctx.fillRect(
+        player.x + 3,
+        player.y + 20,
+        7,
+        14
+    );
+
+    ctx.fillRect(
+        player.x + 12,
+        player.y + 20,
+        7,
+        14
+    );
+
+    /* botas */
+
+    ctx.fillStyle = "#080a0c";
+
+    ctx.fillRect(
+        player.x + 1,
+        player.y + 30,
+        9,
+        5
+    );
+
+    ctx.fillRect(
+        player.x + 12,
+        player.y + 30,
+        9,
+        5
+    );
+
+    /* corpo */
+
+    ctx.fillStyle = "#15191c";
+
+    ctx.fillRect(
+        player.x + 2,
+        player.y + 9,
+        18,
+        15
+    );
+
+    /* cabeça */
+
+    ctx.fillStyle = "#d1a17e";
+
+    ctx.fillRect(
+        player.x + 5,
+        player.y,
+        12,
+        11
+    );
+
+    /* cabelo */
+
+    ctx.fillStyle = "#d0bd86";
+
+    ctx.fillRect(
+        player.x + 5,
+        player.y,
+        12,
+        4
+    );
+
+    /* braços */
+
+    ctx.fillStyle = "#161a1d";
+
+    ctx.fillRect(
+        player.x - 1,
+        player.y + 10,
+        5,
+        14
+    );
+
+    ctx.fillRect(
+        player.x + 18,
+        player.y + 10,
+        5,
+        14
+    );
+}
+
+function drawEnemies() {
+
+    for (const enemy of enemies) {
+
+        if (!enemy.alive) continue;
+
+        /* sombra */
+
+        ctx.fillStyle = "rgba(0,0,0,.45)";
+
+        ctx.fillRect(
+            enemy.x - 4,
+            enemy.y + enemy.h - 3,
+            enemy.w + 8,
+            7
+        );
+
+        /* pernas */
+
+        ctx.fillStyle = "#11151a";
+
+        ctx.fillRect(
+            enemy.x + 3,
+            enemy.y + 22,
+            7,
+            15
+        );
+
+        ctx.fillRect(
+            enemy.x + 14,
+            enemy.y + 22,
+            7,
+            15
+        );
+
+        /* colete */
+
+        ctx.fillStyle = "#1b2228";
+
+        ctx.fillRect(
+            enemy.x,
+            enemy.y + 8,
+            enemy.w,
+            18
+        );
+
+        /* capacete */
+
+        ctx.fillStyle = "#10161b";
+
+        ctx.fillRect(
+            enemy.x + 2,
+            enemy.y,
+            enemy.w - 4,
+            10
+        );
+
+        /* braços */
+
+        ctx.fillStyle = "#181f24";
+
+        ctx.fillRect(
+            enemy.x - 4,
+            enemy.y + 10,
+            6,
+            15
+        );
+
+        ctx.fillRect(
+            enemy.x + enemy.w - 2,
+            enemy.y + 10,
+            6,
+            15
+        );
+
+        /* arma */
+
+        ctx.fillStyle = "#090c0f";
+
+        ctx.fillRect(
+            enemy.x + enemy.w - 2,
+            enemy.y + 18,
+            16,
+            4
+        );
+
+        /* visão */
+
+        if (alertLevel < 3) {
+
+            ctx.fillStyle =
+                player.crouching
+                    ? "rgba(210,210,80,.06)"
+                    : "rgba(210,80,80,.07)";
+
+            ctx.beginPath();
+
+            ctx.moveTo(
+                enemy.x + enemy.w / 2,
+                enemy.y + enemy.h / 2
+            );
+
+            ctx.lineTo(
+                enemy.x + enemy.w / 2 + 180 * enemy.dir,
+                enemy.y - 40
+            );
+
+            ctx.lineTo(
+                enemy.x + enemy.w / 2 + 180 * enemy.dir,
+                enemy.y + enemy.h + 40
+            );
+
+            ctx.closePath();
+
+            ctx.fill();
+        }
+    }
+}
+
+/* ============================
+   HUD / MAPA
+   ============================ */
+
+function drawMapLabels() {
+
+    ctx.font = "11px Arial";
+    ctx.fillStyle = "rgba(255,255,255,.5)";
+
+    ctx.fillText(
+        externalArea
+            ? "ÁREA EXTERNA // NEVE"
+            : "INSTALAÇÃO // DINAMARCA",
+        20,
+        25
+    );
+
+    ctx.fillText(
+        "OPERATION // BLACK OBSIDIAN",
+        20,
+        42
+    );
+
+    if (!externalArea) {
+
+        ctx.fillStyle = "#87949b";
+
+        ctx.fillText(
+            "ESCRITÓRIO",
+            30,
+            240
+        );
+
+        ctx.fillText(
+            "HALL PRINCIPAL",
+            470,
+            240
+        );
+
+        ctx.fillText(
+            "SALA DOS CAMINHÕES",
+            850,
+            600
+        );
+    }
+}
+
+/* ============================
+   ÁREA EXTERNA
+   ============================ */
+
+function updateArea() {
+
+    if (!externalArea &&
+        player.x > 1000 &&
+        player.y > 270 &&
+        player.y < 400) {
+
+        externalArea = true;
+
+        player.x = 80;
+        player.y = 330;
+
+        showMessage("ÁREA EXTERNA // NEVE", 2500);
+    }
+}
+
+/* ============================
+   LOOP PRINCIPAL
+   ============================ */
+
+let lastTime = performance.now();
+
+function loop(now) {
+
+    const dt = Math.min(
+        (now - lastTime) / 1000,
+        .05
+    );
+
+    lastTime = now;
+
+    if (!gameOver && !radioOpen) {
+
+        updatePlayer(dt);
+        updateEnemies(dt);
+        updateArea();
+    }
+
+    draw();
+
+    requestAnimationFrame(loop);
+}
+
+/* ============================
+   DESENHO FINAL
+   ============================ */
+
+function draw() {
+
+    ctx.clearRect(0, 0, W, H);
+
+    drawBackground();
+
+    if (!externalArea) {
+        drawOfficeDetails();
+        drawObstacles();
+        drawDoors();
+    }
+
+    drawEnemies();
+    drawPlayer();
+    drawMapLabels();
+
+    document.getElementById("health").innerText =
+        "VIDA " + Math.max(0, Math.floor(player.health));
+
+    document.getElementById("ammo").innerText =
+        player.ammo;
+
+    if (messageTimer > 0) {
+
+        messageTimer -= 16;
+
+        if (messageTimer <= 0) {
+            document.getElementById("message").style.display = "none";
+        }
+    }
+}
+
+requestAnimationFrame(loop);
+
+</script>
+
+</body>
+</html>
