@@ -2,303 +2,533 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
 
 <title>THE DARK JEWEL — Prototype 0.2</title>
 
 <style>
-:root {
-    --bg: #070a0e;
-    --panel: #0d1218;
-    --panel2: #111820;
-    --line: #26313b;
-    --text: #d9e0e5;
-    --muted: #84909a;
-    --blue: #3d8dff;
-    --red: #d84b55;
-    --green: #57c98a;
-    --gold: #c6a65a;
+*{
+    box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
 }
 
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+html,body{
+    margin:0;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    background:#05090c;
+    color:#dbe5e9;
+    font-family:Arial,Helvetica,sans-serif;
 }
 
-html {
-    scroll-behavior: smooth;
+button{
+    font-family:inherit;
 }
 
-body {
+.hidden{
+    display:none!important;
+}
+
+/* =========================
+   MENU
+========================= */
+
+#menu{
+    width:100%;
+    height:100%;
+    position:relative;
+    overflow:hidden;
     background:
-        radial-gradient(circle at top right, rgba(61,141,255,.08), transparent 30%),
-        radial-gradient(circle at bottom left, rgba(216,75,85,.05), transparent 30%),
-        var(--bg);
-    color: var(--text);
-    font-family: Arial, Helvetica, sans-serif;
-    line-height: 1.65;
-}
-
-/* ===== HEADER ===== */
-
-header {
-    min-height: 340px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 55px 7%;
-    border-bottom: 1px solid var(--line);
-    background:
-        linear-gradient(90deg, rgba(0,0,0,.7), rgba(7,10,14,.35)),
+        linear-gradient(90deg,
+            rgba(3,8,11,.98),
+            rgba(8,17,23,.80)),
         repeating-linear-gradient(
-            0deg,
-            rgba(255,255,255,.018) 0px,
-            rgba(255,255,255,.018) 1px,
-            transparent 1px,
-            transparent 5px
+            90deg,
+            transparent 0px,
+            transparent 100px,
+            rgba(120,150,160,.035) 101px,
+            transparent 102px
         );
 }
 
-.classified {
-    color: var(--red);
-    font-size: .75rem;
-    letter-spacing: 4px;
-    font-weight: bold;
-    margin-bottom: 18px;
+.menu-lines{
+    position:absolute;
+    inset:0;
+    background:
+        linear-gradient(
+            0deg,
+            transparent 0%,
+            rgba(40,80,100,.08) 50%,
+            transparent 100%
+        );
+    pointer-events:none;
 }
 
-.logo {
-    font-size: clamp(2.4rem, 8vw, 5rem);
-    font-weight: 900;
-    letter-spacing: 7px;
-    line-height: 1;
-    color: white;
-    text-shadow:
-        3px 0 var(--blue),
-        -3px 0 var(--red);
+.menu-content{
+    position:absolute;
+    left:8%;
+    top:18%;
+    width:min(650px,84%);
 }
 
-.operation {
-    margin-top: 18px;
-    color: var(--blue);
-    letter-spacing: 4px;
-    font-size: .9rem;
+.logo{
+    font-size:clamp(36px,8vw,72px);
+    font-weight:900;
+    letter-spacing:.08em;
+    line-height:.9;
+    text-shadow:5px 0 rgba(230,50,60,.18);
 }
 
-.prototype {
-    margin-top: 30px;
-    display: inline-block;
-    width: fit-content;
-    border: 1px solid var(--line);
-    padding: 8px 14px;
-    color: var(--gold);
-    font-size: .75rem;
-    letter-spacing: 2px;
+.logo-blue{
+    color:#4ba5df;
 }
 
-/* ===== NAV ===== */
-
-nav {
-    position: sticky;
-    top: 0;
-    z-index: 20;
-    background: rgba(7,10,14,.94);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid var(--line);
+.logo-red{
+    color:#e25b62;
 }
 
-.nav-inner {
-    max-width: 1200px;
-    margin: auto;
-    display: flex;
-    gap: 8px;
-    overflow-x: auto;
-    padding: 10px 14px;
+.subtitle{
+    margin-top:15px;
+    color:#91a6b1;
+    font-size:12px;
+    letter-spacing:.35em;
 }
 
-.nav-inner a {
-    flex: 0 0 auto;
-    color: var(--muted);
-    text-decoration: none;
-    font-size: .72rem;
-    letter-spacing: 1px;
-    border: 1px solid transparent;
-    padding: 8px 10px;
+.classified{
+    margin-top:22px;
+    color:#c7a85e;
+    font-size:10px;
+    letter-spacing:.2em;
 }
 
-.nav-inner a:hover {
-    color: white;
-    border-color: var(--line);
+.menu{
+    width:min(430px,100%);
+    margin-top:35px;
+    display:grid;
+    gap:8px;
 }
 
-/* ===== MAIN ===== */
-
-main {
-    width: min(1100px, 92%);
-    margin: 45px auto 80px;
+.menu button{
+    padding:15px;
+    background:#0b161c;
+    border:1px solid #344952;
+    border-left:4px solid #263941;
+    color:#dbe6ea;
+    text-align:left;
+    letter-spacing:.12em;
+    cursor:pointer;
 }
 
-.section {
-    background: linear-gradient(145deg, var(--panel), var(--panel2));
-    border: 1px solid var(--line);
-    margin-bottom: 24px;
-    padding: 30px;
-    position: relative;
-    overflow: hidden;
+.menu button:hover,
+.menu button:active{
+    background:#12232d;
+    border-left-color:#55a9e2;
 }
 
-.section::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 3px;
-    height: 100%;
-    background: var(--blue);
+.menu button:first-child{
+    border-left-color:#55a9e2;
 }
 
-.section:nth-child(odd)::before {
-    background: var(--red);
+.menu-footer{
+    position:absolute;
+    bottom:15px;
+    left:20px;
+    right:20px;
+    display:flex;
+    justify-content:space-between;
+    color:#52656f;
+    font-size:9px;
+    letter-spacing:.12em;
 }
 
-.section-number {
-    color: var(--gold);
-    font-size: .72rem;
-    letter-spacing: 3px;
-    margin-bottom: 7px;
+/* =========================
+   BRIEFING
+========================= */
+
+#briefing{
+    width:100%;
+    height:100%;
+    background:#071015;
+    padding:15px;
+    overflow:auto;
 }
 
-h2 {
-    font-size: clamp(1.35rem, 4vw, 2rem);
-    letter-spacing: 2px;
-    margin-bottom: 20px;
-    color: white;
+.header{
+    padding:13px;
+    background:#0b171d;
+    border:1px solid #334852;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
 }
 
-h3 {
-    margin: 25px 0 10px;
-    color: var(--blue);
-    font-size: .95rem;
-    letter-spacing: 2px;
+.header-title{
+    font-size:12px;
+    letter-spacing:.15em;
 }
 
-p {
-    margin-bottom: 14px;
-    color: var(--text);
+.header-tag{
+    font-size:9px;
+    color:#c7a85e;
 }
 
-ul {
-    list-style: none;
-    margin: 12px 0 18px;
+.brief-grid{
+    display:grid;
+    grid-template-columns:1.25fr .75fr;
+    gap:12px;
+    margin-top:12px;
 }
 
-li {
-    margin: 8px 0;
-    color: #c8d0d6;
+.panel{
+    background:#09141a;
+    border:1px solid #344852;
+    padding:18px;
 }
 
-li::before {
-    content: "■";
-    color: var(--blue);
-    margin-right: 10px;
-    font-size: .55rem;
+.panel h2{
+    color:#79bce3;
+    font-size:14px;
+    letter-spacing:.13em;
+    margin:0 0 18px;
 }
 
-.quote {
-    border-left: 2px solid var(--red);
-    padding: 15px 20px;
-    margin: 20px 0;
-    background: rgba(216,75,85,.045);
-    color: #e7e7e7;
-    font-style: italic;
+.panel h3{
+    color:#70858f;
+    font-size:9px;
+    letter-spacing:.18em;
+    margin:18px 0 7px;
 }
 
-.warning {
-    border: 1px solid #51452b;
-    background: rgba(198,166,90,.05);
-    padding: 18px;
-    margin: 20px 0;
+.panel p{
+    color:#b9c6cb;
+    font-size:13px;
+    line-height:1.55;
 }
 
-.system-box {
-    border: 1px solid var(--line);
-    background: #080c11;
-    padding: 18px;
-    margin: 18px 0;
-    text-align: center;
-    color: var(--gold);
-    letter-spacing: 2px;
+.objective{
+    padding:13px;
+    border-left:3px solid #55a9e2;
+    background:#0d2029;
+    color:#e8f0f3;
 }
 
-.arrow {
-    color: var(--blue);
-    font-size: 1.4rem;
-    margin: 3px 0;
+.buttons{
+    display:flex;
+    gap:8px;
+    margin-top:20px;
 }
 
-.status {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    border: 1px solid var(--line);
-    padding: 10px 14px;
-    margin: 10px 0 20px;
+.action{
+    flex:1;
+    padding:12px;
+    background:#10212a;
+    border:1px solid #435c68;
+    color:#dce7eb;
 }
 
-.status-dot {
-    width: 9px;
-    height: 9px;
-    border-radius: 50%;
-    background: #d4a43d;
-    box-shadow: 0 0 10px rgba(212,164,61,.6);
+/* =========================
+   GAME
+========================= */
+
+#gameScreen{
+    width:100%;
+    height:100%;
+    position:relative;
+    background:#0a1216;
 }
 
-/* ===== FOOTER ===== */
-
-footer {
-    border-top: 1px solid var(--line);
-    padding: 35px 7%;
-    color: var(--muted);
-    text-align: center;
-    font-size: .75rem;
-    letter-spacing: 1px;
+.game-header{
+    height:45px;
+    background:#071015;
+    border-bottom:1px solid #344852;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:0 12px;
+    font-size:10px;
+    letter-spacing:.08em;
 }
 
-.footer-title {
-    color: white;
-    margin-bottom: 8px;
-    letter-spacing: 3px;
+.game-title{
+    color:#78b9df;
 }
 
-/* ===== MOBILE ===== */
+.game-info{
+    color:#7d8e96;
+}
 
-@media (max-width: 650px) {
+#canvasWrap{
+    position:absolute;
+    top:45px;
+    left:0;
+    right:0;
+    bottom:0;
+}
 
-    header {
-        min-height: 280px;
-        padding: 45px 6%;
+canvas{
+    width:100%;
+    height:100%;
+    display:block;
+    touch-action:none;
+}
+
+/* =========================
+   HUD
+========================= */
+
+.hud{
+    position:absolute;
+    top:10px;
+    left:10px;
+    right:10px;
+    display:flex;
+    justify-content:space-between;
+    pointer-events:none;
+}
+
+.hud-box{
+    background:rgba(4,10,13,.82);
+    border:1px solid rgba(110,140,150,.4);
+    padding:8px 10px;
+    font-size:9px;
+    letter-spacing:.08em;
+}
+
+#state{
+    color:#72b5dd;
+}
+
+#objective{
+    max-width:50%;
+    text-align:right;
+}
+
+/* =========================
+   MESSAGE
+========================= */
+
+#message{
+    position:absolute;
+    bottom:135px;
+    left:50%;
+    transform:translateX(-50%);
+    width:min(650px,90%);
+    padding:10px;
+    background:rgba(4,10,13,.9);
+    border:1px solid #415963;
+    text-align:center;
+    font-size:11px;
+}
+
+/* =========================
+   RADIO
+========================= */
+
+#radio{
+    position:absolute;
+    bottom:15px;
+    left:15px;
+    width:min(430px,calc(100% - 30px));
+    background:rgba(5,11,15,.96);
+    border:1px solid #486271;
+    padding:13px;
+    display:none;
+}
+
+.radio-title{
+    color:#69b6e4;
+    font-size:9px;
+    letter-spacing:.18em;
+}
+
+.radio-name{
+    margin-top:7px;
+    font-weight:bold;
+}
+
+.radio-text{
+    margin-top:6px;
+    color:#d6e0e4;
+    font-size:12px;
+    line-height:1.45;
+}
+
+.radio-buttons{
+    display:flex;
+    gap:8px;
+    margin-top:10px;
+}
+
+.radio-buttons button{
+    flex:1;
+    padding:8px;
+    background:#11232c;
+    border:1px solid #405a66;
+    color:#dce7eb;
+}
+
+/* =========================
+   MOBILE CONTROLS
+========================= */
+
+.controls{
+    position:absolute;
+    left:0;
+    right:0;
+    bottom:10px;
+    height:105px;
+    pointer-events:none;
+}
+
+.dpad{
+    position:absolute;
+    left:15px;
+    bottom:5px;
+    width:115px;
+    height:90px;
+    pointer-events:auto;
+}
+
+.dpad button,
+.actions button{
+    position:absolute;
+    background:rgba(15,29,37,.88);
+    border:1px solid #4c6975;
+    color:#dbe7eb;
+    border-radius:4px;
+}
+
+.dpad button{
+    width:34px;
+    height:34px;
+}
+
+.up{
+    top:0;
+    left:40px;
+}
+
+.down{
+    bottom:0;
+    left:40px;
+}
+
+.left{
+    top:28px;
+    left:2px;
+}
+
+.right{
+    top:28px;
+    right:2px;
+}
+
+.actions{
+    position:absolute;
+    right:15px;
+    bottom:5px;
+    width:170px;
+    height:90px;
+    pointer-events:auto;
+}
+
+.actions button{
+    height:36px;
+}
+
+.interact{
+    left:0;
+    bottom:0;
+    width:78px;
+}
+
+.crouch{
+    right:0;
+    bottom:0;
+    width:78px;
+}
+
+.radio-btn{
+    top:0;
+    left:45px;
+    width:80px;
+}
+
+/* =========================
+   MODAL
+========================= */
+
+#modal{
+    position:absolute;
+    inset:0;
+    background:rgba(2,6,8,.75);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:20;
+}
+
+.modal-box{
+    width:min(500px,90%);
+    padding:22px;
+}
+
+.modal-box h2{
+    margin:0 0 12px;
+    color:#79bce3;
+    letter-spacing:.12em;
+}
+
+.modal-box p{
+    color:#bac8cd;
+    line-height:1.5;
+    font-size:13px;
+}
+
+.modal-buttons{
+    display:flex;
+    gap:8px;
+    margin-top:18px;
+}
+
+.modal-buttons button{
+    flex:1;
+    padding:11px;
+    background:#11232c;
+    border:1px solid #4b6470;
+    color:#dce7eb;
+}
+
+/* =========================
+   RESPONSIVO
+========================= */
+
+@media(max-width:700px){
+
+    .menu-content{
+        left:7%;
+        top:12%;
     }
 
-    .logo {
-        letter-spacing: 3px;
+    .menu-footer{
+        font-size:7px;
     }
 
-    .operation {
-        letter-spacing: 2px;
+    .brief-grid{
+        grid-template-columns:1fr;
     }
 
-    .section {
-        padding: 22px 18px;
+    .brief-grid .panel:nth-child(2){
+        display:none;
     }
 
-    main {
-        width: 94%;
-        margin-top: 25px;
+    .game-header{
+        font-size:8px;
     }
 
-    h2 {
-        letter-spacing: 1px;
+    #message{
+        bottom:120px;
     }
 }
 </style>
@@ -306,746 +536,1907 @@ footer {
 
 <body>
 
-<header id="top">
+<!-- =========================
+     MENU
+========================= -->
 
-    <div class="classified">
-        CLASSIFIED // WB-DEVELOPMENT
-    </div>
+<section id="menu">
 
-    <div class="logo">
-        THE DARK JEWEL
-    </div>
+<div class="menu-lines"></div>
 
-    <div class="operation">
-        OPERATION // BLACK OBSIDIAN
-    </div>
+<div class="menu-content">
 
-    <div class="prototype">
-        DOCUMENTO DE DESENVOLVIMENTO — PROTOTYPE 0.2
-    </div>
-
-</header>
-
-<nav>
-    <div class="nav-inner">
-
-        <a href="#s01">01 VISÃO</a>
-        <a href="#s02">02 OBJETIVO</a>
-        <a href="#s03">03 CONTROLES</a>
-        <a href="#s04">04 MOVIMENTO</a>
-        <a href="#s05">05 CENÁRIO</a>
-        <a href="#s06">06 ESCONDERIJO</a>
-        <a href="#s07">07 DETECÇÃO</a>
-        <a href="#s08">08 IA</a>
-        <a href="#s09">09 RÁDIO</a>
-        <a href="#s10">10 DICAS</a>
-        <a href="#s11">11 NARRATIVA</a>
-        <a href="#s12">12 ECLIPSE</a>
-        <a href="#s13">13 DOCUMENTOS</a>
-        <a href="#s14">14 ESCOLHAS</a>
-        <a href="#s15">15 TEMA</a>
-        <a href="#s16">16 VISUAL</a>
-        <a href="#s17">17 SOM</a>
-        <a href="#s18">18 ESTRUTURA</a>
-        <a href="#s19">19 PRESERVAR</a>
-        <a href="#s20">20 META</a>
-
-    </div>
-</nav>
-
-<main>
-
-<!-- 01 -->
-
-<section class="section" id="s01">
-<div class="section-number">01 — VISÃO DO PROJETO</div>
-<h2>Visão do Projeto</h2>
-
-<p>
-<strong>The Dark Jewel</strong> é um jogo 2D de infiltração,
-espionagem e narrativa, ambientado no Universo W.B.
-</p>
-
-<p>
-O projeto não deve ser tratado apenas como uma sequência de
-missões independentes.
-</p>
-
-<p>
-Cada missão deve contribuir para uma história maior, apresentando
-personagens, organizações, conflitos, decisões e acontecimentos
-que gradualmente revelem o verdadeiro significado da operação.
-</p>
-
-<p>
-A adaptação de <strong>2001:Eclipse</strong> será utilizada como
-uma das principais bases narrativas do projeto.
-</p>
-
-<div class="quote">
-A intenção é que o jogador não apenas complete objetivos.
-<br><br>
-<strong>«Controlar ou ser controlado?»</strong>
+<div class="logo">
+<span class="logo-blue">THE DARK</span>
+<span class="logo-red">JEWEL</span>
 </div>
 
-<p>
-Essa pergunta deve acompanhar a experiência e ganhar novos
-significados conforme a história avança.
-</p>
-</section>
-
-<!-- 02 -->
-
-<section class="section" id="s02">
-<div class="section-number">02 — OBJETIVO</div>
-<h2>Objetivo do Prototype 0.2</h2>
-
-<p>
-O Prototype 0.2 terá como prioridade transformar a demonstração
-atual em uma verdadeira base de desenvolvimento para o jogo.
-</p>
-
-<ul>
-<li>Melhorar drasticamente os controles</li>
-<li>Tornar o movimento mais natural</li>
-<li>Melhorar a interação com o cenário</li>
-<li>Criar uma infiltração mais consistente</li>
-<li>Melhorar a inteligência e movimentação dos inimigos</li>
-<li>Construir uma estrutura narrativa dentro das missões</li>
-<li>Introduzir elementos de 2001:Eclipse</li>
-<li>Criar identidade própria para The Dark Jewel</li>
-<li>Preparar a estrutura para futuras missões</li>
-<li>Criar uma base técnica que possa crescer sem precisar reconstruir o jogo inteiro</li>
-</ul>
-</section>
-
-<!-- 03 -->
-
-<section class="section" id="s03">
-<div class="section-number">03 — CONTROLES</div>
-<h2>Controles</h2>
-
-<p>
-Os controles atuais serão revisados.
-</p>
-
-<ul>
-<li>Movimento</li>
-<li>Agachar</li>
-<li>Interagir</li>
-<li>Entrar em esconderijos</li>
-<li>Sair de esconderijos</li>
-<li>Observar o ambiente</li>
-<li>Interagir com objetos</li>
-<li>Usar equipamentos disponíveis</li>
-<li>Acessar rádio/comunicação</li>
-<li>Pausar</li>
-</ul>
-
-<p>
-O controle deve funcionar principalmente em dispositivos móveis,
-mas também permanecer compatível com teclado.
-</p>
-
-<h3>PRINCÍPIO</h3>
-
-<div class="quote">
-O jogador não deve lutar contra os controles.
-<br><br>
-A dificuldade deve vir da situação apresentada pelo jogo,
-e não de comandos imprecisos.
-</div>
-</section>
-
-<!-- 04 -->
-
-<section class="section" id="s04">
-<div class="section-number">04 — MOVIMENTAÇÃO</div>
-<h2>Movimentação do Personagem</h2>
-
-<ul>
-<li>Caminhada</li>
-<li>Corrida</li>
-<li>Movimento agachado</li>
-<li>Parada</li>
-<li>Mudança de direção</li>
-<li>Interação</li>
-<li>Entrada em esconderijo</li>
-<li>Saída do esconderijo</li>
-<li>Reação a eventos</li>
-</ul>
-
-<p>
-A movimentação deve permanecer estilizada e compatível com a
-estética retro do projeto.
-</p>
-
-<div class="system-box">
-CLAREZA + PERSONALIDADE + FLUIDEZ
-</div>
-</section>
-
-<!-- 05 -->
-
-<section class="section" id="s05">
-<div class="section-number">05 — CENÁRIO</div>
-<h2>Cenário e Exploração</h2>
-
-<p>
-O cenário deve deixar de funcionar apenas como uma sequência de
-corredores.
-</p>
-
-<p>
-Os ambientes precisam transmitir a sensação de que a instalação
-realmente possui uma função.
-</p>
-
-<ul>
-<li>Escritórios</li>
-<li>Depósitos</li>
-<li>Corredores</li>
-<li>Áreas de segurança</li>
-<li>Salas técnicas</li>
-<li>Áreas externas</li>
-<li>Veículos</li>
-<li>Caixas</li>
-<li>Armários</li>
-<li>Mesas</li>
-<li>Equipamentos</li>
-<li>Portas</li>
-<li>Janelas</li>
-<li>Áreas restritas</li>
-</ul>
-
-<p>
-Objetos importantes podem possuir pequenas interações ou
-observações.
-</p>
-
-<div class="quote">
-Buck: "Não posso passar por aqui."
+<div class="subtitle">
+OPERATION // BLACK OBSIDIAN
 </div>
 
-<p>
-Essas pequenas observações ajudam a construir o mundo sem
-interromper completamente a ação.
-</p>
-</section>
-
-<!-- 06 -->
-
-<section class="section" id="s06">
-<div class="section-number">06 — ESCONDERIJO</div>
-<h2>Sistema de Esconderijo</h2>
-
-<p>
-O cenário deve permitir que o jogador utilize determinados
-elementos como esconderijos.
-</p>
-
-<h3>ARMÁRIO</h3>
-
-<ul>
-<li>Buck desaparece visualmente do campo de visão dos inimigos</li>
-<li>O jogador pode observar parcialmente o ambiente</li>
-<li>O movimento fica limitado</li>
-<li>Determinadas ações podem revelar a posição do jogador</li>
-</ul>
-
-<p>
-O sistema deve ser utilizado para criar tensão e não simplesmente
-como uma mecânica obrigatória.
-</p>
-</section>
-
-<!-- 07 -->
-
-<section class="section" id="s07">
-<div class="section-number">07 — DETECÇÃO</div>
-<h2>Sistema de Detecção</h2>
-
-<p>
-Os inimigos devem possuir uma percepção mais natural.
-</p>
-
-<ul>
-<li>Distância</li>
-<li>Linha de visão</li>
-<li>Obstáculos</li>
-<li>Movimento do jogador</li>
-<li>Postura do jogador</li>
-<li>Comportamento anterior do jogador</li>
-<li>Estado de alerta da área</li>
-</ul>
-
-<h3>ESTADOS</h3>
-
-<div class="system-box">
-NORMAL
-<div class="arrow">↓</div>
-SUSPEITA
-<div class="arrow">↓</div>
-ALERTA
-<div class="arrow">↓</div>
-PERSEGUIÇÃO
+<div class="classified">
+CLASSIFIED // UNIVERSO W.B. // PROTOTYPE 0.2
 </div>
 
-<p>
-A missão não deve simplesmente terminar imediatamente quando o
-jogador é percebido.
-</p>
+<div class="menu">
 
-<p>
-O acontecimento deve gerar uma situação.
-</p>
+<button onclick="openBriefing()">
+▶ INICIAR OPERAÇÃO
+</button>
+
+<button onclick="openBriefing()">
+OPERAÇÃO BUCK
+</button>
+
+<button onclick="showOptions()">
+OPÇÕES
+</button>
+
+<button onclick="showCredits()">
+CRÉDITOS
+</button>
+
+</div>
+
+</div>
+
+<div class="menu-footer">
+<span>THE DARK JEWEL // W.B.</span>
+<span>CONTROLAR OU SER CONTROLADO?</span>
+</div>
+
 </section>
 
-<!-- 08 -->
 
-<section class="section" id="s08">
-<div class="section-number">08 — IA</div>
-<h2>Inteligência dos Inimigos</h2>
+<!-- =========================
+     BRIEFING
+========================= -->
+
+<section id="briefing" class="hidden">
+
+<div class="header">
+
+<div class="header-title">
+THE DARK JEWEL // BRIEFING
+</div>
+
+<div class="header-tag">
+PROTOTYPE 0.2
+</div>
+
+</div>
+
+
+<div class="brief-grid">
+
+<div class="panel">
+
+<h2>
+MISSÃO 01 // BLACK OBSIDIAN
+</h2>
+
+<h3>AGENTE</h3>
+<p>BUCK</p>
+
+<h3>LOCALIZAÇÃO</h3>
+<p>Instalação militar — Dinamarca</p>
+
+<h3>SITUAÇÃO</h3>
 
 <p>
-Os inimigos devem parecer agentes procurando alguém, e não
-objetos seguindo uma linha.
+Buck já está dentro da instalação.
+Informações importantes foram recuperadas.
+Agora ele precisa encontrar uma rota para fora.
 </p>
 
-<ul>
-<li>Alterar rotas</li>
-<li>Investigar ruídos</li>
-<li>Procurar em áreas próximas</li>
-<li>Verificar esconderijos</li>
-<li>Reagir a portas abertas</li>
-<li>Reagir a objetos deslocados</li>
-<li>Comunicar suspeitas</li>
-<li>Aumentar o nível de segurança</li>
-</ul>
+<h3>INTELIGÊNCIA</h3>
 
 <p>
-O comportamento deve continuar simples o suficiente para funcionar
-bem no protótipo.
+KATHERINE — comunicação exclusivamente por rádio.
 </p>
+
+<h3>OBJETIVO</h3>
+
+<div class="objective">
+Saia da instalação e alcance o ponto de extração.
+</div>
+
+<div class="buttons">
+
+<button class="action" onclick="backToMenu()">
+VOLTAR
+</button>
+
+<button class="action" onclick="startMission()">
+INICIAR MISSÃO
+</button>
+
+</div>
+
+</div>
+
+
+<div class="panel">
+
+<h2>
+NOTA OPERACIONAL
+</h2>
+
+<p>
+A missão foi construída para incentivar observação,
+movimentação cuidadosa e interação com o ambiente.
+</p>
+
+<h3>CONTROLES — PC</h3>
+
+<p>
+WASD / Setas — movimento<br>
+SHIFT — correr<br>
+ESPAÇO — agachar<br>
+E — interagir<br>
+R — rádio<br>
+P — pausa
+</p>
+
+<h3>CONTROLES — CELULAR</h3>
+
+<p>
+Use o direcional e os botões apresentados durante a missão.
+</p>
+
+<h3>TEMA</h3>
+
+<p>
+<strong>CONTROLAR OU SER CONTROLADO?</strong>
+</p>
+
+<p>
+A resposta não será entregue imediatamente.
+</p>
+
+</div>
+
+</div>
+
 </section>
 
-<!-- 09 -->
 
-<section class="section" id="s09">
-<div class="section-number">09 — RÁDIO</div>
-<h2>Rádio e Katherine</h2>
+<!-- =========================
+     GAME
+========================= -->
 
-<p>
-Katherine continua sendo apresentada exclusivamente através da
-comunicação.
-</p>
+<section id="gameScreen" class="hidden">
 
-<p>
-<strong>Sua aparência permanece não revelada.</strong>
-</p>
+<div class="game-header">
 
-<div class="system-box">
-RADIO // SECURE CHANNEL<br><br>
+<div class="game-title">
+THE DARK JEWEL // OPERATION BLACK OBSIDIAN
+</div>
+
+<div class="game-info">
+DINAMARCA + 00:03
+</div>
+
+</div>
+
+
+<div id="canvasWrap">
+
+<canvas id="game" width="960" height="540"></canvas>
+
+
+<div class="hud">
+
+<div class="hud-box">
+BUCK // <span id="state">NORMAL</span>
+</div>
+
+<div id="objective" class="hud-box">
+OBJETIVO: ALCANCE A SAÍDA
+</div>
+
+</div>
+
+
+<div id="message">
+Observe o ambiente antes de avançar.
+</div>
+
+
+<!-- RADIO -->
+
+<div id="radio">
+
+<div class="radio-title">
+RADIO // SECURE CHANNEL
+</div>
+
+<div class="radio-name">
 KATHERINE
 </div>
 
-<div class="quote">
-"Agora você pode sair daí... Rápido!"
+<div id="radioText" class="radio-text">
+Agora você pode sair daí... Rápido!
 </div>
 
-<ul>
-<li>Orientações</li>
-<li>Informações narrativas</li>
-<li>Reações aos acontecimentos</li>
-<li>Avisos</li>
-<li>Dicas opcionais</li>
-<li>Conversas relacionadas à história</li>
-</ul>
-</section>
+<div class="radio-buttons">
 
-<!-- 10 -->
+<button onclick="getTip()">
+DICA
+</button>
 
-<section class="section" id="s10">
-<div class="section-number">10 — DICAS</div>
-<h2>Sistema de Dicas</h2>
+<button onclick="closeRadio()">
+FECHAR
+</button>
 
-<p>
-O jogador poderá solicitar ajuda através do rádio.
-</p>
-
-<p>
-Katherine poderá oferecer diferentes tipos de orientação.
-</p>
-
-<div class="system-box">
-DESCOBRIR SOZINHO
-<br>
-<span style="color:#84909a">ou</span>
-<br>
-RECEBER ORIENTAÇÃO
 </div>
 
-<p>
-As dicas devem evitar transformar a experiência em um tutorial
-permanente.
-</p>
-</section>
-
-<!-- 11 -->
-
-<section class="section" id="s11">
-<div class="section-number">11 — NARRATIVA</div>
-<h2>Narrativa</h2>
-
-<p>
-As missões não devem parecer acontecimentos isolados.
-</p>
-
-<div class="system-box">
-MISSÃO
-<div class="arrow">↓</div>
-ACONTECIMENTO
-<div class="arrow">↓</div>
-INFORMAÇÃO
-<div class="arrow">↓</div>
-DÚVIDA
-<div class="arrow">↓</div>
-NOVA MISSÃO
-<div class="arrow">↓</div>
-NOVA REVELAÇÃO
 </div>
 
-<p>
-O jogador deve perceber que existe algo maior acontecendo por
-trás da operação.
-</p>
-</section>
 
-<!-- 12 -->
+<!-- MOBILE -->
 
-<section class="section" id="s12">
-<div class="section-number">12 — 2001:ECLIPSE</div>
-<h2>2001:Eclipse</h2>
+<div class="controls">
 
-<p>
-<strong>2001:Eclipse</strong> será utilizado como uma das bases
-fundamentais para a narrativa de The Dark Jewel.
-</p>
+<div class="dpad">
 
-<p>
-A adaptação não deve simplesmente transformar a história original
-em uma sequência de fases.
-</p>
+<button class="up" data-key="up">▲</button>
+<button class="down" data-key="down">▼</button>
+<button class="left" data-key="left">◀</button>
+<button class="right" data-key="right">▶</button>
 
-<p>
-Ela deve traduzir seus acontecimentos para a linguagem de um jogo
-de infiltração.
-</p>
-
-<p>
-Elementos narrativos, personagens, organizações e acontecimentos
-de 2001:Eclipse deverão ser incorporados progressivamente.
-</p>
-
-<ul>
-<li>Diálogos</li>
-<li>Rádio</li>
-<li>Documentos</li>
-<li>Registros</li>
-<li>Ambientes</li>
-<li>Objetos</li>
-<li>Eventos durante as missões</li>
-<li>Descobertas opcionais</li>
-<li>Consequências</li>
-</ul>
-</section>
-
-<!-- 13 -->
-
-<section class="section" id="s13">
-<div class="section-number">13 — DOCUMENTOS</div>
-<h2>Documentos e Informações</h2>
-
-<p>
-O jogador poderá encontrar informações durante as missões.
-</p>
-
-<p>
-Um documento não precisa explicar tudo.
-</p>
-
-<ul>
-<li>Um nome</li>
-<li>Uma organização</li>
-<li>Uma localização</li>
-<li>Uma data</li>
-<li>Uma operação</li>
-<li>Uma informação parcialmente censurada</li>
-<li>Uma referência aparentemente insignificante</li>
-</ul>
-
-<p>
-Posteriormente, essas informações poderão adquirir outro significado.
-</p>
-</section>
-
-<!-- 14 -->
-
-<section class="section" id="s14">
-<div class="section-number">14 — ESCOLHAS</div>
-<h2>Escolhas</h2>
-
-<p>
-The Dark Jewel não deve transformar escolhas em simples opções
-de <strong>BOM / MAU</strong>.
-</p>
-
-<ul>
-<li>Seguir uma ordem</li>
-<li>Questionar uma ordem</li>
-<li>Ignorar uma informação</li>
-<li>Investigar algo</li>
-<li>Prosseguir rapidamente</li>
-<li>Arriscar-se para descobrir mais</li>
-</ul>
-
-<p>
-As consequências podem não ser imediatamente apresentadas.
-</p>
-
-<p>
-O jogador deve poder terminar uma missão sem saber completamente
-o impacto de sua decisão.
-</p>
-</section>
-
-<!-- 15 -->
-
-<section class="section" id="s15">
-<div class="section-number">15 — TEMA CENTRAL</div>
-<h2>Controlar ou Ser Controlado</h2>
-
-<p>
-Esse conceito deve funcionar como um dos pilares narrativos.
-</p>
-
-<ul>
-<li>Controle sobre o personagem</li>
-<li>Controle através de ordens</li>
-<li>Controle de informações</li>
-<li>Controle de organizações</li>
-<li>Controle político</li>
-<li>Controle tecnológico</li>
-<li>Controle sobre a verdade</li>
-<li>Controle sobre as próprias escolhas</li>
-</ul>
-
-<div class="quote">
-A pergunta central não precisa possuir uma resposta simples.
-<br><br>
-O jogo deve permitir que o jogador construa sua própria interpretação.
 </div>
-</section>
 
-<!-- 16 -->
 
-<section class="section" id="s16">
-<div class="section-number">16 — IDENTIDADE VISUAL</div>
-<h2>Identidade Visual</h2>
+<div class="actions">
 
-<ul>
-<li>2D</li>
-<li>Retro</li>
-<li>Baixa saturação</li>
-<li>Sombras fortes</li>
-<li>Ambientes militares</li>
-<li>Azul e vermelho como cores de destaque</li>
-<li>Interface tecnológica</li>
-<li>Modelos estilizados</li>
-<li>Silhuetas facilmente reconhecíveis</li>
-</ul>
+<button class="radio-btn" onclick="openRadio()">
+RÁDIO
+</button>
 
-<h3>EVITAR</h3>
+<button class="interact" onclick="interact()">
+INTERAGIR
+</button>
 
-<ul>
-<li>Fotorealismo</li>
-<li>Excesso de detalhes</li>
-<li>Cenários visualmente confusos</li>
-<li>Interface excessivamente moderna</li>
-</ul>
-</section>
+<button class="crouch" onclick="toggleCrouch()">
+AGACHAR
+</button>
 
-<!-- 17 -->
-
-<section class="section" id="s17">
-<div class="section-number">17 — SOM</div>
-<h2>Som</h2>
-
-<h3>ATMOSFERA</h3>
-<p>
-Ruídos ambientais, vento, instalações, máquinas e silêncio.
-</p>
-
-<h3>GAMEPLAY</h3>
-<p>
-Passos, portas, objetos, alertas e comunicação.
-</p>
-
-<h3>NARRATIVA</h3>
-<p>
-Rádio, interferências, transmissões e momentos musicais.
-</p>
-
-<div class="system-box">
-INFILTRAÇÃO / ESPIONAGEM / TENSÃO / SILÊNCIO
 </div>
-</section>
 
-<!-- 18 -->
+</div>
 
-<section class="section" id="s18">
-<div class="section-number">18 — ESTRUTURA</div>
-<h2>Estrutura do Protótipo</h2>
 
-<div class="system-box">
+<!-- MODAL -->
+
+<div id="modal" class="hidden">
+
+<div class="modal-box panel">
+
+<h2 id="modalTitle">
+</h2>
+
+<p id="modalText">
+</p>
+
+<div class="modal-buttons">
+
+<button onclick="modalContinue()">
+CONTINUAR
+</button>
+
+<button onclick="backToMenu()">
 MENU
-<div class="arrow">↓</div>
-BRIEFING
-<div class="arrow">↓</div>
-MISSÃO
-<div class="arrow">↓</div>
-EXPLORAÇÃO
-<div class="arrow">↓</div>
-EVENTOS
-<div class="arrow">↓</div>
-DESCOBERTAS
-<div class="arrow">↓</div>
-OBJETIVO
-<div class="arrow">↓</div>
-CONCLUSÃO
-<div class="arrow">↓</div>
-REGISTROS
-<div class="arrow">↓</div>
-PRÓXIMA ETAPA
+</button>
+
 </div>
 
-<p>
-Essa estrutura deverá permitir adicionar novas missões futuramente
-sem reconstruir o sistema principal.
-</p>
-</section>
-
-<!-- 19 -->
-
-<section class="section" id="s19">
-<div class="section-number">19 — PRESERVAR</div>
-<h2>O que não deve ser perdido</h2>
-
-<ul>
-<li>The Dark Jewel</li>
-<li>Operation Black Obsidian</li>
-<li>Buck</li>
-<li>Katherine</li>
-<li>Universo W.B.</li>
-<li>Estética retro</li>
-<li>Infiltração</li>
-<li>Espionagem</li>
-<li>Mistério</li>
-<li>Documentos e registros</li>
-<li>Estrutura de missão</li>
-<li>Identidade militar/tecnológica</li>
-</ul>
-
-<div class="quote">
-O objetivo não é abandonar o protótipo anterior.
-<br><br>
-<strong>É evoluí-lo.</strong>
-</div>
-</section>
-
-<!-- 20 -->
-
-<section class="section" id="s20">
-<div class="section-number">20 — META</div>
-<h2>Meta do Prototype 0.2</h2>
-
-<div class="quote">
-«Existe alguma coisa muito maior acontecendo aqui.»
 </div>
 
-<p>
-A missão deve ser apenas a superfície.
-</p>
-
-<p>Por trás dela devem existir:</p>
-
-<ul>
-<li>Pessoas.</li>
-<li>Organizações.</li>
-<li>Informações.</li>
-<li>Conflitos.</li>
-<li>Segredos.</li>
-<li>Consequências.</li>
-</ul>
-
-<p>
-E perguntas que talvez só sejam respondidas muito mais tarde.
-</p>
-</section>
-
-<!-- STATUS -->
-
-<section class="section">
-<div class="section-number">STATUS</div>
-<h2>THE DARK JEWEL — PROTOTYPE 0.2</h2>
-
-<div class="status">
-    <span class="status-dot"></span>
-    <strong>EM DESENVOLVIMENTO</strong>
 </div>
 
-<h3>PRIORIDADES ATUAIS</h3>
-
-<ol style="padding-left:20px; color:#c8d0d6;">
-<li>Controles</li>
-<li>Movimentação</li>
-<li>Interação com cenário</li>
-<li>IA dos inimigos</li>
-<li>Sistema de detecção</li>
-<li>Estrutura narrativa</li>
-<li>Integração de 2001:Eclipse</li>
-<li>Sistema de documentos/registros</li>
-<li>Rádio e comunicação</li>
-<li>Base modular para futuras missões</li>
-</ol>
-
-<div class="warning">
-<strong>OBJETIVO:</strong><br>
-Transformar o protótipo em uma base jogável para a narrativa
-maior de The Dark Jewel.
 </div>
 
 </section>
 
-</main>
 
-<footer>
+<script>
 
-<div class="footer-title">
-THE DARK JEWEL
-</div>
+/* ==========================================
+   THE DARK JEWEL
+   PROTOTYPE 0.2
+========================================== */
 
-OPERATION // BLACK OBSIDIAN
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
 
-<br><br>
+const WIDTH = 960;
+const HEIGHT = 540;
 
-UNIVERSO W.B. — DOCUMENTO DE DESENVOLVIMENTO
+let running = false;
+let paused = false;
+let lastTime = 0;
 
-<br>
+const keys = {
+    up:false,
+    down:false,
+    left:false,
+    right:false,
+    run:false
+};
 
-PROTOTYPE 0.2
+let player;
+let guards;
+let objects;
 
-</footer>
+
+/* ==========================================
+   TELAS
+========================================== */
+
+function openBriefing(){
+
+    document.getElementById("menu")
+        .classList.add("hidden");
+
+    document.getElementById("briefing")
+        .classList.remove("hidden");
+
+}
+
+function backToMenu(){
+
+    running = false;
+
+    document.getElementById("briefing")
+        .classList.add("hidden");
+
+    document.getElementById("gameScreen")
+        .classList.add("hidden");
+
+    document.getElementById("menu")
+        .classList.remove("hidden");
+
+}
+
+function showOptions(){
+
+    alert(
+`OPÇÕES
+
+NORMAL
+Experiência padrão.
+
+EXTREMO
+Mais inimigos, maior percepção e menos espaço seguro.
+
+O Prototype 0.2 está focado em infiltração e exploração.`
+    );
+
+}
+
+function showCredits(){
+
+    alert(
+`THE DARK JEWEL
+
+Autor: O Escritor
+Criador: Felipe
+
+Universo W.B.`
+    );
+
+}
+
+
+/* ==========================================
+   INICIAR MISSÃO
+========================================== */
+
+function startMission(){
+
+    document.getElementById("briefing")
+        .classList.add("hidden");
+
+    document.getElementById("gameScreen")
+        .classList.remove("hidden");
+
+    document.getElementById("modal")
+        .classList.add("hidden");
+
+    player = {
+
+        x:70,
+        y:455,
+
+        width:20,
+        height:30,
+
+        speed:155,
+
+        crouching:false,
+
+        hidden:false,
+
+        direction:1
+
+    };
+
+
+    guards = [
+
+        {
+            x:560,
+            y:135,
+
+            width:22,
+            height:30,
+
+            axis:"x",
+
+            min:500,
+            max:820,
+
+            speed:70,
+
+            direction:1,
+
+            suspicion:0
+        },
+
+        {
+            x:335,
+            y:205,
+
+            width:22,
+            height:30,
+
+            axis:"y",
+
+            min:120,
+            max:355,
+
+            speed:58,
+
+            direction:1,
+
+            suspicion:0
+        },
+
+        {
+            x:745,
+            y:395,
+
+            width:22,
+            height:30,
+
+            axis:"x",
+
+            min:665,
+            max:885,
+
+            speed:55,
+
+            direction:-1,
+
+            suspicion:0
+        }
+
+    ];
+
+
+    objects = [
+
+        /* escritório */
+
+        {
+            type:"desk",
+            x:150,
+            y:95,
+            width:130,
+            height:55,
+            solid:true
+        },
+
+        {
+            type:"locker",
+            x:350,
+            y:82,
+            width:44,
+            height:75,
+            solid:true,
+            hiding:true
+        },
+
+        {
+            type:"locker",
+            x:405,
+            y:82,
+            width:44,
+            height:75,
+            solid:true,
+            hiding:true
+        },
+
+        {
+            type:"window",
+            x:760,
+            y:72,
+            width:115,
+            height:18,
+            solid:true
+        },
+
+        /* hall */
+
+        {
+            type:"crate",
+            x:455,
+            y:365,
+            width:55,
+            height:42,
+            solid:true
+        },
+
+        {
+            type:"crate",
+            x:525,
+            y:365,
+            width:55,
+            height:42,
+            solid:true
+        },
+
+        {
+            type:"crate",
+            x:595,
+            y:365,
+            width:55,
+            height:42,
+            solid:true
+        },
+
+        {
+            type:"crate",
+            x:665,
+            y:365,
+            width:55,
+            height:42,
+            solid:true
+        },
+
+        {
+            type:"crate",
+            x:610,
+            y:440,
+            width:55,
+            height:42,
+            solid:true
+        }
+
+    ];
+
+
+    running = true;
+    paused = false;
+
+    showMessage(
+        "KATHERINE: Agora você pode sair daí... Rápido!"
+    );
+
+    requestAnimationFrame(gameLoop);
+
+}
+
+
+/* ==========================================
+   MOVIMENTO
+========================================== */
+
+function updatePlayer(delta){
+
+    if(player.hidden)
+        return;
+
+
+    let dx = 0;
+    let dy = 0;
+
+
+    if(keys.left)
+        dx--;
+
+    if(keys.right)
+        dx++;
+
+    if(keys.up)
+        dy--;
+
+    if(keys.down)
+        dy++;
+
+
+    if(dx !== 0 || dy !== 0){
+
+        const magnitude =
+            Math.sqrt(dx*dx + dy*dy);
+
+        dx /= magnitude;
+        dy /= magnitude;
+
+        player.direction =
+            dx !== 0 ? dx : player.direction;
+
+    }
+
+
+    let speed =
+        player.speed;
+
+
+    if(keys.run)
+        speed *= 1.35;
+
+
+    if(player.crouching)
+        speed *= .52;
+
+
+    const nextX =
+        player.x + dx * speed * delta;
+
+    const nextY =
+        player.y + dy * speed * delta;
+
+
+    if(
+        nextX >= 10 &&
+        nextX <= WIDTH-player.width-10 &&
+        !collision(nextX,player.y)
+    ){
+
+        player.x = nextX;
+
+    }
+
+
+    if(
+        nextY >= 60 &&
+        nextY <= HEIGHT-player.height-10 &&
+        !collision(player.x,nextY)
+    ){
+
+        player.y = nextY;
+
+    }
+
+}
+
+
+/* ==========================================
+   COLISÃO
+========================================== */
+
+function collision(x,y){
+
+    const rectangle = {
+
+        x:x,
+        y:y,
+
+        width:player.width,
+        height:player.height
+
+    };
+
+
+    for(const object of objects){
+
+        if(
+            object.solid &&
+            rectanglesOverlap(
+                rectangle,
+                object
+            )
+        ){
+
+            return true;
+
+        }
+
+    }
+
+
+    return false;
+
+}
+
+
+function rectanglesOverlap(a,b){
+
+    return (
+
+        a.x < b.x+b.width &&
+        a.x+a.width > b.x &&
+        a.y < b.y+b.height &&
+        a.y+a.height > b.y
+
+    );
+
+}
+
+
+/* ==========================================
+   INIMIGOS / IA
+========================================== */
+
+function updateGuards(delta){
+
+    for(const guard of guards){
+
+        if(guard.axis === "x"){
+
+            guard.x +=
+                guard.speed *
+                guard.direction *
+                delta;
+
+
+            if(
+                guard.x < guard.min ||
+                guard.x > guard.max
+            ){
+
+                guard.direction *= -1;
+
+                guard.x =
+                    Math.max(
+                        guard.min,
+                        Math.min(
+                            guard.max,
+                            guard.x
+                        )
+                    );
+
+            }
+
+        }
+
+        else{
+
+            guard.y +=
+                guard.speed *
+                guard.direction *
+                delta;
+
+
+            if(
+                guard.y < guard.min ||
+                guard.y > guard.max
+            ){
+
+                guard.direction *= -1;
+
+                guard.y =
+                    Math.max(
+                        guard.min,
+                        Math.min(
+                            guard.max,
+                            guard.y
+                        )
+                    );
+
+            }
+
+        }
+
+
+        /* percepção */
+
+        const playerX =
+            player.x + player.width/2;
+
+        const playerY =
+            player.y + player.height/2;
+
+        const guardX =
+            guard.x + guard.width/2;
+
+        const guardY =
+            guard.y + guard.height/2;
+
+
+        const distance =
+            Math.hypot(
+                playerX-guardX,
+                playerY-guardY
+            );
+
+
+        const detectionRange =
+            player.crouching
+                ? 105
+                : 160;
+
+
+        const visible =
+            !player.hidden &&
+            distance < detectionRange &&
+            lineOfSight(
+                playerX,
+                playerY,
+                guardX,
+                guardY
+            );
+
+
+        if(visible){
+
+            guard.suspicion +=
+                delta * 1.5;
+
+        }
+
+        else{
+
+            guard.suspicion -=
+                delta * .65;
+
+        }
+
+
+        guard.suspicion =
+            Math.max(
+                0,
+                Math.min(
+                    1,
+                    guard.suspicion
+                )
+            );
+
+
+        if(guard.suspicion > .72){
+
+            setState("ALERTA");
+
+            showMessage(
+                "ALERTA — um guarda está procurando por Buck."
+            );
+
+        }
+
+        else if(guard.suspicion > .35){
+
+            setState("SUSPEITA");
+
+        }
+
+        else{
+
+            setState("NORMAL");
+
+        }
+
+    }
+
+}
+
+
+/* ==========================================
+   LINHA DE VISÃO
+========================================== */
+
+function lineOfSight(
+    x1,
+    y1,
+    x2,
+    y2
+){
+
+    for(const object of objects){
+
+        if(!object.solid)
+            continue;
+
+
+        if(
+            lineIntersectsRectangle(
+                x1,
+                y1,
+                x2,
+                y2,
+                object
+            )
+        ){
+
+            return false;
+
+        }
+
+    }
+
+
+    return true;
+
+}
+
+
+function lineIntersectsRectangle(
+    x1,
+    y1,
+    x2,
+    y2,
+    rectangle
+){
+
+    const steps = 45;
+
+
+    for(let i=1;i<steps;i++){
+
+        const t =
+            i/steps;
+
+
+        const x =
+            x1+(x2-x1)*t;
+
+        const y =
+            y1+(y2-y1)*t;
+
+
+        if(
+
+            x >= rectangle.x &&
+            x <= rectangle.x+rectangle.width &&
+            y >= rectangle.y &&
+            y <= rectangle.y+rectangle.height
+
+        ){
+
+            return true;
+
+        }
+
+    }
+
+
+    return false;
+
+}
+
+
+/* ==========================================
+   INTERAÇÃO
+========================================== */
+
+function interact(){
+
+    if(!running || paused)
+        return;
+
+
+    for(const object of objects){
+
+        const distance =
+            Math.hypot(
+                player.x-object.x,
+                player.y-object.y
+            );
+
+
+        if(distance < 65){
+
+            if(object.hiding){
+
+                player.hidden =
+                    !player.hidden;
+
+
+                if(player.hidden){
+
+                    showMessage(
+                        "Buck entrou no esconderijo."
+                    );
+
+                }
+
+                else{
+
+                    showMessage(
+                        "Buck saiu do esconderijo."
+                    );
+
+                }
+
+
+                return;
+
+            }
+
+
+            if(object.type === "window"){
+
+                showMessage(
+                    "Buck: “Não posso passar por aqui.”"
+                );
+
+                return;
+
+            }
+
+
+            if(object.type === "desk"){
+
+                showMessage(
+                    "Nada importante foi encontrado aqui."
+                );
+
+                return;
+
+            }
+
+
+            if(object.type === "crate"){
+
+                showMessage(
+                    "Cobertura improvisada."
+                );
+
+                return;
+
+            }
+
+        }
+
+    }
+
+}
+
+
+/* ==========================================
+   AGACHAR
+========================================== */
+
+function toggleCrouch(){
+
+    if(!player)
+        return;
+
+
+    player.crouching =
+        !player.crouching;
+
+
+    showMessage(
+        player.crouching
+            ? "Buck está agachado."
+            : "Buck voltou à postura normal."
+    );
+
+}
+
+
+/* ==========================================
+   RÁDIO
+========================================== */
+
+function openRadio(){
+
+    if(!running)
+        return;
+
+
+    document.getElementById("radio")
+        .style.display = "block";
+
+
+    document.getElementById("radioText")
+        .textContent =
+        "Agora você pode sair daí... Rápido!";
+
+}
+
+
+function closeRadio(){
+
+    document.getElementById("radio")
+        .style.display = "none";
+
+}
+
+
+function getTip(){
+
+    const tips = [
+
+        "Você pode evitar os inimigos se agachando, isso diminui a percepção sobre você.",
+
+        "Você quer ouvir apenas o som da minha voz? Sério, saia daí...",
+
+        "Utilize seu equipamento apenas quando for necessário, mas tente evitar confronto."
+
+    ];
+
+
+    const random =
+        Math.floor(
+            Math.random()*tips.length
+        );
+
+
+    document.getElementById("radioText")
+        .textContent =
+        tips[random];
+
+}
+
+
+/* ==========================================
+   OBJETIVO
+========================================== */
+
+function checkObjective(){
+
+    const exit = {
+
+        x:875,
+        y:65,
+
+        width:55,
+        height:90
+
+    };
+
+
+    if(
+        rectanglesOverlap(
+            player,
+            exit
+        )
+    ){
+
+        finishMission();
+
+    }
+
+}
+
+
+function finishMission(){
+
+    paused = true;
+
+    document.getElementById("modalTitle")
+        .textContent =
+        "ESCAPE COMPLETE";
+
+
+    document.getElementById("modalText")
+        .textContent =
+        "Buck alcançou a saída da instalação. A missão termina nesta etapa do Prototype 0.2.";
+
+
+    document.getElementById("modal")
+        .classList.remove("hidden");
+
+}
+
+
+/* ==========================================
+   PAUSA
+========================================== */
+
+function togglePause(){
+
+    paused = !paused;
+
+    showMessage(
+        paused
+            ? "MISSÃO PAUSADA"
+            : "OPERAÇÃO RETOMADA"
+    );
+
+}
+
+
+/* ==========================================
+   MENSAGENS
+========================================== */
+
+let messageTimer;
+
+function showMessage(text){
+
+    const element =
+        document.getElementById("message");
+
+
+    element.textContent = text;
+
+
+    clearTimeout(messageTimer);
+
+
+    messageTimer =
+        setTimeout(
+            ()=>{
+                element.textContent = "";
+            },
+            4000
+        );
+
+}
+
+
+/* ==========================================
+   MODAL
+========================================== */
+
+function modalContinue(){
+
+    document.getElementById("modal")
+        .classList.add("hidden");
+
+    paused = false;
+
+}
+
+
+/* ==========================================
+   DESENHO DO MAPA
+========================================== */
+
+function drawWorld(){
+
+    ctx.clearRect(
+        0,
+        0,
+        WIDTH,
+        HEIGHT
+    );
+
+
+    /* fundo */
+
+    ctx.fillStyle="#111b20";
+
+    ctx.fillRect(
+        0,
+        0,
+        WIDTH,
+        HEIGHT
+    );
+
+
+    /* escritório */
+
+    ctx.fillStyle="#1c292f";
+
+    ctx.fillRect(
+        0,
+        60,
+        465,
+        145
+    );
+
+
+    /* hall */
+
+    ctx.fillStyle="#0d171c";
+
+    ctx.fillRect(
+        0,
+        205,
+        WIDTH,
+        145
+    );
+
+
+    /* área externa */
+
+    ctx.fillStyle="#18272e";
+
+    ctx.fillRect(
+        465,
+        60,
+        495,
+        290
+    );
+
+
+    /* neve */
+
+    for(let i=0;i<40;i++){
+
+        const x =
+            (i*97)%495 + 465;
+
+        const y =
+            70+(i*43)%260;
+
+
+        ctx.fillStyle =
+            "rgba(210,225,230,.18)";
+
+
+        ctx.fillRect(
+            x,
+            y,
+            2,
+            10
+        );
+
+    }
+
+
+    /* área dos caminhões */
+
+    ctx.fillStyle="#080e12";
+
+    ctx.fillRect(
+        700,
+        350,
+        260,
+        180
+    );
+
+
+    /* estrada */
+
+    ctx.strokeStyle="#52636b";
+
+    ctx.lineWidth=2;
+
+    ctx.setLineDash([
+        18,
+        18
+    ]);
+
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+        830,
+        350
+    );
+
+    ctx.lineTo(
+        830,
+        530
+    );
+
+    ctx.stroke();
+
+
+    ctx.setLineDash([]);
+
+
+    /* paredes */
+
+    ctx.fillStyle="#3a4b53";
+
+    ctx.fillRect(
+        145,
+        70,
+        315,
+        9
+    );
+
+    ctx.fillRect(
+        145,
+        160,
+        315,
+        9
+    );
+
+    ctx.fillRect(
+        145,
+        70,
+        9,
+        99
+    );
+
+    ctx.fillRect(
+        455,
+        70,
+        10,
+        280
+    );
+
+
+    /* saída */
+
+    ctx.fillStyle="#542e32";
+
+    ctx.fillRect(
+        875,
+        65,
+        55,
+        90
+    );
+
+
+    ctx.fillStyle="#ef6a70";
+
+    ctx.fillRect(
+        877,
+        68,
+        51,
+        4
+    );
+
+
+    ctx.fillStyle="#e1e8eb";
+
+    ctx.font="10px Arial";
+
+    ctx.fillText(
+        "SAÍDA",
+        889,
+        113
+    );
+
+
+    /* objetos */
+
+    for(const object of objects){
+
+        if(object.type === "desk"){
+
+            ctx.fillStyle="#515d62";
+
+            ctx.fillRect(
+                object.x,
+                object.y,
+                object.width,
+                object.height
+            );
+
+            ctx.fillStyle="#78848a";
+
+            ctx.fillRect(
+                object.x+8,
+                object.y+8,
+                object.width-16,
+                7
+            );
+
+        }
+
+
+        if(object.type === "locker"){
+
+            ctx.fillStyle="#394b54";
+
+            ctx.fillRect(
+                object.x,
+                object.y,
+                object.width,
+                object.height
+            );
+
+            ctx.fillStyle="#1a252a";
+
+            ctx.fillRect(
+                object.x+8,
+                object.y+9,
+                object.width-16,
+                object.height-18
+            );
+
+        }
+
+
+        if(object.type === "crate"){
+
+            ctx.fillStyle="#655941";
+
+            ctx.fillRect(
+                object.x,
+                object.y,
+                object.width,
+                object.height
+            );
+
+            ctx.strokeStyle="#9b8559";
+
+            ctx.strokeRect(
+                object.x+4,
+                object.y+4,
+                object.width-8,
+                object.height-8
+            );
+
+        }
+
+
+        if(object.type === "window"){
+
+            ctx.fillStyle="#213740";
+
+            ctx.fillRect(
+                object.x,
+                object.y,
+                object.width,
+                object.height
+            );
+
+            ctx.strokeStyle="#6b858f";
+
+            ctx.strokeRect(
+                object.x,
+                object.y,
+                object.width,
+                object.height
+            );
+
+        }
+
+    }
+
+
+    /* rotas dos guardas */
+
+    ctx.strokeStyle=
+        "rgba(110,160,185,.15)";
+
+    ctx.setLineDash([
+        5,
+        7
+    ]);
+
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+        500,
+        150
+    );
+
+    ctx.lineTo(
+        820,
+        150
+    );
+
+    ctx.stroke();
+
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+        335,
+        120
+    );
+
+    ctx.lineTo(
+        335,
+        355
+    );
+
+    ctx.stroke();
+
+
+    ctx.setLineDash([]);
+
+
+    /* inimigos */
+
+    for(const guard of guards){
+
+        if(guard.suspicion > .35){
+
+            ctx.fillStyle =
+                "rgba(220,80,90,.16)";
+
+            ctx.beginPath();
+
+            ctx.arc(
+                guard.x+11,
+                guard.y+15,
+                155,
+                0,
+                Math.PI*2
+            );
+
+            ctx.fill();
+
+        }
+
+
+        ctx.fillStyle =
+            guard.suspicion>.35
+                ? "#b94e55"
+                : "#202c32";
+
+
+        ctx.fillRect(
+            guard.x,
+            guard.y,
+            guard.width,
+            guard.height
+        );
+
+
+        /* capacete */
+
+        ctx.fillStyle="#10171b";
+
+        ctx.fillRect(
+            guard.x+3,
+            guard.y-7,
+            guard.width-6,
+            8
+        );
+
+
+        /* colete */
+
+        ctx.fillStyle="#56666d";
+
+        ctx.fillRect(
+            guard.x+4,
+            guard.y+8,
+            guard.width-8,
+            14
+        );
+
+    }
+
+
+    /* BUCK */
+
+    const playerHeight =
+        player.crouching
+            ? 18
+            : 30;
+
+
+    ctx.fillStyle =
+        player.hidden
+            ? "#33454d"
+            : "#68acd1";
+
+
+    ctx.fillRect(
+        player.x,
+        player.y+(30-playerHeight),
+        player.width,
+        playerHeight
+    );
+
+
+    /* cabeça */
+
+    ctx.fillStyle="#d5d7d6";
+
+    ctx.fillRect(
+        player.x+5,
+        player.y+(30-playerHeight)-6,
+        10,
+        7
+    );
+
+
+    /* indicação de esconderijo */
+
+    if(player.hidden){
+
+        ctx.strokeStyle="#6db4cf";
+
+        ctx.strokeRect(
+            player.x-5,
+            player.y-5,
+            30,
+            40
+        );
+
+    }
+
+
+    /* interação */
+
+    let nearby = false;
+
+
+    for(const object of objects){
+
+        if(
+            Math.hypot(
+                player.x-object.x,
+                player.y-object.y
+            ) < 65
+        ){
+
+            nearby = true;
+
+        }
+
+    }
+
+
+    if(nearby){
+
+        ctx.fillStyle="#d2b15f";
+
+        ctx.font="11px Arial";
+
+        ctx.fillText(
+            "E / INTERAGIR",
+            player.x-18,
+            player.y-15
+        );
+
+    }
+
+}
+
+
+/* ==========================================
+   LOOP
+========================================== */
+
+function gameLoop(time){
+
+    if(!running)
+        return;
+
+
+    const delta =
+        Math.min(
+            .033,
+            (time-lastTime)/1000 || 0
+        );
+
+
+    lastTime = time;
+
+
+    if(!paused){
+
+        updatePlayer(delta);
+
+        updateGuards(delta);
+
+        checkObjective();
+
+    }
+
+
+    drawWorld();
+
+
+    requestAnimationFrame(
+        gameLoop
+    );
+
+}
+
+
+/* ==========================================
+   TECLADO
+========================================== */
+
+window.addEventListener(
+"keydown",
+event=>{
+
+    if(event.key==="w" || event.key==="ArrowUp")
+        keys.up=true;
+
+    if(event.key==="s" || event.key==="ArrowDown")
+        keys.down=true;
+
+    if(event.key==="a" || event.key==="ArrowLeft")
+        keys.left=true;
+
+    if(event.key==="d" || event.key==="ArrowRight")
+        keys.right=true;
+
+    if(event.key==="Shift")
+        keys.run=true;
+
+
+    if(event.key===" "){
+
+        event.preventDefault();
+
+        toggleCrouch();
+
+    }
+
+
+    if(event.key.toLowerCase()==="e")
+        interact();
+
+
+    if(event.key.toLowerCase()==="r")
+        openRadio();
+
+
+    if(event.key.toLowerCase()==="p")
+        togglePause();
+
+});
+
+
+window.addEventListener(
+"keyup",
+event=>{
+
+    if(event.key==="w" || event.key==="ArrowUp")
+        keys.up=false;
+
+    if(event.key==="s" || event.key==="ArrowDown")
+        keys.down=false;
+
+    if(event.key==="a" || event.key==="ArrowLeft")
+        keys.left=false;
+
+    if(event.key==="d" || event.key==="ArrowRight")
+        keys.right=false;
+
+    if(event.key==="Shift")
+        keys.run=false;
+
+});
+
+
+/* ==========================================
+   CONTROLES TOUCH
+========================================== */
+
+document
+.querySelectorAll("[data-key]")
+.forEach(button=>{
+
+    const key =
+        button.dataset.key;
+
+
+    function press(event){
+
+        event.preventDefault();
+
+        keys[key]=true;
+
+    }
+
+
+    function release(event){
+
+        event.preventDefault();
+
+        keys[key]=false;
+
+    }
+
+
+    button.addEventListener(
+        "pointerdown",
+        press
+    );
+
+    button.addEventListener(
+        "pointerup",
+        release
+    );
+
+    button.addEventListener(
+        "pointercancel",
+        release
+    );
+
+    button.addEventListener(
+        "pointerleave",
+        release
+    );
+
+});
+
+
+</script>
 
 </body>
-</html>
+    </html>
