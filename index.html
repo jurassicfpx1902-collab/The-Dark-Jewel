@@ -3,18 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>THE DARK JEWEL — PROTOTYPE 0.2.1</title>
+    <title>THE DARK JEWEL — PROTOTYPE 0.2.2</title>
     <style>
         :root {
-            --bg-dark: #080a0d;
-            --panel-bg: #10141d;
-            --text-main: #c0c8d4;
-            --text-dim: #506075;
+            --bg-dark: #05070a;
+            --panel-bg: #0c1017;
+            --text-main: #c4d0e0;
+            --text-dim: #4a5a70;
             --accent-blue: #0088ff;
             --accent-red: #ff2a3f;
             --accent-green: #00ff66;
             --accent-yellow: #ffcc00;
-            --border-color: #1e2636;
+            --border-color: #1a2433;
         }
 
         * {
@@ -44,7 +44,7 @@
             height: 600px;
             background-color: var(--bg-dark);
             border: 2px solid var(--border-color);
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+            box-shadow: 0 0 25px rgba(0, 136, 255, 0.15);
             overflow: hidden;
         }
 
@@ -69,7 +69,7 @@
             pointer-events: none;
             background: linear-gradient(
                 rgba(18, 16, 16, 0) 50%, 
-                rgba(0, 0, 0, 0.25) 50%
+                rgba(0, 0, 0, 0.3) 50%
             );
             background-size: 100% 4px;
             z-index: 20;
@@ -82,14 +82,14 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            padding: 30px;
+            padding: 25px;
             z-index: 10;
-            background: rgba(8, 10, 13, 0.95);
+            background: rgba(5, 7, 10, 0.95);
         }
 
         .hidden { display: none !important; }
 
-        .title-block { margin-top: 20px; }
+        .title-block { margin-top: 10px; }
 
         .title-main {
             font-size: 2.2rem;
@@ -97,30 +97,38 @@
             letter-spacing: 4px;
             color: #fff;
             text-shadow: 2px 0 var(--accent-red), -2px 0 var(--accent-blue);
-            animation: glitchText 3s infinite alternate;
+            animation: glitchText 3.5s infinite alternate;
         }
 
         .title-sub {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: var(--accent-blue);
             letter-spacing: 3px;
-            margin-top: 5px;
+            margin-top: 4px;
+            font-weight: bold;
+        }
+
+        .menu-layout {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            margin-top: 15px;
+            flex-grow: 1;
         }
 
         .menu-options {
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            margin-top: 20px;
-            width: 250px;
+            gap: 10px;
+            width: 240px;
         }
 
         .menu-btn {
-            background: transparent;
+            background: rgba(12, 16, 23, 0.8);
             border: 1px solid var(--border-color);
             color: var(--text-main);
-            padding: 10px 15px;
-            font-size: 0.9rem;
+            padding: 12px 15px;
+            font-size: 0.85rem;
             text-align: left;
             cursor: pointer;
             letter-spacing: 2px;
@@ -128,18 +136,47 @@
         }
 
         .menu-btn:hover, .menu-btn:focus {
-            background: rgba(0, 136, 255, 0.15);
+            background: rgba(0, 136, 255, 0.2);
             border-color: var(--accent-blue);
             color: #fff;
             padding-left: 22px;
             outline: none;
         }
 
+        .art-preview-box {
+            width: 220px;
+            height: 260px;
+            border: 1px solid var(--border-color);
+            background: #000;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+        }
+
+        .art-preview-box canvas {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+        }
+
+        .art-caption {
+            position: relative;
+            z-index: 2;
+            background: rgba(5, 7, 10, 0.85);
+            padding: 6px;
+            font-size: 0.65rem;
+            color: var(--accent-blue);
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+            letter-spacing: 1px;
+        }
+
         .terminal-footer {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: var(--text-dim);
             border-top: 1px solid var(--border-color);
-            padding-top: 10px;
+            padding-top: 8px;
             display: flex;
             justify-content: space-between;
         }
@@ -147,15 +184,15 @@
         .doc-box {
             border: 1px solid var(--border-color);
             background: var(--panel-bg);
-            padding: 20px;
-            margin-top: 20px;
-            font-size: 0.85rem;
-            line-height: 1.6;
+            padding: 18px;
+            margin-top: 15px;
+            font-size: 0.82rem;
+            line-height: 1.5;
             flex-grow: 1;
             overflow-y: auto;
         }
 
-        .doc-line { margin-bottom: 8px; }
+        .doc-line { margin-bottom: 6px; }
         .doc-label { color: var(--text-dim); }
         .doc-value { color: var(--accent-blue); font-weight: bold; }
 
@@ -167,16 +204,17 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            padding: 15px;
+            padding: 12px;
         }
 
         .hud-header {
             display: flex;
             justify-content: space-between;
-            background: rgba(16, 20, 29, 0.85);
+            align-items: center;
+            background: rgba(12, 16, 23, 0.88);
             border: 1px solid var(--border-color);
             padding: 8px 12px;
-            font-size: 0.75rem;
+            font-size: 0.72rem;
         }
 
         .hud-bottom {
@@ -187,21 +225,21 @@
 
         .interaction-prompt {
             align-self: center;
-            background: rgba(0, 136, 255, 0.2);
+            background: rgba(0, 136, 255, 0.25);
             border: 1px solid var(--accent-blue);
             color: #fff;
-            padding: 6px 16px;
-            font-size: 0.8rem;
+            padding: 6px 14px;
+            font-size: 0.75rem;
             letter-spacing: 1px;
             animation: pulse 1.5s infinite;
         }
 
         .msg-box {
-            background: rgba(16, 20, 29, 0.92);
+            background: rgba(12, 16, 23, 0.94);
             border: 1px solid var(--accent-blue);
-            padding: 12px;
-            font-size: 0.8rem;
-            max-width: 500px;
+            padding: 10px 14px;
+            font-size: 0.78rem;
+            max-width: 480px;
             pointer-events: auto;
         }
 
@@ -212,8 +250,8 @@
         .msg-header {
             color: var(--accent-blue);
             font-weight: bold;
-            margin-bottom: 5px;
-            font-size: 0.7rem;
+            margin-bottom: 4px;
+            font-size: 0.68rem;
             letter-spacing: 1px;
         }
 
@@ -221,9 +259,43 @@
             color: var(--accent-yellow);
         }
 
+        /* MODAL DE MINIMAPA */
+        #map-modal {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 320px;
+            height: 280px;
+            background: rgba(5, 7, 10, 0.96);
+            border: 2px solid var(--accent-blue);
+            z-index: 30;
+            display: flex;
+            flex-direction: column;
+            padding: 10px;
+        }
+
+        #map-modal-header {
+            display: flex;
+            justify-content: space-between;
+            color: var(--accent-blue);
+            font-size: 0.75rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 4px;
+        }
+
+        #map-canvas {
+            width: 100%;
+            height: 200px;
+            background: #090e14;
+            border: 1px solid var(--border-color);
+        }
+
+        /* CONTROLES MOBILE APERFEÇOADOS */
         #mobile-controls {
             position: absolute;
-            bottom: 15px; left: 15px; right: 15px;
+            bottom: 12px; left: 12px; right: 12px;
             display: none;
             justify-content: space-between;
             align-items: flex-end;
@@ -233,62 +305,68 @@
 
         @media (max-width: 820px) {
             #mobile-controls { display: flex; }
+            .art-preview-box { display: none; }
         }
 
         .dpad {
             display: grid;
-            grid-template-columns: repeat(3, 48px);
-            grid-template-rows: repeat(3, 48px);
-            gap: 3px;
+            grid-template-columns: repeat(3, 54px);
+            grid-template-rows: repeat(3, 54px);
+            gap: 4px;
             pointer-events: auto;
         }
 
         .touch-btn {
-            background: rgba(16, 20, 29, 0.85);
+            background: rgba(12, 16, 23, 0.88);
             border: 1px solid var(--border-color);
             color: var(--text-main);
             display: flex;
             justify-content: center;
             align-items: center;
             font-weight: bold;
-            font-size: 1rem;
+            font-size: 1.1rem;
             border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.5);
         }
 
         .touch-btn.active {
             background: var(--accent-blue);
             color: #fff;
+            border-color: #fff;
         }
 
         .dpad-center {
-            background: rgba(10, 14, 20, 0.5);
+            background: rgba(5, 7, 10, 0.6);
             border: 1px solid rgba(255,255,255,0.05);
             display: flex;
             justify-content: center;
             align-items: center;
             color: var(--text-dim);
-            font-size: 0.8rem;
+            font-size: 0.7rem;
         }
 
         .action-btns {
             display: flex;
-            gap: 8px;
+            gap: 6px;
             pointer-events: auto;
+            flex-wrap: wrap;
+            max-width: 180px;
+            justify-content: flex-end;
         }
 
-        .action-btn-large {
-            width: 55px;
-            height: 55px;
-            border-radius: 50%;
-            font-size: 0.75rem;
+        .action-btn-small {
+            width: 50px;
+            height: 50px;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            letter-spacing: 1px;
         }
 
         @keyframes glitchText {
             0% { transform: translate(0); }
-            92% { transform: translate(0); }
-            94% { transform: translate(-2px, 1px); }
-            96% { transform: translate(2px, -1px); }
-            98% { transform: translate(-1px, -1px); }
+            94% { transform: translate(0); }
+            96% { transform: translate(-2px, 1px); }
+            98% { transform: translate(2px, -1px); }
             100% { transform: translate(0); }
         }
 
@@ -312,7 +390,7 @@
                 <div>AGENT: <span style="color:#fff;">BUCK</span></div>
                 <div>STATUS: <span id="hud-status" style="color:var(--accent-green);">STEALTH</span></div>
                 <div>OBJ: <span style="color:var(--accent-blue);">EXTRAÇÃO</span></div>
-                <div>DIST: <span id="hud-dist" style="color:#fff;">0</span></div>
+                <div><span id="hud-dir" style="color:var(--accent-yellow);">↑</span> <span id="hud-dist" style="color:#fff;">42m</span></div>
             </div>
 
             <div class="hud-bottom">
@@ -330,6 +408,18 @@
             </div>
         </div>
 
+        <!-- MODAL DE MAPA -->
+        <div id="map-modal" class="hidden">
+            <div id="map-modal-header">
+                <span>FACILITY MAP // NO DARK</span>
+                <span style="cursor:pointer;" onclick="Game.toggleMap()">[X]</span>
+            </div>
+            <canvas id="map-canvas" width="300" height="190"></canvas>
+            <div style="font-size:0.65rem; color:var(--text-dim); margin-top:6px; text-align:center;">
+                [B] = BUCK // [E] = EXTRAÇÃO
+            </div>
+        </div>
+
         <!-- CONTROLES MOBILE -->
         <div id="mobile-controls">
             <div class="dpad">
@@ -338,9 +428,10 @@
                 <div></div><div class="touch-btn" id="btn-down">▼</div><div></div>
             </div>
             <div class="action-btns">
-                <div class="touch-btn action-btn-large" id="btn-radio">RAD</div>
-                <div class="touch-btn action-btn-large" id="btn-interact">INT</div>
-                <div class="touch-btn action-btn-large" id="btn-pause">ESC</div>
+                <div class="touch-btn action-btn-small" id="btn-map">MAP</div>
+                <div class="touch-btn action-btn-small" id="btn-radio">RAD</div>
+                <div class="touch-btn action-btn-small" id="btn-interact">INT</div>
+                <div class="touch-btn action-btn-small" id="btn-pause">ESC</div>
             </div>
         </div>
 
@@ -348,58 +439,65 @@
         <div id="screen-main-menu" class="ui-screen">
             <div class="title-block">
                 <div class="title-main">THE DARK JEWEL</div>
-                <div class="title-sub">OPERATION // BLACK OBSIDIAN</div>
+                <div class="title-sub">OPERATION // NO DARK</div>
             </div>
 
-            <div class="menu-options">
-                <button class="menu-btn" onclick="App.startBootSequence()">INICIAR</button>
-                <button class="menu-btn" onclick="App.showScreen('screen-buck')">OPERAÇÃO BUCK</button>
-                <button class="menu-btn" onclick="App.showScreen('screen-options')">OPÇÕES</button>
-                <button class="menu-btn" onclick="App.showScreen('screen-credits')">CRÉDITOS</button>
+            <div class="menu-layout">
+                <div class="menu-options">
+                    <button class="menu-btn" onclick="App.startBootSequence()">INICIAR MISSÃO</button>
+                    <button class="menu-btn" onclick="App.showScreen('screen-buck')">OPERAÇÃO BUCK</button>
+                    <button class="menu-btn" onclick="App.showScreen('screen-options')">OPÇÕES</button>
+                    <button class="menu-btn" onclick="App.showScreen('screen-credits')">CRÉDITOS</button>
+                </div>
+
+                <!-- ILUSTRAÇÃO PROCEDURAL DE BUCK NO MENU -->
+                <div class="art-preview-box">
+                    <canvas id="menuArtCanvas" width="220" height="230"></canvas>
+                    <div class="art-caption">AGENT BUCK // INFILTRATION</div>
+                </div>
             </div>
 
             <div class="terminal-footer">
-                <div>SYSTEM: SECURE</div>
-                <div>PROTOTYPE 0.2.1</div>
+                <div>DEPARTAMENTO DE DEFESA GLOBAL</div>
+                <div>PROTOTYPE 0.2.2</div>
             </div>
         </div>
 
         <!-- TELA: BOOT -->
         <div id="screen-boot" class="ui-screen hidden" style="justify-content: center; align-items: center;">
-            <div id="boot-text" style="font-size: 1rem; color: var(--accent-blue); letter-spacing: 2px;">
+            <div id="boot-text" style="font-size: 0.95rem; color: var(--accent-blue); letter-spacing: 2px;">
                 SYSTEM INITIALIZING...
             </div>
         </div>
 
         <!-- TELA: BRIEFING -->
         <div id="screen-briefing" class="ui-screen hidden">
-            <div class="title-sub">CLASSIFIED // BRIEFING DE MISSÃO</div>
+            <div class="title-sub">CLASSIFIED // MISSION BRIEFING</div>
             
             <div class="doc-box">
-                <div class="doc-line"><span class="doc-label">MISSION:</span> <span class="doc-value">01</span></div>
-                <div class="doc-line"><span class="doc-label">OPERATION:</span> <span class="doc-value">BLACK OBSIDIAN</span></div>
+                <div class="doc-line"><span class="doc-label">MISSION:</span> <span class="doc-value">01 — NO DARK</span></div>
+                <div class="doc-line"><span class="doc-label">ORGANIZATION:</span> <span class="doc-value">DEPARTAMENTO DE DEFESA GLOBAL (EUA)</span></div>
                 <div class="doc-line"><span class="doc-label">AGENT:</span> <span class="doc-value">BUCK</span></div>
-                <div class="doc-line"><span class="doc-label">LOCATION:</span> <span class="doc-value">BASE DINAMARQUESA</span></div>
-                <div class="doc-line"><span class="doc-label">AFFILIATION:</span> <span class="doc-value">UNIVERSO W.B.</span></div>
-                <div class="doc-line"><span class="doc-label">ORGANIZATION:</span> <span class="doc-value">DEPARTAMENTO DE DEFESA GLOBAL DA CIA</span></div>
+                <div class="doc-line"><span class="doc-label">LOCATION:</span> <span class="doc-value">INSTALAÇÃO MILITAR DINAMARQUESA</span></div>
                 <div class="doc-line"><span class="doc-label">OBJECTIVE:</span> <span class="doc-value">CHEGAR AO PONTO DE EXTRAÇÃO</span></div>
                 <br>
-                <p style="color: var(--text-main); font-size: 0.8rem; border-left: 2px solid var(--accent-blue); padding-left: 8px;">
-                    «Buck se infiltrou na base dinamarquesa para conseguir informações essenciais da Dark Obsidian. Encontre a rota para o ponto de extração sem ser notado.»
+                <p style="color: var(--text-main); font-size: 0.78rem; border-left: 2px solid var(--accent-blue); padding-left: 8px;">
+                    «Buck, ex-parceiro de Jeffy, infiltra-se na base dinamarquesa para recuperar dados táticos antes que o setor caia em isolamento. Esta operação antecede os registros sigilosos de 2001:ECLIPSE.»
                 </p>
             </div>
 
-            <button class="menu-btn" style="margin-top: 15px; align-self: flex-end;" onclick="App.enterGameplay()">INICIAR INFILTRAÇÃO</button>
+            <button class="menu-btn" style="margin-top: 12px; align-self: flex-end;" onclick="App.enterGameplay()">INICIAR INFILTRAÇÃO</button>
         </div>
 
         <!-- TELA: OPERAÇÃO BUCK -->
         <div id="screen-buck" class="ui-screen hidden">
-            <div class="title-sub">REGISTRO DE AGENTE // BUCK</div>
+            <div class="title-sub">DOSSIÊ // AGENTE BUCK</div>
             <div class="doc-box">
                 <p class="doc-line"><span class="doc-label">AGENTE:</span> BUCK</p>
                 <p class="doc-line"><span class="doc-label">AFILIAÇÃO:</span> UNIVERSO W.B.</p>
-                <p class="doc-line"><span class="doc-label">ORGANIZAÇÃO:</span> DEPARTAMENTO DE DEFESA GLOBAL DA CIA</p>
-                <p class="doc-line"><span class="doc-label">FUNÇÃO:</span> AGENTE DE INFILTRAÇÃO</p>
+                <p class="doc-line"><span class="doc-label">DEPARTAMENTO:</span> DEFESA GLOBAL DA CIA</p>
+                <p class="doc-line"><span class="doc-label">LIGAÇÃO TÁTICA:</span> CONEXÃO DE CAMPO COM JEFFY</p>
+                <p class="doc-line"><span class="doc-label">STATUS DE OPERAÇÃO:</span> ATIVO // PRE-2001 ECLIPSE ERA</p>
             </div>
             <button class="menu-btn" onclick="App.showScreen('screen-main-menu')">VOLTAR</button>
         </div>
@@ -413,22 +511,22 @@
                     <button class="menu-btn" id="btn-diff" style="display:inline; padding: 2px 10px; margin-left: 10px;" onclick="App.toggleDifficulty()">NORMAL</button>
                 </div>
                 <p id="diff-desc" style="color: var(--text-dim); font-size: 0.75rem; margin-top: 5px;">
-                    «Uma experiência comum e padrão feita para os jogadores.»
+                    «Experiência stealth equilibrada para reconhecimento de campo.»
                 </p>
                 <br>
-                <div class="doc-line"><span class="doc-label">TRILHA SONORA:</span> ESTILO MGS2 TÁTICO</div>
-                <div class="doc-line"><span class="doc-label">EFEITOS SONOROS:</span> ATIVOS</div>
+                <div class="doc-line"><span class="doc-label">CÂMERA:</span> SMOOTH DYNAMIC FOLLOW</div>
+                <div class="doc-line"><span class="doc-label">AUDIO CHIP:</span> SYNTH TACTICAL (ESTILO MGS2)</div>
             </div>
             <button class="menu-btn" onclick="App.backFromOptions()">VOLTAR</button>
         </div>
 
         <!-- TELA: CRÉDITOS -->
         <div id="screen-credits" class="ui-screen hidden">
-            <div class="title-sub">CRÉDITOS DE DESENVOLVIMENTO</div>
+            <div class="title-sub">CRÉDITOS</div>
             <div class="doc-box">
                 <div class="doc-line"><span class="doc-label">PROJETO:</span> <span class="doc-value">THE DARK JEWEL</span></div>
-                <div class="doc-line"><span class="doc-label">OPERATION:</span> <span class="doc-value">BLACK OBSIDIAN</span></div>
-                <div class="doc-line"><span class="doc-label">PROTOTYPE:</span> <span class="doc-value">0.2.1</span></div>
+                <div class="doc-line"><span class="doc-label">OPERATION:</span> <span class="doc-value">NO DARK</span></div>
+                <div class="doc-line"><span class="doc-label">VERSÃO:</span> <span class="doc-value">PROTOTYPE 0.2.2</span></div>
                 <br>
                 <div class="doc-line"><span class="doc-label">AUTOR:</span> <span class="doc-value">O Escritor</span></div>
                 <div class="doc-line"><span class="doc-label">CRIADOR:</span> <span class="doc-value">Felipe</span></div>
@@ -441,49 +539,38 @@
             <div class="title-main" style="font-size: 1.5rem;">PAUSED</div>
             <div class="menu-options">
                 <button class="menu-btn" onclick="App.resumeGame()">CONTINUAR</button>
+                <button class="menu-btn" onclick="Game.toggleMap()">VER MAPA</button>
                 <button class="menu-btn" onclick="App.showScreen('screen-options')">OPÇÕES</button>
                 <button class="menu-btn" onclick="App.exitToMenu()">SAIR DA MISSÃO</button>
             </div>
-            <div class="terminal-footer">STATUS: EM PAUSA</div>
+            <div class="terminal-footer">STATUS: MISSÃO EM PAUSA</div>
         </div>
 
-        <!-- TELA: DERROTA / DETECTED -->
+        <!-- TELA: DERROTA -->
         <div id="screen-defeat" class="ui-screen hidden" style="justify-content: center; align-items: center; background: rgba(15, 3, 5, 0.95);">
             <div class="title-main" style="color: var(--accent-red); font-size: 2rem;">DETECTED</div>
-            <div class="title-sub" style="color: var(--accent-red); margin-bottom: 20px;">MISSION FAILED</div>
-            <p style="color: var(--text-main); font-size: 0.9rem; margin-bottom: 25px;">«BUCK FOI DETECTADO.»</p>
+            <div class="title-sub" style="color: var(--accent-red); margin-bottom: 18px;">MISSION FAILED</div>
+            <p style="color: var(--text-main); font-size: 0.85rem; margin-bottom: 22px;">«BUCK FOI DETECTADO PELA PATRULHA.»</p>
             <button class="menu-btn" style="border-color: var(--accent-red); color: #fff;" onclick="App.restartMission()">REINICIAR</button>
         </div>
 
-        <!-- TELA: VITÓRIA / EXTRACTION -->
+        <!-- TELA: VITÓRIA -->
         <div id="screen-complete" class="ui-screen hidden" style="justify-content: center; align-items: center; background: rgba(3, 15, 8, 0.95);">
-            <div class="title-main" style="color: var(--accent-green); font-size: 2rem;">OPERATION COMPLETE</div>
-            <div class="title-sub" style="color: var(--accent-green); margin-bottom: 20px;">EXTRACTION CONFIRMED</div>
-            <p style="color: var(--text-main); font-size: 0.9rem; margin-bottom: 25px;">«BUCK ALCANÇOU O PONTO DE EXTRAÇÃO.»</p>
+            <div class="title-main" style="color: var(--accent-green); font-size: 1.8rem;">OPERATION COMPLETE</div>
+            <div class="title-sub" style="color: var(--accent-green); margin-bottom: 18px;">EXTRACTION CONFIRMED</div>
+            <p style="color: var(--text-main); font-size: 0.85rem; margin-bottom: 22px;">«BUCK ALCANÇOU O PONTO DE EXTRAÇÃO EM NO DARK.»</p>
             <button class="menu-btn" style="border-color: var(--accent-green); color: #fff;" onclick="App.exitToMenu()">CONTINUAR</button>
         </div>
     </div>
 
     <script>
         /**
-         * SISTEMA DE INPUT UNIFICADO (TECLADO + POINTER EVENTS MOBILE)
+         * CONTROLE DE INPUT UNIFICADO (TECLADO + TOUCH POINTERS)
          */
         class InputController {
             constructor() {
-                this.state = {
-                    up: false,
-                    down: false,
-                    left: false,
-                    right: false
-                };
-                
-                this.touchState = {
-                    up: false,
-                    down: false,
-                    left: false,
-                    right: false
-                };
-
+                this.state = { up: false, down: false, left: false, right: false };
+                this.touchState = { up: false, down: false, left: false, right: false };
                 this.setupKeyboard();
             }
 
@@ -498,6 +585,7 @@
                     if (App.currentState === 'gameplay' && !App.isPaused) {
                         if (k === 'e') Game.interact();
                         if (k === 'r') Game.toggleRadio();
+                        if (k === 'm') Game.toggleMap();
                         if (k === 'escape' || k === 'p') App.pauseGame();
                     }
                 });
@@ -542,7 +630,7 @@
         const Input = new InputController();
 
         /**
-         * ÁUDIO SINTETIZADO COM MÚSICA ESTILO MGS2
+         * ÁUDIO SINTETIZADO (MGS2 STYLE)
          */
         class SoundSystem {
             constructor() {
@@ -578,7 +666,7 @@
             playSelect() { this.playTone(520, 'sine', 0.08, 0.04); }
             playConfirm() { this.playTone(880, 'square', 0.1, 0.03); }
             playGlitch() { this.playTone(120, 'sawtooth', 0.12, 0.05); }
-            playStep() { this.playTone(60, 'triangle', 0.03, 0.02); }
+            playStep() { this.playTone(55, 'triangle', 0.03, 0.02); }
             playRadio() { this.playTone(640, 'sine', 0.15, 0.04); }
             playAlert() { this.playTone(200, 'sawtooth', 0.4, 0.1); }
             playExtraction() { 
@@ -586,13 +674,11 @@
                 setTimeout(() => this.playTone(880, 'sine', 0.3, 0.05), 120);
             }
 
-            // Trilha inspirada na atmosfera tática / espionagem de Metal Gear Solid 2
             startMGS2Music() {
                 this.init();
                 if (this.isMusicPlaying || !this.enabled) return;
                 this.isMusicPlaying = true;
 
-                // Linha de baixo sintetizada acelerada (estilo "Tanker Stealth")
                 const bassLine = [65, 65, 0, 65, 68, 65, 0, 61, 65, 65, 0, 72, 70, 68, 65, 0];
                 let step = 0;
 
@@ -601,23 +687,21 @@
                     
                     const freq = bassLine[step % bassLine.length];
                     if (freq > 0) {
-                        this.playTone(freq, 'sawtooth', 0.12, 0.025);
+                        this.playTone(freq, 'sawtooth', 0.12, 0.02);
                     }
 
-                    // Sintetizador militar com batida em colcheias
                     if (step % 2 === 1) {
-                        this.playTone(1400, 'sine', 0.02, 0.008); // Hi-hat digital
+                        this.playTone(1400, 'sine', 0.02, 0.006);
                     }
 
-                    // Brass sintetizado em pontos estratégicos
                     if (step % 16 === 0) {
-                        this.playTone(260, 'square', 0.25, 0.02);
+                        this.playTone(260, 'square', 0.25, 0.018);
                     } else if (step % 16 === 10) {
-                        this.playTone(311, 'square', 0.2, 0.018);
+                        this.playTone(311, 'square', 0.2, 0.015);
                     }
 
                     step++;
-                }, 140); // BPM acelerado para tom tático
+                }, 140);
             }
 
             stopMusic() {
@@ -629,7 +713,7 @@
         const AudioFX = new SoundSystem();
 
         /**
-         * GERENCIADOR GERAL
+         * GERENCIADOR DE APLICAÇÃO
          */
         class AppManager {
             constructor() {
@@ -660,6 +744,10 @@
                     }
                     if (screenId !== 'screen-pause') hud.classList.add('hidden');
                 }
+
+                if (screenId === 'screen-main-menu') {
+                    this.renderMenuArt();
+                }
             }
 
             startBootSequence() {
@@ -669,10 +757,10 @@
                 
                 const textEl = document.getElementById('boot-text');
                 const steps = [
-                    "SYSTEM INITIALIZING...",
-                    "CONNECTION...",
-                    "SECURE CHANNEL...",
-                    "OPERATION // BLACK OBSIDIAN"
+                    "INITIALIZING SYSTEM...",
+                    "ESTABLISHING SECURE CONNECTION...",
+                    "DEPARTAMENTO DE DEFESA GLOBAL...",
+                    "MISSION: NO DARK"
                 ];
 
                 let idx = 0;
@@ -685,7 +773,7 @@
                         clearInterval(interval);
                         this.showScreen('screen-briefing');
                     }
-                }, 500);
+                }, 480);
             }
 
             toggleDifficulty() {
@@ -696,11 +784,11 @@
                 if (this.difficulty === 'NORMAL') {
                     this.difficulty = 'EXTREMO';
                     btn.innerText = 'EXTREMO';
-                    desc.innerText = '«Uma configuração mais difícil, semelhante aos desafios enfrentados por muitos agentes na vida real.»';
+                    desc.innerText = '«Visão inimiga ampliada e patrulha acelerada.»';
                 } else {
                     this.difficulty = 'NORMAL';
                     btn.innerText = 'NORMAL';
-                    desc.innerText = '«Uma experiência comum e padrão feita para os jogadores.»';
+                    desc.innerText = '«Experiência stealth equilibrada para reconhecimento de campo.»';
                 }
             }
 
@@ -734,6 +822,7 @@
                 AudioFX.playSelect();
                 this.isPaused = false;
                 document.getElementById('screen-pause').classList.add('hidden');
+                document.getElementById('map-modal').classList.add('hidden');
                 this.currentState = 'gameplay';
             }
 
@@ -751,6 +840,7 @@
                 Game.missionState = "MISSION_COMPLETE";
                 this.currentState = 'complete';
                 document.getElementById('hud-layer').classList.add('hidden');
+                document.getElementById('map-modal').classList.add('hidden');
                 document.getElementById('screen-complete').classList.remove('hidden');
             }
 
@@ -763,14 +853,91 @@
 
             exitToMenu() {
                 this.isPaused = false;
+                document.getElementById('map-modal').classList.add('hidden');
                 this.showScreen('screen-main-menu');
+            }
+
+            // Renderiza a ilustração procedutoral de Buck para o Menu (Discreta e Stylized)
+            renderMenuArt() {
+                const cvs = document.getElementById('menuArtCanvas');
+                if (!cvs) return;
+                const ctx = cvs.getContext('2d');
+                ctx.clearRect(0, 0, cvs.width, cvs.height);
+
+                // Fundo Escuro com Gradiente
+                const grad = ctx.createLinearGradient(0, 0, 0, cvs.height);
+                grad.addColorStop(0, '#0a1017');
+                grad.addColorStop(1, '#030508');
+                ctx.fillStyle = grad;
+                ctx.fillRect(0, 0, cvs.width, cvs.height);
+
+                // Parede em Perfil (Esquerda)
+                ctx.fillStyle = '#141d2b';
+                ctx.fillRect(0, 0, 75, cvs.height);
+                ctx.strokeStyle = '#0088ff';
+                ctx.lineWidth = 1;
+                ctx.strokeRect(0, 0, 75, cvs.height);
+
+                // Buck Agachado (Silhueta estilizada)
+                ctx.save();
+                // Corpo / Traje militar escuro
+                ctx.fillStyle = '#182233';
+                ctx.beginPath();
+                ctx.arc(60, 140, 18, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillRect(45, 145, 30, 45);
+
+                // Cabelo Loiro de Buck
+                ctx.fillStyle = '#ffcc00';
+                ctx.beginPath();
+                ctx.arc(62, 130, 10, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Detalhe tecnológico / Olhar concentrado
+                ctx.fillStyle = '#0088ff';
+                ctx.fillRect(66, 130, 5, 2);
+                ctx.restore();
+
+                // Porta protegida ao fundo
+                ctx.fillStyle = '#101622';
+                ctx.fillRect(150, 60, 50, 110);
+                ctx.strokeStyle = '#223348';
+                ctx.strokeRect(150, 60, 50, 110);
+
+                // Guarda de Vigia (Ao fundo)
+                ctx.save();
+                ctx.fillStyle = '#221515';
+                ctx.beginPath();
+                ctx.arc(175, 110, 10, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillRect(168, 120, 14, 30);
+
+                // Foco de Visão do Guarda (Vermelho Suave)
+                ctx.beginPath();
+                ctx.moveTo(175, 110);
+                ctx.lineTo(120, 180);
+                ctx.lineTo(210, 180);
+                ctx.closePath();
+                ctx.fillStyle = 'rgba(255, 42, 63, 0.12)';
+                ctx.fill();
+                ctx.restore();
+
+                // Linhas de Varredura / Grid
+                ctx.strokeStyle = 'rgba(0, 136, 255, 0.1)';
+                ctx.lineWidth = 1;
+                for (let y = 0; y < cvs.height; y += 12) {
+                    ctx.beginPath();
+                    ctx.moveTo(0, y);
+                    ctx.lineTo(cvs.width, y);
+                    ctx.stroke();
+                }
             }
         }
 
         const App = new AppManager();
 
         /**
-         * GAME ENGINE - INFILTRAÇÃO & CENÁRIO ESTILO METAL GEAR (MSX/PS1)
+         * GAME ENGINE (CÂMERA DINÂMICA + NO DARK MAP + MINIMAPA)
          */
         class GameEngine {
             constructor() {
@@ -779,52 +946,62 @@
                 
                 this.missionState = "MISSION_ACTIVE";
 
+                // Tamanho Total do Mapa
+                this.mapWidth = 1100;
+                this.mapHeight = 850;
+
+                // Câmera Dinâmica (Smooth Follow)
+                this.camera = { x: 0, y: 0, viewportW: 800, viewportH: 600 };
+
                 // Agente Buck
                 this.player = {
-                    x: 90, y: 300, radius: 10, speed: 2.5,
+                    x: 100, y: 400, radius: 10, speed: 2.5,
                     dir: 'RIGHT', isMoving: false, animFrame: 0
                 };
 
-                // Inimigo Patrulheiro
+                // Inimigo Guarda
                 this.enemy = {
-                    x: 520, y: 130, radius: 10, speed: 1.3,
-                    pA: { x: 520, y: 130 },
-                    pB: { x: 520, y: 470 },
+                    x: 650, y: 200, radius: 10, speed: 1.4,
+                    pA: { x: 650, y: 200 },
+                    pB: { x: 650, y: 650 },
                     currentTarget: null,
                     angle: Math.PI / 2,
                     fov: Math.PI / 3,
-                    viewDist: 110
+                    viewDist: 125
                 };
 
-                // Ponto de Extração
+                // Ponto de Extração (Lado direito/inferior)
                 this.extraction = {
-                    x: 690, y: 480, radius: 22
+                    x: 980, y: 720, radius: 25
                 };
 
-                // Paredes da Instalação Dinamarquesa (Estilo Metal Gear)
+                // Paredes da Instalação Militante Dinamarquesa
                 this.walls = [
                     // Paredes externas
-                    { x: 40, y: 40, w: 720, h: 20 },
-                    { x: 40, y: 540, w: 720, h: 20 },
-                    { x: 40, y: 40, w: 20, h: 520 },
-                    { x: 740, y: 40, w: 20, h: 520 },
+                    { x: 40, y: 40, w: 1020, h: 20 },
+                    { x: 40, y: 790, w: 1020, h: 20 },
+                    { x: 40, y: 40, w: 20, h: 770 },
+                    { x: 1040, y: 40, w: 20, h: 770 },
                     
-                    // Divisórias internas
-                    { x: 240, y: 40, w: 20, h: 360 },
-                    { x: 420, y: 180, w: 20, h: 380 },
-                    { x: 580, y: 40, w: 20, h: 340 }
+                    // Corredores e Salas Internas
+                    { x: 300, y: 40, w: 20, h: 520 },
+                    { x: 520, y: 260, w: 20, h: 550 },
+                    { x: 780, y: 40, w: 20, h: 500 },
+                    { x: 300, y: 560, w: 140, h: 20 },
+                    { x: 680, y: 380, w: 120, h: 20 }
                 ];
 
                 this.interactables = [
-                    { id: 'terminal', x: 160, y: 80, w: 35, h: 25, text: 'TERMINAL BLOQUEADO. SOLICITANDO CHAVE DE ACESSO NÍVEL 3.' },
-                    { id: 'desk', x: 100, y: 450, w: 55, h: 35, text: 'FIELD NOTE: "Relatórios de transporte da Dark Obsidian."' },
-                    { id: 'door', x: 240, y: 400, w: 20, h: 70, text: 'PORTA TRANCADA DIGITALMENTE.' },
-                    { id: 'crates', x: 630, y: 100, w: 45, h: 45, text: 'CAIXAS DE MUNIÇÃO INDUSTRIAL.' }
+                    { id: 'terminal', x: 200, y: 100, w: 35, h: 25, text: 'TERMINAL DE DADOS: "Registros sigilosos do Depto de Defesa Global."' },
+                    { id: 'desk', x: 120, y: 650, w: 55, h: 35, text: 'FIELD NOTE: "Relatório de contingência assinado por Jeffy."' },
+                    { id: 'door', x: 300, y: 620, w: 20, h: 80, text: 'PORTA TRANCADA DIGITALMENTE.' },
+                    { id: 'crates', x: 880, y: 120, w: 50, h: 50, text: 'CAIXAS DE MUNIÇÃO INDUSTRIAL DA BASE DINAMARQUESA.' }
                 ];
 
                 this.currentInteractable = null;
                 this.radioOpen = false;
                 this.fieldNoteOpen = false;
+                this.mapOpen = false;
                 this.stepTimer = 0;
 
                 this.setupTouchControls();
@@ -846,6 +1023,11 @@
                     this.toggleRadio();
                 });
 
+                document.getElementById('btn-map').addEventListener('pointerdown', (e) => {
+                    e.preventDefault();
+                    this.toggleMap();
+                });
+
                 document.getElementById('btn-pause').addEventListener('pointerdown', (e) => {
                     e.preventDefault();
                     App.pauseGame();
@@ -854,16 +1036,19 @@
 
             initMission() {
                 this.missionState = "MISSION_ACTIVE";
-                this.player.x = 90;
-                this.player.y = 300;
+                this.player.x = 100;
+                this.player.y = 400;
                 this.enemy.x = this.enemy.pA.x;
                 this.enemy.y = this.enemy.pA.y;
                 this.enemy.currentTarget = this.enemy.pB;
 
                 this.radioOpen = true;
                 this.fieldNoteOpen = false;
+                this.mapOpen = false;
+
                 document.getElementById('field-note-display').classList.add('hidden');
                 document.getElementById('radio-display').classList.remove('hidden');
+                document.getElementById('map-modal').classList.add('hidden');
                 document.getElementById('radio-text').innerText = '«“Agora você pode sair daí... Rápido!”»';
                 AudioFX.playRadio();
             }
@@ -872,10 +1057,19 @@
                 AudioFX.playRadio();
                 this.radioOpen = !this.radioOpen;
                 const radioEl = document.getElementById('radio-display');
-                if (this.radioOpen) {
-                    radioEl.classList.remove('hidden');
+                if (this.radioOpen) radioEl.classList.remove('hidden');
+                else radioEl.classList.add('hidden');
+            }
+
+            toggleMap() {
+                AudioFX.playSelect();
+                this.mapOpen = !this.mapOpen;
+                const mapModal = document.getElementById('map-modal');
+                if (this.mapOpen) {
+                    mapModal.classList.remove('hidden');
+                    this.renderMinimap();
                 } else {
-                    radioEl.classList.add('hidden');
+                    mapModal.classList.add('hidden');
                 }
             }
 
@@ -891,7 +1085,7 @@
             update() {
                 if (App.currentState !== 'gameplay' || App.isPaused || this.missionState !== 'MISSION_ACTIVE') return;
 
-                // Captura de Movimento Unificada
+                // Captura de Entrada Unificada
                 let dx = 0;
                 let dy = 0;
 
@@ -900,7 +1094,6 @@
                 if (Input.isLeft()) dx -= 1;
                 if (Input.isRight()) dx += 1;
 
-                // Determina Direção do Agente
                 if (Math.abs(dx) > 0 || Math.abs(dy) > 0) {
                     this.player.isMoving = true;
                     if (Math.abs(dx) > Math.abs(dy)) {
@@ -912,7 +1105,7 @@
                     this.player.isMoving = false;
                 }
 
-                // Normalização do Vetor de Movimento (evita velocidade extra na diagonal)
+                // Normalização do Vetor Diagonal
                 if (dx !== 0 && dy !== 0) {
                     dx *= 0.7071;
                     dy *= 0.7071;
@@ -926,7 +1119,7 @@
                     this.player.animFrame = 0;
                 }
 
-                // Movimentação com Deslizamento em Paredes (Sliding Collision)
+                // Movimento com Deslizamento em Paredes
                 const moveX = dx * this.player.speed;
                 const moveY = dy * this.player.speed;
 
@@ -937,11 +1130,26 @@
                     this.player.y += moveY;
                 }
 
-                // Atualizar Distância até a Extração
-                const distToExtraction = Math.hypot(this.extraction.x - this.player.x, this.extraction.y - this.player.y);
-                document.getElementById('hud-dist').innerText = Math.floor(distToExtraction);
+                // Atualização da Câmera Dinâmica (Acompanha Buck Suavemente)
+                const targetCamX = this.player.x - this.camera.viewportW / 2;
+                const targetCamY = this.player.y - this.camera.viewportH / 2;
 
-                if (distToExtraction < 30) {
+                this.camera.x += (targetCamX - this.camera.x) * 0.1;
+                this.camera.y += (targetCamY - this.camera.y) * 0.1;
+
+                // Limites da Câmera
+                this.camera.x = Math.max(0, Math.min(this.camera.x, this.mapWidth - this.camera.viewportW));
+                this.camera.y = Math.max(0, Math.min(this.camera.y, this.mapHeight - this.camera.viewportH));
+
+                // Atualizar HUD de Bússola e Distância
+                const distToExtraction = Math.hypot(this.extraction.x - this.player.x, this.extraction.y - this.player.y);
+                document.getElementById('hud-dist').innerText = `${Math.floor(distToExtraction / 10)}m`;
+
+                // Seta Direcional Discreta
+                const angleToExt = Math.atan2(this.extraction.y - this.player.y, this.extraction.x - this.player.x);
+                document.getElementById('hud-dir').innerText = this.getArrowDirection(angleToExt);
+
+                if (distToExtraction < 32) {
                     App.triggerExtraction();
                     return;
                 }
@@ -951,20 +1159,38 @@
                 const edy = this.enemy.currentTarget.y - this.enemy.y;
                 const distToTarget = Math.hypot(edx, edy);
 
-                if (distToTarget < 3) {
+                const currentSpeed = (App.difficulty === 'EXTREMO') ? this.enemy.speed * 1.3 : this.enemy.speed;
+
+                if (distToTarget < 4) {
                     this.enemy.currentTarget = (this.enemy.currentTarget === this.enemy.pA) ? this.enemy.pB : this.enemy.pA;
                 } else {
-                    this.enemy.x += (edx / distToTarget) * this.enemy.speed;
-                    this.enemy.y += (edy / distToTarget) * this.enemy.speed;
+                    this.enemy.x += (edx / distToTarget) * currentSpeed;
+                    this.enemy.y += (edy / distToTarget) * currentSpeed;
                     this.enemy.angle = Math.atan2(edy, edx);
                 }
 
-                // Checagem de Visão e Detecção
+                // Checagem de Visão
                 if (this.checkEnemyDetection()) {
                     App.triggerDefeat();
                 }
 
                 this.checkInteractions();
+
+                if (this.mapOpen) {
+                    this.renderMinimap();
+                }
+            }
+
+            getArrowDirection(angle) {
+                const deg = angle * (180 / Math.PI);
+                if (deg >= -22.5 && deg < 22.5) return '→';
+                if (deg >= 22.5 && deg < 67.5) return '↘';
+                if (deg >= 67.5 && deg < 112.5) return '↓';
+                if (deg >= 112.5 && deg < 157.5) return '↙';
+                if (deg >= 157.5 || deg < -157.5) return '←';
+                if (deg >= -157.5 && deg < -112.5) return '↖';
+                if (deg >= -112.5 && deg < -67.5) return '↑';
+                return '↗';
             }
 
             checkWallCollision(x, y, radius) {
@@ -985,7 +1211,9 @@
                 const dy = this.player.y - this.enemy.y;
                 const dist = Math.hypot(dx, dy);
 
-                if (dist > this.enemy.viewDist) return false;
+                const viewDist = (App.difficulty === 'EXTREMO') ? this.enemy.viewDist * 1.25 : this.enemy.viewDist;
+
+                if (dist > viewDist) return false;
 
                 let angleToPlayer = Math.atan2(dy, dx);
                 let diff = angleToPlayer - this.enemy.angle;
@@ -995,7 +1223,6 @@
 
                 if (Math.abs(diff) > this.enemy.fov / 2) return false;
 
-                // Raio bloqueado por paredes
                 for (let wall of this.walls) {
                     if (this.lineIntersectsRect(this.enemy.x, this.enemy.y, this.player.x, this.player.y, wall)) {
                         return false;
@@ -1022,7 +1249,7 @@
                         this.player.y - (item.y + item.h / 2)
                     );
 
-                    if (dist < 45) {
+                    if (dist < 48) {
                         this.currentInteractable = item;
                         promptEl.classList.remove('hidden');
                         return;
@@ -1040,15 +1267,19 @@
 
                 if (App.currentState !== 'gameplay' && App.currentState !== 'screen-pause' && App.currentState !== 'defeat') return;
 
-                // Fundo do Cenário Militar Retro (Inspirado no estilo Metal Gear MSX/PS1)
-                this.ctx.fillStyle = '#111812'; // Verde militar escuro de fundo
-                this.ctx.fillRect(40, 40, 720, 520);
+                this.ctx.save();
+                // Aplica deslocamento da Câmera
+                this.ctx.translate(-this.camera.x, -this.camera.y);
 
-                // Piso Quadriculado Tático com Detalhes industriais[span_1](start_span)[span_1](end_span)
-                this.ctx.strokeStyle = '#1a261c';
+                // Fundo do Mapa Militar
+                this.ctx.fillStyle = '#0a0f14';
+                this.ctx.fillRect(0, 0, this.mapWidth, this.mapHeight);
+
+                // Piso Tático Quadriculado
+                this.ctx.strokeStyle = '#121a24';
                 this.ctx.lineWidth = 1;
-                for (let x = 40; x < 760; x += 32) {
-                    for (let y = 40; y < 560; y += 32) {
+                for (let x = 0; x < this.mapWidth; x += 32) {
+                    for (let y = 0; y < this.mapHeight; y += 32) {
                         this.ctx.strokeRect(x, y, 32, 32);
                     }
                 }
@@ -1065,23 +1296,23 @@
                 this.ctx.stroke();
                 
                 this.ctx.fillStyle = '#0088ff';
-                this.ctx.font = 'bold 8px Courier New';
+                this.ctx.font = 'bold 9px Courier New';
                 this.ctx.textAlign = 'center';
                 this.ctx.fillText('[ EXTRACTION ]', this.extraction.x, this.extraction.y + 3);
                 this.ctx.restore();
 
-                // Paredes em Estilo Estrutural
+                // Paredes
                 for (let wall of this.walls) {
-                    this.ctx.fillStyle = '#1e2d22'; // Tom oliva de estrutura militar[span_2](start_span)[span_2](end_span)
+                    this.ctx.fillStyle = '#162230';
                     this.ctx.fillRect(wall.x, wall.y, wall.w, wall.h);
-                    this.ctx.strokeStyle = '#324a38';
+                    this.ctx.strokeStyle = '#283d54';
                     this.ctx.lineWidth = 2;
                     this.ctx.strokeRect(wall.x, wall.y, wall.w, wall.h);
                 }
 
-                // Objetos de Mapa / Caixas
+                // Objetos Interativos
                 for (let item of this.interactables) {
-                    this.ctx.fillStyle = '#263628';
+                    this.ctx.fillStyle = '#1e2d3e';
                     this.ctx.fillRect(item.x, item.y, item.w, item.h);
                     this.ctx.strokeStyle = '#ffcc00';
                     this.ctx.lineWidth = 1;
@@ -1096,13 +1327,13 @@
                     this.enemy.angle - this.enemy.fov / 2, 
                     this.enemy.angle + this.enemy.fov / 2);
                 this.ctx.closePath();
-                this.ctx.fillStyle = 'rgba(255, 204, 0, 0.18)';
+                this.ctx.fillStyle = 'rgba(255, 42, 63, 0.18)';
                 this.ctx.fill();
                 this.ctx.restore();
 
                 // Inimigo Guarda
                 this.ctx.save();
-                this.ctx.fillStyle = '#2d2020';
+                this.ctx.fillStyle = '#2d1818';
                 this.ctx.beginPath();
                 this.ctx.arc(this.enemy.x, this.enemy.y, this.enemy.radius, 0, Math.PI * 2);
                 this.ctx.fill();
@@ -1120,14 +1351,11 @@
                 this.ctx.fill();
                 this.ctx.restore();
 
-                // Agente Buck (Com Animação de Passos e Direção)
+                // Agente Buck
                 this.ctx.save();
-                
-                // Animação de bobbing corporal durante a caminhada
                 let bobY = (this.player.isMoving && this.player.animFrame === 1) ? -1 : 0;
 
-                // Corpo / Uniforme Militar
-                this.ctx.fillStyle = '#0f141d';
+                this.ctx.fillStyle = '#0d1520';
                 this.ctx.beginPath();
                 this.ctx.arc(this.player.x, this.player.y + bobY, this.player.radius, 0, Math.PI * 2);
                 this.ctx.fill();
@@ -1135,13 +1363,13 @@
                 this.ctx.lineWidth = 1.5;
                 this.ctx.stroke();
 
-                // Cabelo Loiro Estilizado de Buck
+                // Cabelo Loiro
                 this.ctx.fillStyle = '#ffcc00';
                 this.ctx.beginPath();
                 this.ctx.arc(this.player.x, this.player.y - 2 + bobY, 5, 0, Math.PI * 2);
                 this.ctx.fill();
 
-                // Indicador de Olhar/Direção
+                // Olhar
                 this.ctx.fillStyle = '#ffffff';
                 let eyeX = this.player.x;
                 let eyeY = this.player.y + bobY;
@@ -1159,6 +1387,38 @@
                 this.ctx.textAlign = 'center';
                 this.ctx.fillText('BUCK', this.player.x, this.player.y - 14 + bobY);
                 this.ctx.restore();
+
+                this.ctx.restore();
+            }
+
+            renderMinimap() {
+                const cvs = document.getElementById('map-canvas');
+                if (!cvs) return;
+                const ctx = cvs.getContext('2d');
+                ctx.clearRect(0, 0, cvs.width, cvs.height);
+
+                const scaleX = cvs.width / this.mapWidth;
+                const scaleY = cvs.height / this.mapHeight;
+
+                // Fundo do Minimapa
+                ctx.fillStyle = '#060a0f';
+                ctx.fillRect(0, 0, cvs.width, cvs.height);
+
+                // Paredes no Minimapa
+                ctx.fillStyle = '#1c2b3d';
+                for (let wall of this.walls) {
+                    ctx.fillRect(wall.x * scaleX, wall.y * scaleY, wall.w * scaleX, wall.h * scaleY);
+                }
+
+                // Ponto de Extração
+                ctx.fillStyle = '#0088ff';
+                ctx.font = 'bold 10px Courier New';
+                ctx.fillText('E', this.extraction.x * scaleX - 3, this.extraction.y * scaleY + 4);
+
+                // Posição de Buck
+                ctx.fillStyle = '#ffcc00';
+                ctx.font = 'bold 10px Courier New';
+                ctx.fillText('B', this.player.x * scaleX - 3, this.player.y * scaleY + 4);
             }
 
             loop() {
