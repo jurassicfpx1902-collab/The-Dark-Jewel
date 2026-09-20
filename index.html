@@ -1,825 +1,2536 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>THE DARK JEWEL — PROTOTYPE 0.1</title>
-    <style>
-        :root {
-            --bg-dark: #080a0d;
-            --panel-bg: #10141d;
-            --text-main: #c0c8d4;
-            --text-dim: #506075;
-            --accent-blue: #0088ff;
-            --accent-red: #ff2a3f;
-            --accent-green: #00ff66;
-            --border-color: #1e2636;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>THE DARK JEWEL — PROTOTYPE 0.2</title>
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            user-select: none;
-            -webkit-user-select: none;
-            font-family: 'Courier New', Courier, monospace;
-        }
+<style>
+:root {
+    --bg-dark:#080a0d;
+    --panel-bg:#10141d;
+    --text-main:#c0c8d4;
+    --text-dim:#506075;
+    --accent-blue:#0088ff;
+    --accent-red:#ff2a3f;
+    --accent-green:#00ff66;
+    --accent-yellow:#ffcc00;
+    --border-color:#1e2636;
+}
 
-        body, html {
-            width: 100%;
-            height: 100%;
-            background-color: #000;
-            color: var(--text-main);
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+* {
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    user-select:none;
+    -webkit-user-select:none;
+    font-family:"Courier New",Courier,monospace;
+}
 
-        /* Container Principal com proporção */
-        #game-container {
-            position: relative;
-            width: 800px;
-            height: 600px;
-            background-color: var(--bg-dark);
-            border: 2px solid var(--border-color);
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
-            overflow: hidden;
-        }
+html,body {
+    width:100%;
+    height:100%;
+    background:#000;
+    color:var(--text-main);
+    overflow:hidden;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
 
-        @media (max-width: 820px) {
-            #game-container {
-                width: 100vw;
-                height: 100vh;
-                border: none;
-            }
-        }
+#game-container {
+    position:relative;
+    width:800px;
+    height:600px;
+    background:var(--bg-dark);
+    border:2px solid var(--border-color);
+    box-shadow:0 0 20px rgba(0,0,0,.8);
+    overflow:hidden;
+}
 
-        /* Canvas de Jogo */
-        canvas {
-            display: block;
-            width: 100%;
-            height: 100%;
-            background-color: #05070a;
-        }
+@media(max-width:820px) {
+    #game-container {
+        width:100vw;
+        height:100vh;
+        border:none;
+    }
+}
 
-        /* Camada de Efeitos Visuais (Scanlines/Glitch) */
-        .scanlines {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none;
-            background: linear-gradient(
-                rgba(18, 16, 16, 0) 50%, 
-                rgba(0, 0, 0, 0.25) 50%
-            );
-            background-size: 100% 4px;
-            z-index: 20;
-            opacity: 0.6;
-        }
+canvas {
+    display:block;
+    width:100%;
+    height:100%;
+    background:#05070a;
+}
 
-        /* Interfaces Overlay */
-        .ui-screen {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            padding: 30px;
-            z-index: 10;
-            background: rgba(8, 10, 13, 0.95);
-        }
+.scanlines {
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    background:linear-gradient(
+        rgba(18,16,16,0) 50%,
+        rgba(0,0,0,.25) 50%
+    );
+    background-size:100% 4px;
+    z-index:50;
+    opacity:.6;
+}
 
-        .hidden { display: none !important; }
+.ui-screen {
+    position:absolute;
+    inset:0;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    padding:30px;
+    z-index:20;
+    background:rgba(8,10,13,.95);
+}
 
-        /* Estilo do Menu Principal */
-        .title-block {
-            margin-top: 20px;
-        }
+.hidden {
+    display:none !important;
+}
 
-        .title-main {
-            font-size: 2.2rem;
-            font-weight: bold;
-            letter-spacing: 4px;
-            color: #fff;
-            text-shadow: 2px 0 var(--accent-red), -2px 0 var(--accent-blue);
-            animation: glitchText 3s infinite alternate;
-        }
+.title-block {
+    margin-top:20px;
+}
 
-        .title-sub {
-            font-size: 0.9rem;
-            color: var(--accent-blue);
-            letter-spacing: 3px;
-            margin-top: 5px;
-        }
+.title-main {
+    font-size:2.2rem;
+    font-weight:bold;
+    letter-spacing:4px;
+    color:#fff;
+    text-shadow:2px 0 var(--accent-red),-2px 0 var(--accent-blue);
+    animation:glitchText 3s infinite alternate;
+}
 
-        .menu-options {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-top: 20px;
-            width: 250px;
-        }
+.title-sub {
+    font-size:.9rem;
+    color:var(--accent-blue);
+    letter-spacing:3px;
+    margin-top:5px;
+}
 
-        .menu-btn {
-            background: transparent;
-            border: 1px solid var(--border-color);
-            color: var(--text-main);
-            padding: 10px 15px;
-            font-size: 0.9rem;
-            text-align: left;
-            cursor: pointer;
-            letter-spacing: 2px;
-            transition: all 0.2s;
-        }
+.menu-options {
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    margin-top:20px;
+    width:270px;
+}
 
-        .menu-btn:hover, .menu-btn:focus {
-            background: rgba(0, 136, 255, 0.15);
-            border-color: var(--accent-blue);
-            color: #fff;
-            padding-left: 22px;
-            outline: none;
-        }
+.menu-btn {
+    background:transparent;
+    border:1px solid var(--border-color);
+    color:var(--text-main);
+    padding:10px 15px;
+    font-size:.9rem;
+    text-align:left;
+    cursor:pointer;
+    letter-spacing:2px;
+    transition:.2s;
+}
 
-        .terminal-footer {
-            font-size: 0.75rem;
-            color: var(--text-dim);
-            border-top: 1px solid var(--border-color);
-            padding-top: 10px;
-            display: flex;
-            justify-content: space-between;
-        }
+.menu-btn:hover,
+.menu-btn:focus {
+    background:rgba(0,136,255,.15);
+    border-color:var(--accent-blue);
+    color:#fff;
+    padding-left:22px;
+    outline:none;
+}
 
-        /* Briefing e Documentos */
-        .doc-box {
-            border: 1px solid var(--border-color);
-            background: var(--panel-bg);
-            padding: 20px;
-            margin-top: 20px;
-            font-size: 0.85rem;
-            line-height: 1.6;
-            flex-grow: 1;
-            overflow-y: auto;
-        }
+.terminal-footer {
+    font-size:.75rem;
+    color:var(--text-dim);
+    border-top:1px solid var(--border-color);
+    padding-top:10px;
+    display:flex;
+    justify-content:space-between;
+}
 
-        .doc-line { margin-bottom: 8px; }
-        .doc-label { color: var(--text-dim); }
-        .doc-value { color: var(--accent-blue); font-weight: bold; }
+.doc-box {
+    border:1px solid var(--border-color);
+    background:var(--panel-bg);
+    padding:20px;
+    margin-top:20px;
+    font-size:.85rem;
+    line-height:1.6;
+    flex-grow:1;
+    overflow-y:auto;
+}
 
-        /* HUD durante o Gameplay */
-        #hud-layer {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none;
-            z-index: 5;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            padding: 15px;
-        }
+.doc-line {
+    margin-bottom:8px;
+}
 
-        .hud-header {
-            display: flex;
-            justify-content: space-between;
-            background: rgba(16, 20, 29, 0.7);
-            border: 1px solid var(--border-color);
-            padding: 8px 12px;
-            font-size: 0.75rem;
-        }
+.doc-label {
+    color:var(--text-dim);
+}
 
-        .hud-bottom {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
+.doc-value {
+    color:var(--accent-blue);
+    font-weight:bold;
+}
 
-        .interaction-prompt {
-            align-self: center;
-            background: rgba(0, 136, 255, 0.2);
-            border: 1px solid var(--accent-blue);
-            color: #fff;
-            padding: 6px 16px;
-            font-size: 0.8rem;
-            letter-spacing: 1px;
-            animation: pulse 1.5s infinite;
-        }
+#hud-layer {
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    z-index:10;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    padding:15px;
+}
 
-        .radio-box {
-            background: rgba(16, 20, 29, 0.9);
-            border: 1px solid var(--accent-blue);
-            padding: 12px;
-            font-size: 0.8rem;
-            max-width: 500px;
-        }
+.hud-header {
+    display:flex;
+    justify-content:space-between;
+    background:rgba(16,20,29,.78);
+    border:1px solid var(--border-color);
+    padding:8px 12px;
+    font-size:.75rem;
+}
 
-        .radio-header {
-            color: var(--accent-blue);
-            font-weight: bold;
-            margin-bottom: 5px;
-            font-size: 0.7rem;
-            letter-spacing: 1px;
-        }
+.hud-bottom {
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
 
-        /* Controles Mobile */
-        #mobile-controls {
-            position: absolute;
-            bottom: 15px; left: 15px; right: 15px;
-            display: none;
-            justify-content: space-between;
-            align-items: flex-end;
-            z-index: 15;
-            pointer-events: none;
-        }
+.interaction-prompt {
+    align-self:center;
+    background:rgba(0,136,255,.2);
+    border:1px solid var(--accent-blue);
+    color:#fff;
+    padding:6px 16px;
+    font-size:.8rem;
+    letter-spacing:1px;
+    animation:pulse 1.5s infinite;
+}
 
-        @media (max-width: 820px) {
-            #mobile-controls { display: flex; }
-        }
+.message-box {
+    align-self:center;
+    max-width:500px;
+    background:rgba(16,20,29,.94);
+    border:1px solid var(--accent-blue);
+    color:#fff;
+    padding:10px 14px;
+    font-size:.78rem;
+    text-align:center;
+}
 
-        .dpad {
-            display: grid;
-            grid-template-columns: repeat(3, 45px);
-            grid-template-rows: repeat(3, 45px);
-            gap: 3px;
-            pointer-events: auto;
-        }
+.radio-box {
+    background:rgba(16,20,29,.94);
+    border:1px solid var(--accent-blue);
+    padding:12px;
+    font-size:.8rem;
+    max-width:500px;
+    pointer-events:auto;
+}
 
-        .touch-btn {
-            background: rgba(16, 20, 29, 0.8);
-            border: 1px solid var(--border-color);
-            color: var(--text-main);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-weight: bold;
-            font-size: 1rem;
-            border-radius: 4px;
-            touch-action: manipulation;
-        }
+.radio-header {
+    color:var(--accent-blue);
+    font-weight:bold;
+    margin-bottom:5px;
+    font-size:.7rem;
+    letter-spacing:1px;
+}
 
-        .touch-btn:active {
-            background: var(--accent-blue);
-            color: #fff;
-        }
+.alert-box {
+    align-self:center;
+    border:1px solid var(--accent-red);
+    background:rgba(255,42,63,.12);
+    color:var(--accent-red);
+    padding:7px 18px;
+    font-size:.8rem;
+    letter-spacing:2px;
+    animation:alertPulse .5s infinite alternate;
+}
 
-        .action-btns {
-            display: flex;
-            gap: 8px;
-            pointer-events: auto;
-        }
+#mobile-controls {
+    position:absolute;
+    bottom:15px;
+    left:15px;
+    right:15px;
+    display:none;
+    justify-content:space-between;
+    align-items:flex-end;
+    z-index:40;
+    pointer-events:none;
+}
 
-        .action-btn-large {
-            width: 55px;
-            height: 55px;
-            border-radius: 50%;
-            font-size: 0.75rem;
-        }
+@media(max-width:820px) {
+    #mobile-controls {
+        display:flex;
+    }
+}
 
-        /* Animações */
-        @keyframes glitchText {
-            0% { transform: translate(0); }
-            92% { transform: translate(0); }
-            94% { transform: translate(-2px, 1px); }
-            96% { transform: translate(2px, -1px); }
-            98% { transform: translate(-1px, -1px); }
-            100% { transform: translate(0); }
-        }
+.dpad {
+    display:grid;
+    grid-template-columns:repeat(3,45px);
+    grid-template-rows:repeat(3,45px);
+    gap:3px;
+    pointer-events:auto;
+}
 
-        @keyframes pulse {
-            0% { opacity: 0.6; }
-            50% { opacity: 1; }
-            100% { opacity: 0.6; }
-        }
-    </style>
+.touch-btn {
+    background:rgba(16,20,29,.88);
+    border:1px solid var(--border-color);
+    color:var(--text-main);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-weight:bold;
+    font-size:1rem;
+    border-radius:4px;
+    touch-action:none;
+}
+
+.touch-btn:active {
+    background:var(--accent-blue);
+    color:#fff;
+}
+
+.action-btns {
+    display:flex;
+    gap:8px;
+    pointer-events:auto;
+}
+
+.action-btn-large {
+    width:55px;
+    height:55px;
+    border-radius:50%;
+    font-size:.7rem;
+}
+
+@keyframes glitchText {
+    0%,92% { transform:translate(0); }
+    94% { transform:translate(-2px,1px); }
+    96% { transform:translate(2px,-1px); }
+    98% { transform:translate(-1px,-1px); }
+    100% { transform:translate(0); }
+}
+
+@keyframes pulse {
+    0%,100% { opacity:.6; }
+    50% { opacity:1; }
+}
+
+@keyframes alertPulse {
+    from { opacity:.55; }
+    to { opacity:1; }
+}
+</style>
 </head>
+
 <body>
 
-    <div id="game-container">
-        <div class="scanlines"></div>
+<div id="game-container">
 
-        <!-- CANVAS DO GAMEPLAY -->
-        <canvas id="gameCanvas" width="800" height="600"></canvas>
+<div class="scanlines"></div>
 
-        <!-- HUD DE GAMEPLAY -->
-        <div id="hud-layer" class="hidden">
-            <div class="hud-header">
-                <div>AGENT: <span style="color:#fff;">BUCK</span></div>
-                <div>LOCATION: <span style="color:#fff;">DENMARK</span></div>
-                <div>STATUS: <span id="hud-status" style="color:var(--accent-green);">STEALTH</span></div>
-            </div>
+<canvas id="gameCanvas" width="800" height="600"></canvas>
 
-            <div class="hud-bottom">
-                <div id="interact-prompt" class="interaction-prompt hidden">[E] INTERAGIR</div>
-                
-                <div id="radio-display" class="radio-box hidden">
-                    <div class="radio-header">RADIO // SECURE CHANNEL — KATHERINE</div>
-                    <div id="radio-text">«Buck, você está na área de testes. Verifique os terminais e a porta.»</div>
-                </div>
-            </div>
-        </div>
+<!-- HUD -->
+<div id="hud-layer" class="hidden">
 
-        <!-- CONTROLES MOBILE -->
-        <div id="mobile-controls">
-            <div class="dpad">
-                <div></div><div class="touch-btn" id="btn-up">▲</div><div></div>
-                <div class="touch-btn" id="btn-left">◄</div><div></div><div class="touch-btn" id="btn-right">►</div>
-                <div></div><div class="touch-btn" id="btn-down">▼</div><div></div>
-            </div>
-            <div class="action-btns">
-                <button class="touch-btn action-btn-large" id="btn-radio">RAD</button>
-                <button class="touch-btn action-btn-large" id="btn-interact">INT</button>
-                <button class="touch-btn action-btn-large" id="btn-pause">ESC</button>
-            </div>
-        </div>
-
-        <!-- TELA: MENU PRINCIPAL -->
-        <div id="screen-main-menu" class="ui-screen">
-            <div class="title-block">
-                <div class="title-main">THE DARK JEWEL</div>
-                <div class="title-sub">OPERATION // BLACK OBSIDIAN</div>
-            </div>
-
-            <div class="menu-options">
-                <button class="menu-btn" onclick="App.startBootSequence()">INICIAR</button>
-                <button class="menu-btn" onclick="App.showScreen('screen-buck')">OPERAÇÃO BUCK</button>
-                <button class="menu-btn" onclick="App.showScreen('screen-options')">OPÇÕES</button>
-                <button class="menu-btn" onclick="App.showScreen('screen-credits')">CRÉDITOS</button>
-            </div>
-
-            <div class="terminal-footer">
-                <div>SYSTEM: SECURE</div>
-                <div>PROTOTYPE 0.1</div>
-            </div>
-        </div>
-
-        <!-- TELA: BOOT / SECURE CONNECTION -->
-        <div id="screen-boot" class="ui-screen hidden" style="justify-content: center; align-items: center;">
-            <div id="boot-text" style="font-size: 1rem; color: var(--accent-blue); letter-spacing: 2px;">
-                SYSTEM INITIALIZING...
-            </div>
-        </div>
-
-        <!-- TELA: BRIEFING -->
-        <div id="screen-briefing" class="ui-screen hidden">
-            <div class="title-sub">CLASSIFIED // BRIEFING DE MISSÃO</div>
-            
-            <div class="doc-box">
-                <div class="doc-line"><span class="doc-label">MISSION:</span> <span class="doc-value">01</span></div>
-                <div class="doc-line"><span class="doc-label">OPERATION:</span> <span class="doc-value">BLACK OBSIDIAN</span></div>
-                <div class="doc-line"><span class="doc-label">AGENT:</span> <span class="doc-value">BUCK</span></div>
-                <div class="doc-line"><span class="doc-label">LOCATION:</span> <span class="doc-value">DENMARK</span></div>
-                <div class="doc-line"><span class="doc-label">STATUS:</span> <span class="doc-value">CLASSIFIED</span></div>
-                <div class="doc-line"><span class="doc-label">OBJECTIVE:</span> <span class="doc-value">PENDING</span></div>
-                <br>
-                <p style="color: var(--text-dim); font-size: 0.8rem;">
-                    [ARQUIVO CONFIDENCIAL — UNIVERSO W.B.]<br>
-                    O agente Buck foi inserido na instalação avançada para testes de campo preliminares.
-                    Estabeleça comunicação rádio com Katherine e valide a infraestrutura dos terminais.
-                </p>
-            </div>
-
-            <button class="menu-btn" style="margin-top: 15px; align-self: flex-end;" onclick="App.enterGameplay()">ENTRAR NA ÁREA DE TESTE</button>
-        </div>
-
-        <!-- TELA: OPERAÇÃO BUCK -->
-        <div id="screen-buck" class="ui-screen hidden">
-            <div class="title-sub">REGISTRO DE AGENTE // BUCK</div>
-            <div class="doc-box">
-                <p class="doc-line"><span class="doc-label">NOME DE CÓDIGO:</span> BUCK</p>
-                <p class="doc-line"><span class="doc-label">AFILIAÇÃO:</span> UNIVERSO W.B.</p>
-                <p class="doc-line"><span class="doc-label">HABILIDADES:</span> INFILTRAÇÃO, ESPIONAGEM TÁTICA</p>
-                <br>
-                <p style="color: var(--text-dim); font-size: 0.8rem;">
-                    "Informações adicionais restritas a níveis de acesso superiores."
-                </p>
-            </div>
-            <button class="menu-btn" onclick="App.showScreen('screen-main-menu')">VOLTAR</button>
-        </div>
-
-        <!-- TELA: OPÇÕES -->
-        <div id="screen-options" class="ui-screen hidden">
-            <div class="title-sub">CONFIGURAÇÕES DO SISTEMA</div>
-            <div class="doc-box">
-                <div class="doc-line">
-                    <span class="doc-label">DIFICULDADE:</span> 
-                    <button class="menu-btn" id="btn-diff" style="display:inline; padding: 2px 10px; margin-left: 10px;" onclick="App.toggleDifficulty()">NORMAL</button>
-                </div>
-                <p id="diff-desc" style="color: var(--text-dim); font-size: 0.75rem; margin-top: 5px;">
-                    "Uma experiência comum e padrão feita para os jogadores."
-                </p>
-                <br>
-                <div class="doc-line"><span class="doc-label">AUDIO BGM:</span> HABILITADO</div>
-                <div class="doc-line"><span class="doc-label">AUDIO SFX:</span> HABILITADO (SINTETIZADOR WEB AUDIO)</div>
-            </div>
-            <button class="menu-btn" onclick="App.backFromOptions()">VOLTAR</button>
-        </div>
-
-        <!-- TELA: CRÉDITOS -->
-        <div id="screen-credits" class="ui-screen hidden">
-            <div class="title-sub">CRÉDITOS DE DESENVOLVIMENTO</div>
-            <div class="doc-box">
-                <div class="doc-line"><span class="doc-label">PROJETO:</span> <span class="doc-value">THE DARK JEWEL</span></div>
-                <div class="doc-line"><span class="doc-label">PROTOTYPE:</span> <span class="doc-value">0.1</span></div>
-                <br>
-                <div class="doc-line"><span class="doc-label">AUTOR:</span> <span class="doc-value">O Escritor</span></div>
-                <div class="doc-line"><span class="doc-label">CRIADOR:</span> <span class="doc-value">Felipe</span></div>
-            </div>
-            <button class="menu-btn" onclick="App.showScreen('screen-main-menu')">VOLTAR</button>
-        </div>
-
-        <!-- TELA: PAUSA -->
-        <div id="screen-pause" class="ui-screen hidden">
-            <div class="title-main" style="font-size: 1.5rem;">PAUSED</div>
-            <div class="menu-options">
-                <button class="menu-btn" onclick="App.resumeGame()">CONTINUAR</button>
-                <button class="menu-btn" onclick="App.showScreen('screen-options')">OPÇÕES</button>
-                <button class="menu-btn" onclick="App.exitToMenu()">SAIR DA MISSÃO</button>
-            </div>
-            <div class="terminal-footer">STATUS: EM PAUSA</div>
+    <div class="hud-header">
+        <div>AGENT: <span style="color:#fff;">BUCK</span></div>
+        <div>LOCATION: <span style="color:#fff;">DENMARK BASE</span></div>
+        <div>
+            STATUS:
+            <span id="hud-status" style="color:var(--accent-green);">
+                STEALTH
+            </span>
         </div>
     </div>
 
-    <script>
-        /**
-         * MÓDULO DE ÁUDIO SINTÉTICO (Sem dependências externas de assets)
-         */
-        class SoundSystem {
-            constructor() {
-                this.ctx = null;
-                this.enabled = true;
-            }
+    <div class="hud-bottom">
 
-            init() {
-                if (!this.ctx) {
-                    const AudioContext = window.AudioContext || window.webkitAudioContext;
-                    this.ctx = new AudioContext();
-                }
-            }
+        <div id="detection-alert" class="alert-box hidden">
+            ALERT // DETECTED
+        </div>
 
-            playTone(freq, type, duration, vol = 0.1) {
-                if (!this.enabled || !this.ctx) return;
-                try {
-                    const osc = this.ctx.createOscillator();
-                    const gain = this.ctx.createGain();
-                    osc.type = type;
-                    osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
-                    gain.gain.setValueAtTime(vol, this.ctx.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + duration);
-                    osc.connect(gain);
-                    gain.connect(this.ctx.destination);
-                    osc.start();
-                    osc.stop(this.ctx.currentTime + duration);
-                } catch (e) {}
-            }
+        <div id="interact-prompt" class="interaction-prompt hidden">
+            [E] INTERAGIR
+        </div>
 
-            playSelect() { this.playTone(440, 'sine', 0.08, 0.05); }
-            playConfirm() { this.playTone(880, 'square', 0.12, 0.04); }
-            playGlitch() { this.playTone(120, 'sawtooth', 0.15, 0.08); }
-            playStep() { this.playTone(80, 'triangle', 0.05, 0.03); }
-            playRadio() { this.playTone(600, 'sine', 0.2, 0.05); }
+        <!-- Mensagens de objetos -->
+        <div id="message-display" class="message-box hidden"></div>
+
+        <!-- Rádio separado das interações -->
+        <div id="radio-display" class="radio-box hidden">
+            <div class="radio-header">
+                RADIO // SECURE CHANNEL — KATHERINE
+            </div>
+
+            <div id="radio-text">
+                Agora você pode sair daí... Rápido!
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- CONTROLES MOBILE -->
+<div id="mobile-controls">
+
+    <div class="dpad">
+        <div></div>
+        <button class="touch-btn" id="btn-up">▲</button>
+        <div></div>
+
+        <button class="touch-btn" id="btn-left">◄</button>
+        <div></div>
+        <button class="touch-btn" id="btn-right">►</button>
+
+        <div></div>
+        <button class="touch-btn" id="btn-down">▼</button>
+        <div></div>
+    </div>
+
+    <div class="action-btns">
+        <button class="touch-btn action-btn-large" id="btn-radio">RAD</button>
+        <button class="touch-btn action-btn-large" id="btn-interact">INT</button>
+        <button class="touch-btn action-btn-large" id="btn-pause">ESC</button>
+    </div>
+
+</div>
+
+<!-- MENU -->
+<div id="screen-main-menu" class="ui-screen">
+
+    <div class="title-block">
+        <div class="title-main">THE DARK JEWEL</div>
+        <div class="title-sub">
+            OPERATION // BLACK OBSIDIAN
+        </div>
+    </div>
+
+    <div class="menu-options">
+
+        <button class="menu-btn"
+            onclick="App.startBootSequence()">
+            INICIAR
+        </button>
+
+        <button class="menu-btn"
+            onclick="App.showScreen('screen-buck')">
+            OPERAÇÃO BUCK
+        </button>
+
+        <button class="menu-btn"
+            onclick="App.showScreen('screen-options')">
+            OPÇÕES
+        </button>
+
+        <button class="menu-btn"
+            onclick="App.showScreen('screen-credits')">
+            CRÉDITOS
+        </button>
+
+        <button class="menu-btn"
+            onclick="App.exitGame()">
+            SAIR
+        </button>
+
+    </div>
+
+    <div class="terminal-footer">
+        <div>SYSTEM: SECURE</div>
+        <div>PROTOTYPE 0.2</div>
+    </div>
+
+</div>
+
+<!-- BOOT -->
+<div id="screen-boot"
+     class="ui-screen hidden"
+     style="justify-content:center;align-items:center;">
+
+    <div id="boot-text"
+         style="font-size:1rem;color:var(--accent-blue);letter-spacing:2px;">
+        SYSTEM INITIALIZING...
+    </div>
+
+</div>
+
+<!-- BRIEFING -->
+<div id="screen-briefing" class="ui-screen hidden">
+
+    <div class="title-sub">
+        CLASSIFIED // BRIEFING DE MISSÃO
+    </div>
+
+    <div class="doc-box">
+
+        <div class="doc-line">
+            <span class="doc-label">MISSION:</span>
+            <span class="doc-value">01</span>
+        </div>
+
+        <div class="doc-line">
+            <span class="doc-label">OPERATION:</span>
+            <span class="doc-value">BLACK OBSIDIAN</span>
+        </div>
+
+        <div class="doc-line">
+            <span class="doc-label">AGENT:</span>
+            <span class="doc-value">BUCK</span>
+        </div>
+
+        <div class="doc-line">
+            <span class="doc-label">LOCATION:</span>
+            <span class="doc-value">BASE DINAMARQUESA</span>
+        </div>
+
+        <div class="doc-line">
+            <span class="doc-label">AFFILIATION:</span>
+            <span class="doc-value">UNIVERSO W.B.</span>
+        </div>
+
+        <div class="doc-line">
+            <span class="doc-label">ORGANIZATION:</span>
+            <span class="doc-value">
+                DEPARTAMENTO DE DEFESA GLOBAL DA CIA
+            </span>
+        </div>
+
+        <div class="doc-line">
+            <span class="doc-label">OBJECTIVE:</span>
+            <span class="doc-value">
+                OBTER INFORMAÇÕES ESSENCIAIS DA DARK OBSIDIAN
+            </span>
+        </div>
+
+        <br>
+
+        <p style="
+            color:var(--text-main);
+            font-size:.8rem;
+            border-left:2px solid var(--accent-blue);
+            padding-left:8px;
+        ">
+            Buck se infiltrou na base dinamarquesa para conseguir
+            informações essenciais da Dark Obsidian.
+        </p>
+
+    </div>
+
+    <button class="menu-btn"
+            style="margin-top:15px;align-self:flex-end;"
+            onclick="App.enterGameplay()">
+        INICIAR INFILTRAÇÃO
+    </button>
+
+</div>
+
+<!-- OPERAÇÃO BUCK -->
+<div id="screen-buck" class="ui-screen hidden">
+
+    <div class="title-sub">
+        REGISTRO DE AGENTE // BUCK
+    </div>
+
+    <div class="doc-box">
+
+        <p class="doc-line">
+            <span class="doc-label">AGENTE:</span> BUCK
+        </p>
+
+        <p class="doc-line">
+            <span class="doc-label">AFILIAÇÃO:</span> UNIVERSO W.B.
+        </p>
+
+        <p class="doc-line">
+            <span class="doc-label">ORGANIZAÇÃO:</span>
+            DEPARTAMENTO DE DEFESA GLOBAL DA CIA
+        </p>
+
+        <p class="doc-line">
+            <span class="doc-label">FUNÇÃO:</span>
+            AGENTE DE INFILTRAÇÃO
+        </p>
+
+    </div>
+
+    <button class="menu-btn"
+            onclick="App.showScreen('screen-main-menu')">
+        VOLTAR
+    </button>
+
+</div>
+
+<!-- OPÇÕES -->
+<div id="screen-options" class="ui-screen hidden">
+
+    <div class="title-sub">
+        CONFIGURAÇÕES DO SISTEMA
+    </div>
+
+    <div class="doc-box">
+
+        <div class="doc-line">
+
+            <span class="doc-label">
+                DIFICULDADE:
+            </span>
+
+            <button class="menu-btn"
+                    id="btn-diff"
+                    style="
+                        display:inline;
+                        padding:2px 10px;
+                        margin-left:10px;
+                    "
+                    onclick="App.toggleDifficulty()">
+                NORMAL
+            </button>
+
+        </div>
+
+        <p id="diff-desc"
+           style="
+             color:var(--text-dim);
+             font-size:.75rem;
+             margin-top:5px;
+           ">
+            Uma experiência comum e padrão feita para os jogadores.
+        </p>
+
+        <br>
+
+        <div class="doc-line">
+            <span class="doc-label">
+                MÚSICA DO MENU:
+            </span>
+            ATIVA
+        </div>
+
+        <div class="doc-line">
+            <span class="doc-label">
+                EFEITOS SONOROS:
+            </span>
+            ATIVOS
+        </div>
+
+    </div>
+
+    <button class="menu-btn"
+            onclick="App.backFromOptions()">
+        VOLTAR
+    </button>
+
+</div>
+
+<!-- CRÉDITOS -->
+<div id="screen-credits" class="ui-screen hidden">
+
+    <div class="title-sub">
+        CRÉDITOS DE DESENVOLVIMENTO
+    </div>
+
+    <div class="doc-box">
+
+        <div class="doc-line">
+            <span class="doc-label">PROJETO:</span>
+            <span class="doc-value">THE DARK JEWEL</span>
+        </div>
+
+        <div class="doc-line">
+            <span class="doc-label">OPERATION:</span>
+            <span class="doc-value">BLACK OBSIDIAN</span>
+        </div>
+
+        <div class="doc-line">
+            <span class="doc-label">PROTOTYPE:</span>
+            <span class="doc-value">0.2</span>
+        </div>
+
+        <br>
+
+        <div class="doc-line">
+            <span class="doc-label">AUTOR:</span>
+            <span class="doc-value">O Escritor</span>
+        </div>
+
+        <div class="doc-line">
+            <span class="doc-label">CRIADOR:</span>
+            <span class="doc-value">Felipe</span>
+        </div>
+
+    </div>
+
+    <button class="menu-btn"
+            onclick="App.showScreen('screen-main-menu')">
+        VOLTAR
+    </button>
+
+</div>
+
+<!-- PAUSA -->
+<div id="screen-pause" class="ui-screen hidden">
+
+    <div class="title-main" style="font-size:1.5rem;">
+        PAUSED
+    </div>
+
+    <div class="menu-options">
+
+        <button class="menu-btn"
+                onclick="App.resumeGame()">
+            CONTINUAR
+        </button>
+
+        <button class="menu-btn"
+                onclick="App.openOptionsFromPause()">
+            OPÇÕES
+        </button>
+
+        <button class="menu-btn"
+                onclick="App.exitToMenu()">
+            SAIR DA MISSÃO
+        </button>
+
+    </div>
+
+    <div class="terminal-footer">
+        STATUS: EM PAUSA
+    </div>
+
+</div>
+
+<!-- DERROTA -->
+<div id="screen-defeat"
+     class="ui-screen hidden"
+     style="
+        justify-content:center;
+        align-items:center;
+        background:rgba(15,3,5,.95);
+     ">
+
+    <div class="title-main"
+         style="
+            color:var(--accent-red);
+            font-size:2rem;
+         ">
+        DETECTED
+    </div>
+
+    <div class="title-sub"
+         style="
+            color:var(--accent-red);
+            margin-bottom:20px;
+         ">
+        MISSION FAILED
+    </div>
+
+    <p style="
+        color:var(--text-main);
+        font-size:.9rem;
+        margin-bottom:25px;
+    ">
+        BUCK FOI DETECTADO.
+    </p>
+
+    <button class="menu-btn"
+            style="
+                border-color:var(--accent-red);
+                color:#fff;
+            "
+            onclick="App.restartMission()">
+        REINICIAR
+    </button>
+
+</div>
+
+</div>
+
+<script>
+
+/* =========================================================
+   SISTEMA DE ÁUDIO
+========================================================= */
+
+class SoundSystem {
+
+    constructor() {
+        this.ctx = null;
+        this.enabled = true;
+        this.isMusicPlaying = false;
+        this.musicTimer = null;
+        this.musicStep = 0;
+    }
+
+    init() {
+
+        if (!this.ctx) {
+
+            const AudioContext =
+                window.AudioContext ||
+                window.webkitAudioContext;
+
+            if (!AudioContext) return;
+
+            this.ctx = new AudioContext();
         }
 
-        const AudioFX = new SoundSystem();
+        if (this.ctx.state === "suspended") {
+            this.ctx.resume();
+        }
+    }
 
-        /**
-         * GERENCIADOR DE ESTADOS E INTERFACE
+    playTone(freq,type,duration,volume=.05) {
+
+        if (!this.enabled || !this.ctx) return;
+
+        try {
+
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+
+            osc.type = type;
+            osc.frequency.setValueAtTime(
+                freq,
+                this.ctx.currentTime
+            );
+
+            gain.gain.setValueAtTime(
+                volume,
+                this.ctx.currentTime
+            );
+
+            gain.gain.exponentialRampToValueAtTime(
+                .0001,
+                this.ctx.currentTime + duration
+            );
+
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+
+            osc.start();
+            osc.stop(
+                this.ctx.currentTime + duration
+            );
+
+        } catch(e) {}
+    }
+
+    playSelect() {
+        this.playTone(440,"sine",.08,.035);
+    }
+
+    playConfirm() {
+        this.playTone(880,"square",.12,.03);
+    }
+
+    playGlitch() {
+        this.playTone(110,"sawtooth",.15,.05);
+    }
+
+    playStep() {
+        this.playTone(70,"triangle",.045,.018);
+    }
+
+    playRadio() {
+        this.playTone(580,"sine",.18,.04);
+    }
+
+    playAlert() {
+        this.playTone(180,"sawtooth",.25,.07);
+        setTimeout(() => {
+            this.playTone(120,"sawtooth",.25,.06);
+        },120);
+    }
+
+    startMenuMusic() {
+
+        this.init();
+
+        if (this.isMusicPlaying || !this.enabled)
+            return;
+
+        this.isMusicPlaying = true;
+        this.musicStep = 0;
+
+        const notes = [
+            55,55,58,55,
+            52,55,49,52
+        ];
+
+        this.musicTimer = setInterval(() => {
+
+            if (!this.isMusicPlaying) return;
+
+            const freq =
+                notes[this.musicStep % notes.length];
+
+            this.playTone(
+                freq,
+                "sawtooth",
+                .30,
+                .025
+            );
+
+            if (this.musicStep % 4 === 0) {
+
+                this.playTone(
+                    180,
+                    "sine",
+                    .12,
+                    .018
+                );
+            }
+
+            if (this.musicStep % 8 === 7) {
+
+                this.playTone(
+                    440,
+                    "triangle",
+                    .20,
+                    .012
+                );
+            }
+
+            this.musicStep++;
+
+        },380);
+    }
+
+    stopMenuMusic() {
+
+        this.isMusicPlaying = false;
+
+        if (this.musicTimer) {
+            clearInterval(this.musicTimer);
+            this.musicTimer = null;
+        }
+    }
+}
+
+const AudioFX = new SoundSystem();
+
+
+/* =========================================================
+   GERENCIADOR DE ESTADOS
+========================================================= */
+
+class AppManager {
+
+    constructor() {
+
+        this.currentState = "screen-main-menu";
+        this.difficulty = "NORMAL";
+        this.isPaused = false;
+        this.optionsFromPause = false;
+    }
+
+    showScreen(screenId) {
+
+        AudioFX.init();
+        AudioFX.playSelect();
+
+        document
+            .querySelectorAll(".ui-screen")
+            .forEach(screen =>
+                screen.classList.add("hidden")
+            );
+
+        const target =
+            document.getElementById(screenId);
+
+        if (target) {
+            target.classList.remove("hidden");
+            this.currentState = screenId;
+        }
+
+        const hud =
+            document.getElementById("hud-layer");
+
+        if (screenId === "gameplay") {
+
+            hud.classList.remove("hidden");
+            AudioFX.stopMenuMusic();
+
+        } else {
+
+            if (
+                screenId !== "screen-pause" &&
+                screenId !== "screen-defeat"
+            ) {
+                AudioFX.startMenuMusic();
+            }
+
+            if (screenId !== "screen-pause") {
+                hud.classList.add("hidden");
+            }
+        }
+    }
+
+    startBootSequence() {
+
+        AudioFX.init();
+        AudioFX.playConfirm();
+
+        this.showScreen("screen-boot");
+
+        const text =
+            document.getElementById("boot-text");
+
+        const steps = [
+            "SYSTEM INITIALIZING...",
+            "CONNECTION...",
+            "SECURE CHANNEL...",
+            "OPERATION // BLACK OBSIDIAN"
+        ];
+
+        let index = 0;
+
+        const interval = setInterval(() => {
+
+            index++;
+
+            if (index < steps.length) {
+
+                text.innerText = steps[index];
+                AudioFX.playGlitch();
+
+            } else {
+
+                clearInterval(interval);
+                this.showScreen("screen-briefing");
+            }
+
+        },550);
+    }
+
+    toggleDifficulty() {
+
+        AudioFX.playSelect();
+
+        const button =
+            document.getElementById("btn-diff");
+
+        const description =
+            document.getElementById("diff-desc");
+
+        if (this.difficulty === "NORMAL") {
+
+            this.difficulty = "EXTREMO";
+
+            button.innerText = "EXTREMO";
+
+            description.innerText =
+                "Uma configuração mais difícil, semelhante aos desafios enfrentados por muitos agentes na vida real.";
+
+        } else {
+
+            this.difficulty = "NORMAL";
+
+            button.innerText = "NORMAL";
+
+            description.innerText =
+                "Uma experiência comum e padrão feita para os jogadores.";
+        }
+
+        Game.applyDifficulty();
+    }
+
+    backFromOptions() {
+
+        if (this.optionsFromPause) {
+
+            this.optionsFromPause = false;
+            this.showScreen("screen-pause");
+
+        } else {
+
+            this.showScreen("screen-main-menu");
+        }
+    }
+
+    openOptionsFromPause() {
+
+        this.optionsFromPause = true;
+        this.showScreen("screen-options");
+    }
+
+    enterGameplay() {
+
+        AudioFX.init();
+        AudioFX.playConfirm();
+
+        document
+            .querySelectorAll(".ui-screen")
+            .forEach(screen =>
+                screen.classList.add("hidden")
+            );
+
+        document
+            .getElementById("hud-layer")
+            .classList.remove("hidden");
+
+        this.currentState = "gameplay";
+        this.isPaused = false;
+
+        AudioFX.stopMenuMusic();
+
+        Game.initMission();
+    }
+
+    pauseGame() {
+
+        if (
+            this.currentState !== "gameplay" ||
+            this.isPaused
+        ) return;
+
+        AudioFX.playSelect();
+
+        this.isPaused = true;
+
+        document
+            .getElementById("screen-pause")
+            .classList.remove("hidden");
+    }
+
+    resumeGame() {
+
+        AudioFX.playSelect();
+
+        this.isPaused = false;
+
+        document
+            .getElementById("screen-pause")
+            .classList.add("hidden");
+
+        this.currentState = "gameplay";
+    }
+
+    triggerDefeat() {
+
+        if (
+            this.currentState !== "gameplay"
+        ) return;
+
+        AudioFX.playAlert();
+
+        this.currentState = "defeat";
+
+        document
+            .getElementById("screen-defeat")
+            .classList.remove("hidden");
+
+        document
+            .getElementById("hud-status")
+            .innerText = "DETECTED";
+
+        document
+            .getElementById("hud-status")
+            .style.color =
+                "var(--accent-red)";
+
+        document
+            .getElementById("detection-alert")
+            .classList.remove("hidden");
+    }
+
+    restartMission() {
+
+        document
+            .getElementById("screen-defeat")
+            .classList.add("hidden");
+
+        document
+            .getElementById("detection-alert")
+            .classList.add("hidden");
+
+        this.enterGameplay();
+    }
+
+    exitToMenu() {
+
+        this.isPaused = false;
+
+        Game.resetTransientUI();
+
+        this.showScreen("screen-main-menu");
+    }
+
+    exitGame() {
+
+        /*
+         * Navegadores normalmente impedem uma página
+         * de fechar a própria aba.
+         * Por isso mostramos uma mensagem de sistema.
          */
-        class AppManager {
-            constructor() {
-                this.currentState = 'screen-main-menu';
-                this.previousState = '';
-                this.difficulty = 'NORMAL'; // NORMAL / EXTREMO
-                this.isPaused = false;
-            }
 
-            showScreen(screenId) {
-                AudioFX.init();
-                AudioFX.playSelect();
-                
-                this.previousState = this.currentState;
-                document.querySelectorAll('.ui-screen').forEach(s => s.classList.add('hidden'));
-                
-                const target = document.getElementById(screenId);
-                if (target) {
-                    target.classList.remove('hidden');
-                    this.currentState = screenId;
+        AudioFX.playSelect();
+
+        alert(
+            "THE DARK JEWEL // PROTOTYPE 0.2\n\nSistema encerrado."
+        );
+    }
+}
+
+const App = new AppManager();
+
+
+/* =========================================================
+   GAME ENGINE
+========================================================= */
+
+class GameEngine {
+
+    constructor() {
+
+        this.canvas =
+            document.getElementById("gameCanvas");
+
+        this.ctx =
+            this.canvas.getContext("2d");
+
+        /* -------------------------
+           PLAYER
+        ------------------------- */
+
+        this.player = {
+
+            x:90,
+            y:300,
+
+            radius:10,
+
+            speed:2.2,
+
+            dir:"RIGHT"
+        };
+
+
+        /* -------------------------
+           INIMIGO
+        ------------------------- */
+
+        this.enemy = {
+
+            x:520,
+            y:150,
+
+            radius:11,
+
+            speed:1.2,
+
+            pA:{x:520,y:150},
+            pB:{x:520,y:450},
+
+            currentTarget:null,
+
+            angle:Math.PI/2,
+
+            fov:Math.PI/3,
+
+            viewDist:110
+        };
+
+
+        /* -------------------------
+           MAPA
+        ------------------------- */
+
+        this.walls = [
+
+            /* Limites */
+
+            {x:40,y:40,w:720,h:20},
+            {x:40,y:540,w:720,h:20},
+            {x:40,y:40,w:20,h:520},
+            {x:740,y:40,w:20,h:520},
+
+            /* Divisões internas */
+
+            {x:260,y:40,w:20,h:360},
+            {x:420,y:180,w:20,h:380}
+        ];
+
+
+        /* -------------------------
+           OBJETOS
+        ------------------------- */
+
+        this.interactables = [
+
+            {
+                id:"terminal",
+                x:180,
+                y:80,
+                w:35,
+                h:25,
+                text:"TERMINAL BLOQUEADO."
+            },
+
+            {
+                id:"desk",
+                x:120,
+                y:450,
+                w:55,
+                h:35,
+                text:"Documentos sem identificação."
+            },
+
+            {
+                id:"door",
+                x:260,
+                y:400,
+                w:20,
+                h:70,
+                text:"ACESSO RESTRITO."
+            },
+
+            {
+                id:"crates",
+                x:620,
+                y:300,
+                w:45,
+                h:45,
+                text:"CAIXAS DE SUPRIMENTOS DA BASE."
+            }
+        ];
+
+
+        this.keys = {};
+
+        this.currentInteractable = null;
+
+        this.radioOpen = false;
+
+        this.stepTimer = 0;
+
+        this.messageTimer = null;
+
+        this.detectionTimer = 0;
+
+        this.detecting = false;
+
+        this.setupInputs();
+    }
+
+
+    /* =====================================================
+       INPUT
+    ===================================================== */
+
+    setupInputs() {
+
+        window.addEventListener("keydown",e => {
+
+            const key =
+                e.key.toLowerCase();
+
+            this.keys[key] = true;
+
+            if (
+                App.currentState === "gameplay" &&
+                !App.isPaused
+            ) {
+
+                if (key === "e")
+                    this.interact();
+
+                if (key === "r")
+                    this.toggleRadio();
+
+                if (
+                    key === "escape" ||
+                    key === "p"
+                ) {
+                    App.pauseGame();
                 }
-
-                const hud = document.getElementById('hud-layer');
-                if (screenId === 'gameplay') {
-                    hud.classList.remove('hidden');
-                } else if (screenId !== 'screen-pause') {
-                    hud.classList.add('hidden');
-                }
             }
+        });
 
-            startBootSequence() {
-                AudioFX.init();
-                AudioFX.playConfirm();
-                this.showScreen('screen-boot');
-                
-                const textEl = document.getElementById('boot-text');
-                const steps = [
-                    "SYSTEM INITIALIZING...",
-                    "CONNECTION...",
-                    "SECURE CHANNEL...",
-                    "OPERATION // BLACK OBSIDIAN"
-                ];
 
-                let idx = 0;
-                const interval = setInterval(() => {
-                    idx++;
-                    if (idx < steps.length) {
-                        textEl.innerText = steps[idx];
-                        AudioFX.playGlitch();
-                    } else {
-                        clearInterval(interval);
-                        this.showScreen('screen-briefing');
-                    }
-                }, 600);
-            }
+        window.addEventListener("keyup",e => {
 
-            toggleDifficulty() {
-                AudioFX.playSelect();
-                const btn = document.getElementById('btn-diff');
-                const desc = document.getElementById('diff-desc');
-                
-                if (this.difficulty === 'NORMAL') {
-                    this.difficulty = 'EXTREMO';
-                    btn.innerText = 'EXTREMO';
-                    desc.innerText = '"Uma configuração mais difícil, semelhante aos desafios enfrentados por muitos agentes na vida real."';
-                } else {
-                    this.difficulty = 'NORMAL';
-                    btn.innerText = 'NORMAL';
-                    desc.innerText = '"Uma experiência comum e padrão feita para os jogadores."';
-                }
-            }
+            this.keys[
+                e.key.toLowerCase()
+            ] = false;
+        });
 
-            backFromOptions() {
-                if (this.isPaused) {
-                    this.showScreen('screen-pause');
-                } else {
-                    this.showScreen('screen-main-menu');
-                }
-            }
 
-            enterGameplay() {
-                AudioFX.playConfirm();
-                document.querySelectorAll('.ui-screen').forEach(s => s.classList.add('hidden'));
-                document.getElementById('hud-layer').classList.remove('hidden');
-                this.currentState = 'gameplay';
-                this.isPaused = false;
-                Game.reset();
-            }
+        const bindTouch = (id,key) => {
 
-            pauseGame() {
-                if (this.currentState === 'gameplay') {
-                    AudioFX.playSelect();
-                    this.isPaused = true;
-                    document.getElementById('screen-pause').classList.remove('hidden');
-                }
-            }
+            const element =
+                document.getElementById(id);
 
-            resumeGame() {
-                AudioFX.playSelect();
-                this.isPaused = false;
-                document.getElementById('screen-pause').classList.add('hidden');
-                this.currentState = 'gameplay';
-            }
+            if (!element) return;
 
-            exitToMenu() {
-                this.isPaused = false;
-                this.showScreen('screen-main-menu');
+            const start = e => {
+
+                e.preventDefault();
+
+                this.keys[key] = true;
+            };
+
+            const end = e => {
+
+                e.preventDefault();
+
+                this.keys[key] = false;
+            };
+
+            element.addEventListener(
+                "touchstart",
+                start,
+                {passive:false}
+            );
+
+            element.addEventListener(
+                "touchend",
+                end,
+                {passive:false}
+            );
+
+            element.addEventListener(
+                "touchcancel",
+                end,
+                {passive:false}
+            );
+
+            element.addEventListener(
+                "mousedown",
+                () => this.keys[key] = true
+            );
+
+            element.addEventListener(
+                "mouseup",
+                () => this.keys[key] = false
+            );
+
+            element.addEventListener(
+                "mouseleave",
+                () => this.keys[key] = false
+            );
+        };
+
+
+        bindTouch("btn-up","w");
+        bindTouch("btn-down","s");
+        bindTouch("btn-left","a");
+        bindTouch("btn-right","d");
+
+
+        document
+            .getElementById("btn-interact")
+            .addEventListener(
+                "click",
+                () => this.interact()
+            );
+
+
+        document
+            .getElementById("btn-radio")
+            .addEventListener(
+                "click",
+                () => this.toggleRadio()
+            );
+
+
+        document
+            .getElementById("btn-pause")
+            .addEventListener(
+                "click",
+                () => App.pauseGame()
+            );
+    }
+
+
+    /* =====================================================
+       MISSÃO
+    ===================================================== */
+
+    initMission() {
+
+        this.player.x = 90;
+        this.player.y = 300;
+        this.player.dir = "RIGHT";
+
+        this.enemy.x = this.enemy.pA.x;
+        this.enemy.y = this.enemy.pA.y;
+
+        this.enemy.currentTarget =
+            this.enemy.pB;
+
+        this.detectionTimer = 0;
+        this.detecting = false;
+
+        this.currentInteractable = null;
+
+        this.resetTransientUI();
+
+        this.applyDifficulty();
+
+        /*
+         * Fala inicial única de Katherine.
+         */
+
+        this.radioOpen = true;
+
+        document
+            .getElementById("radio-display")
+            .classList.remove("hidden");
+
+        document
+            .getElementById("radio-text")
+            .innerText =
+                "Agora você pode sair daí... Rápido!";
+
+        AudioFX.playRadio();
+    }
+
+
+    applyDifficulty() {
+
+        if (App.difficulty === "NORMAL") {
+
+            this.enemy.speed = 1.2;
+            this.enemy.viewDist = 110;
+            this.enemy.fov = Math.PI / 3;
+
+        } else {
+
+            this.enemy.speed = 1.6;
+            this.enemy.viewDist = 135;
+            this.enemy.fov = Math.PI / 2.8;
+        }
+    }
+
+
+    resetTransientUI() {
+
+        this.radioOpen = false;
+
+        document
+            .getElementById("radio-display")
+            .classList.add("hidden");
+
+        document
+            .getElementById("message-display")
+            .classList.add("hidden");
+
+        document
+            .getElementById("interact-prompt")
+            .classList.add("hidden");
+
+        document
+            .getElementById("detection-alert")
+            .classList.add("hidden");
+    }
+
+
+    /* =====================================================
+       RÁDIO
+    ===================================================== */
+
+    toggleRadio() {
+
+        AudioFX.playRadio();
+
+        this.radioOpen =
+            !this.radioOpen;
+
+        const radio =
+            document.getElementById(
+                "radio-display"
+            );
+
+        if (this.radioOpen) {
+
+            radio.classList.remove(
+                "hidden"
+            );
+
+        } else {
+
+            radio.classList.add(
+                "hidden"
+            );
+        }
+    }
+
+
+    /* =====================================================
+       INTERAÇÃO
+    ===================================================== */
+
+    interact() {
+
+        if (!this.currentInteractable)
+            return;
+
+        AudioFX.playConfirm();
+
+        const message =
+            document.getElementById(
+                "message-display"
+            );
+
+        message.innerText =
+            this.currentInteractable.text;
+
+        message.classList.remove(
+            "hidden"
+        );
+
+        clearTimeout(
+            this.messageTimer
+        );
+
+        this.messageTimer =
+            setTimeout(() => {
+
+                message.classList.add(
+                    "hidden"
+                );
+
+            },2200);
+    }
+
+
+    /* =====================================================
+       UPDATE
+    ===================================================== */
+
+    update() {
+
+        if (
+            App.currentState !== "gameplay" ||
+            App.isPaused
+        ) return;
+
+
+        /* -------------------------
+           MOVIMENTO BUCK
+        ------------------------- */
+
+        let dx = 0;
+        let dy = 0;
+
+        if (
+            this.keys["w"] ||
+            this.keys["arrowup"]
+        ) {
+            dy -= 1;
+            this.player.dir = "UP";
+        }
+
+        if (
+            this.keys["s"] ||
+            this.keys["arrowdown"]
+        ) {
+            dy += 1;
+            this.player.dir = "DOWN";
+        }
+
+        if (
+            this.keys["a"] ||
+            this.keys["arrowleft"]
+        ) {
+            dx -= 1;
+            this.player.dir = "LEFT";
+        }
+
+        if (
+            this.keys["d"] ||
+            this.keys["arrowright"]
+        ) {
+            dx += 1;
+            this.player.dir = "RIGHT";
+        }
+
+        if (
+            dx !== 0 &&
+            dy !== 0
+        ) {
+            dx *= .7071;
+            dy *= .7071;
+        }
+
+
+        if (
+            dx !== 0 ||
+            dy !== 0
+        ) {
+
+            this.stepTimer++;
+
+            if (
+                this.stepTimer % 18 === 0
+            ) {
+                AudioFX.playStep();
             }
         }
 
-        const App = new AppManager();
 
-        /**
-         * SISTEMA DE JOGO (ENGINE DRAFT // GAMEPLAY DE TESTE)
+        const nextX =
+            this.player.x +
+            dx * this.player.speed;
+
+        const nextY =
+            this.player.y +
+            dy * this.player.speed;
+
+
+        if (
+            !this.checkWallCollision(
+                nextX,
+                this.player.y,
+                this.player.radius
+            )
+        ) {
+            this.player.x = nextX;
+        }
+
+
+        if (
+            !this.checkWallCollision(
+                this.player.x,
+                nextY,
+                this.player.radius
+            )
+        ) {
+            this.player.y = nextY;
+        }
+
+
+        /* -------------------------
+           PATRULHA
+        ------------------------- */
+
+        const edx =
+            this.enemy.currentTarget.x -
+            this.enemy.x;
+
+        const edy =
+            this.enemy.currentTarget.y -
+            this.enemy.y;
+
+        const distance =
+            Math.hypot(edx,edy);
+
+
+        if (distance < 3) {
+
+            this.enemy.currentTarget =
+                this.enemy.currentTarget ===
+                this.enemy.pA
+                    ? this.enemy.pB
+                    : this.enemy.pA;
+
+        } else {
+
+            this.enemy.x +=
+                (edx / distance) *
+                this.enemy.speed;
+
+            this.enemy.y +=
+                (edy / distance) *
+                this.enemy.speed;
+
+            this.enemy.angle =
+                Math.atan2(edy,edx);
+        }
+
+
+        /* -------------------------
+           DETECÇÃO
+        ------------------------- */
+
+        if (this.checkEnemyDetection()) {
+
+            this.detectionTimer++;
+
+            this.detecting = true;
+
+            document
+                .getElementById(
+                    "detection-alert"
+                )
+                .classList.remove(
+                    "hidden"
+                );
+
+            document
+                .getElementById(
+                    "hud-status"
+                )
+                .innerText =
+                    "ALERT";
+
+            document
+                .getElementById(
+                    "hud-status"
+                )
+                .style.color =
+                    "var(--accent-yellow)";
+
+
+            /*
+             * Pequena margem para o jogador
+             * reagir antes da derrota.
+             */
+
+            if (
+                this.detectionTimer > 20
+            ) {
+                App.triggerDefeat();
+            }
+
+        } else {
+
+            this.detectionTimer = 0;
+
+            this.detecting = false;
+
+            document
+                .getElementById(
+                    "detection-alert"
+                )
+                .classList.add(
+                    "hidden"
+                );
+
+            document
+                .getElementById(
+                    "hud-status"
+                )
+                .innerText =
+                    "STEALTH";
+
+            document
+                .getElementById(
+                    "hud-status"
+                )
+                .style.color =
+                    "var(--accent-green)";
+        }
+
+
+        this.checkInteractions();
+    }
+
+
+    /* =====================================================
+       COLISÃO
+    ===================================================== */
+
+    checkWallCollision(
+        x,
+        y,
+        radius
+    ) {
+
+        for (
+            const wall of this.walls
+        ) {
+
+            const closestX =
+                Math.max(
+                    wall.x,
+                    Math.min(
+                        x,
+                        wall.x + wall.w
+                    )
+                );
+
+            const closestY =
+                Math.max(
+                    wall.y,
+                    Math.min(
+                        y,
+                        wall.y + wall.h
+                    )
+                );
+
+            const distX =
+                x - closestX;
+
+            const distY =
+                y - closestY;
+
+            if (
+                distX * distX +
+                distY * distY <
+                radius * radius
+            ) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+
+    /* =====================================================
+       DETECÇÃO
+    ===================================================== */
+
+    checkEnemyDetection() {
+
+        const dx =
+            this.player.x -
+            this.enemy.x;
+
+        const dy =
+            this.player.y -
+            this.enemy.y;
+
+        const distance =
+            Math.hypot(dx,dy);
+
+
+        if (
+            distance >
+            this.enemy.viewDist
+        ) {
+            return false;
+        }
+
+
+        let angleToPlayer =
+            Math.atan2(dy,dx);
+
+        let difference =
+            angleToPlayer -
+            this.enemy.angle;
+
+
+        while (
+            difference < -Math.PI
+        ) {
+            difference +=
+                Math.PI * 2;
+        }
+
+        while (
+            difference > Math.PI
+        ) {
+            difference -=
+                Math.PI * 2;
+        }
+
+
+        if (
+            Math.abs(difference) >
+            this.enemy.fov / 2
+        ) {
+            return false;
+        }
+
+
+        /*
+         * VERIFICAÇÃO REAL DA LINHA DE VISÃO.
+         *
+         * Em vez de apenas comparar caixas,
+         * testamos a linha entre guarda e Buck
+         * contra cada parede.
          */
-        class GameEngine {
-            constructor() {
-                this.canvas = document.getElementById('gameCanvas');
-                this.ctx = this.canvas.getContext('2d');
-                
-                // Entidades e Ambiente
-                this.player = { x: 100, y: 300, size: 16, speed: 2.5, color: '#0088ff' };
-                this.walls = [
-                    { x: 50, y: 50, w: 700, h: 20 },
-                    { x: 50, y: 530, w: 700, h: 20 },
-                    { x: 50, y: 50, w: 20, h: 500 },
-                    { x: 730, y: 50, w: 20, h: 500 },
-                    { x: 350, y: 50, w: 20, h: 320 } // Divisória central
-                ];
 
-                this.interactables = [
-                    { id: 'terminal', x: 200, y: 100, w: 40, h: 30, text: 'TERMINAL BLOQUEADO.' },
-                    { id: 'desk', x: 150, y: 400, w: 60, h: 40, text: 'BUCK: "Apenas papéis confidenciais sem uso."' },
-                    { id: 'door', x: 350, y: 370, w: 20, h: 80, text: 'PORTA TRANCADA ELETRONICAMENTE.' },
-                    { id: 'object', x: 550, y: 200, w: 30, h: 30, text: 'CAIXA DE SUPRIMENTOS VAZIA.' }
-                ];
+        for (
+            const wall of this.walls
+        ) {
 
-                // Input State
-                this.keys = {};
-                this.currentInteractable = null;
-                this.radioOpen = false;
-                this.stepTimer = 0;
-
-                this.setupInputs();
-            }
-
-            setupInputs() {
-                window.addEventListener('keydown', e => {
-                    this.keys[e.key.toLowerCase()] = true;
-
-                    if (App.currentState === 'gameplay' && !App.isPaused) {
-                        if (e.key === 'e' || e.key === 'E') this.interact();
-                        if (e.key === 'r' || e.key === 'R') this.toggleRadio();
-                        if (e.key === 'Escape' || e.key === 'p' || e.key === 'P') App.pauseGame();
-                    }
-                });
-
-                window.addEventListener('keyup', e => {
-                    this.keys[e.key.toLowerCase()] = false;
-                });
-
-                // Mapeamento Mobile
-                const bindTouch = (id, key) => {
-                    const el = document.getElementById(id);
-                    if (!el) return;
-                    el.addEventListener('touchstart', (e) => { e.preventDefault(); this.keys[key] = true; });
-                    el.addEventListener('touchend', (e) => { e.preventDefault(); this.keys[key] = false; });
-                };
-
-                bindTouch('btn-up', 'w');
-                bindTouch('btn-down', 's');
-                bindTouch('btn-left', 'a');
-                bindTouch('btn-right', 'd');
-
-                document.getElementById('btn-interact').addEventListener('click', () => this.interact());
-                document.getElementById('btn-radio').addEventListener('click', () => this.toggleRadio());
-                document.getElementById('btn-pause').addEventListener('click', () => App.pauseGame());
-            }
-
-            reset() {
-                this.player.x = 120;
-                this.player.y = 300;
-                this.radioOpen = false;
-                document.getElementById('radio-display').classList.add('hidden');
-            }
-
-            toggleRadio() {
-                AudioFX.playRadio();
-                this.radioOpen = !this.radioOpen;
-                const radioEl = document.getElementById('radio-display');
-                if (this.radioOpen) {
-                    radioEl.classList.remove('hidden');
-                } else {
-                    radioEl.classList.add('hidden');
-                }
-            }
-
-            interact() {
-                if (this.currentInteractable) {
-                    AudioFX.playConfirm();
-                    this.radioOpen = true;
-                    document.getElementById('radio-display').classList.remove('hidden');
-                    document.getElementById('radio-text').innerText = this.currentInteractable.text;
-                }
-            }
-
-            update() {
-                if (App.currentState !== 'gameplay' || App.isPaused) return;
-
-                let dx = 0;
-                let dy = 0;
-
-                if (this.keys['w'] || this.keys['arrowup']) dy -= 1;
-                if (this.keys['s'] || this.keys['arrowdown']) dy += 1;
-                if (this.keys['a'] || this.keys['arrowleft']) dx -= 1;
-                if (this.keys['d'] || this.keys['arrowright']) dx += 1;
-
-                const isShift = this.keys['shift'];
-                const currentSpeed = isShift ? this.player.speed * 1.5 : this.player.speed;
-
-                if (dx !== 0 && dy !== 0) {
-                    dx *= 0.7071;
-                    dy *= 0.7071;
-                }
-
-                // Som de passos simples
-                if (dx !== 0 || dy !== 0) {
-                    this.stepTimer++;
-                    if (this.stepTimer % (isShift ? 12 : 20) === 0) {
-                        AudioFX.playStep();
-                    }
-                }
-
-                // Checar colisões e mover
-                const nextX = this.player.x + dx * currentSpeed;
-                const nextY = this.player.y + dy * currentSpeed;
-
-                if (!this.checkWallCollision(nextX, this.player.y)) this.player.x = nextX;
-                if (!this.checkWallCollision(this.player.x, nextY)) this.player.y = nextY;
-
-                // Checar proximidade de interação
-                this.checkInteractions();
-            }
-
-            checkWallCollision(x, y) {
-                const pMinX = x - this.player.size / 2;
-                const pMaxX = x + this.player.size / 2;
-                const pMinY = y - this.player.size / 2;
-                const pMaxY = y + this.player.size / 2;
-
-                for (let wall of this.walls) {
-                    if (pMaxX > wall.x && pMinX < wall.x + wall.w &&
-                        pMaxY > wall.y && pMinY < wall.y + wall.h) {
-                        return true;
-                    }
-                }
+            if (
+                this.segmentIntersectsRect(
+                    this.enemy.x,
+                    this.enemy.y,
+                    this.player.x,
+                    this.player.y,
+                    wall
+                )
+            ) {
                 return false;
             }
+        }
 
-            checkInteractions() {
-                this.currentInteractable = null;
-                const promptEl = document.getElementById('interact-prompt');
+        return true;
+    }
 
-                for (let item of this.interactables) {
-                    const dist = Math.hypot(
-                        this.player.x - (item.x + item.w / 2),
-                        this.player.y - (item.y + item.h / 2)
-                    );
 
-                    if (dist < 50) {
-                        this.currentInteractable = item;
-                        promptEl.classList.remove('hidden');
-                        return;
-                    }
-                }
-                promptEl.classList.add('hidden');
-            }
+    /* =====================================================
+       GEOMETRIA DE VISÃO
+    ===================================================== */
 
-            render() {
-                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    segmentIntersectsRect(
+        x1,y1,
+        x2,y2,
+        rect
+    ) {
 
-                if (App.currentState !== 'gameplay' && App.currentState !== 'screen-pause') return;
+        /*
+         * Se o ponto final já estiver dentro
+         * do retângulo, consideramos bloqueado.
+         */
 
-                // Renderizar Sala / Piso
-                this.ctx.fillStyle = '#0b0f17';
-                this.ctx.fillRect(50, 50, 700, 500);
+        if (
+            this.pointInRect(
+                x2,y2,rect
+            )
+        ) {
+            return true;
+        }
 
-                // Linhas de Grade Tática
-                this.ctx.strokeStyle = '#121824';
-                this.ctx.lineWidth = 1;
-                for (let x = 50; x < 750; x += 40) {
-                    this.ctx.beginPath();
-                    this.ctx.moveTo(x, 50); this.ctx.lineTo(x, 550);
-                    this.ctx.stroke();
-                }
 
-                // Renderizar Paredes
-                this.ctx.fillStyle = '#1a2332';
-                this.ctx.strokeStyle = '#2a384e';
-                for (let wall of this.walls) {
-                    this.ctx.fillRect(wall.x, wall.y, wall.w, wall.h);
-                    this.ctx.strokeRect(wall.x, wall.y, wall.w, wall.h);
-                }
+        const edges = [
 
-                // Renderizar Objetos Interativos
-                for (let item of this.interactables) {
-                    this.ctx.fillStyle = '#1e2d42';
-                    this.ctx.fillRect(item.x, item.y, item.w, item.h);
-                    this.ctx.strokeStyle = '#0088ff';
-                    this.ctx.strokeRect(item.x, item.y, item.w, item.h);
-                }
+            [
+                rect.x,
+                rect.y,
+                rect.x + rect.w,
+                rect.y
+            ],
 
-                // Renderizar Agente Buck
-                this.ctx.save();
-                this.ctx.fillStyle = this.player.color;
-                this.ctx.shadowColor = '#0088ff';
-                this.ctx.shadowBlur = 8;
-                
-                // Corpo humano estilizado simples (Círculo + Indicador de Visão)
-                this.ctx.beginPath();
-                this.ctx.arc(this.player.x, this.player.y, this.player.size / 2, 0, Math.PI * 2);
-                this.ctx.fill();
+            [
+                rect.x + rect.w,
+                rect.y,
+                rect.x + rect.w,
+                rect.y + rect.h
+            ],
 
-                this.ctx.fillStyle = '#ffffff';
-                this.ctx.font = '9px Courier New';
-                this.ctx.textAlign = 'center';
-                this.ctx.fillText('BUCK', this.player.x, this.player.y - 12);
-                this.ctx.restore();
-            }
+            [
+                rect.x + rect.w,
+                rect.y + rect.h,
+                rect.x,
+                rect.y + rect.h
+            ],
 
-            loop() {
-                this.update();
-                this.render();
-                requestAnimationFrame(() => this.loop());
+            [
+                rect.x,
+                rect.y + rect.h,
+                rect.x,
+                rect.y
+            ]
+        ];
+
+
+        for (
+            const edge of edges
+        ) {
+
+            if (
+                this.segmentsIntersect(
+                    x1,y1,
+                    x2,y2,
+                    edge[0],
+                    edge[1],
+                    edge[2],
+                    edge[3]
+                )
+            ) {
+                return true;
             }
         }
 
-        const Game = new GameEngine();
-        Game.loop();
-    </script>
+        return false;
+    }
+
+
+    pointInRect(
+        x,y,rect
+    ) {
+
+        return (
+            x >= rect.x &&
+            x <= rect.x + rect.w &&
+            y >= rect.y &&
+            y <= rect.y + rect.h
+        );
+    }
+
+
+    segmentsIntersect(
+        x1,y1,
+        x2,y2,
+        x3,y3,
+        x4,y4
+    ) {
+
+        const denominator =
+            (y4-y3)*(x2-x1) -
+            (x4-x3)*(y2-y1);
+
+        if (
+            Math.abs(denominator) <
+            0.00001
+        ) {
+            return false;
+        }
+
+        const ua =
+            (
+                (x4-x3)*(y1-y3) -
+                (y4-y3)*(x1-x3)
+            ) / denominator;
+
+        const ub =
+            (
+                (x2-x1)*(y1-y3) -
+                (y2-y1)*(x1-x3)
+            ) / denominator;
+
+        return (
+            ua >= 0 &&
+            ua <= 1 &&
+            ub >= 0 &&
+            ub <= 1
+        );
+    }
+
+
+    /* =====================================================
+       INTERAÇÕES
+    ===================================================== */
+
+    checkInteractions() {
+
+        this.currentInteractable = null;
+
+        const prompt =
+            document.getElementById(
+                "interact-prompt"
+            );
+
+        for (
+            const item of this.interactables
+        ) {
+
+            const centerX =
+                item.x + item.w / 2;
+
+            const centerY =
+                item.y + item.h / 2;
+
+            const distance =
+                Math.hypot(
+                    this.player.x - centerX,
+                    this.player.y - centerY
+                );
+
+
+            if (distance < 45) {
+
+                this.currentInteractable =
+                    item;
+
+                prompt.classList.remove(
+                    "hidden"
+                );
+
+                return;
+            }
+        }
+
+        prompt.classList.add(
+            "hidden"
+        );
+    }
+
+
+    /* =====================================================
+       RENDER
+    ===================================================== */
+
+    render() {
+
+        this.ctx.clearRect(
+            0,
+            0,
+            this.canvas.width,
+            this.canvas.height
+        );
+
+
+        if (
+            App.currentState !== "gameplay" &&
+            App.currentState !== "screen-pause" &&
+            App.currentState !== "defeat"
+        ) {
+            return;
+        }
+
+
+        /* FUNDO */
+
+        this.ctx.fillStyle =
+            "#0a0d14";
+
+        this.ctx.fillRect(
+            40,40,720,520
+        );
+
+
+        /* GRID */
+
+        this.ctx.strokeStyle =
+            "#121926";
+
+        this.ctx.lineWidth = 1;
+
+        for (
+            let x=40;
+            x<760;
+            x+=40
+        ) {
+
+            this.ctx.beginPath();
+
+            this.ctx.moveTo(x,40);
+            this.ctx.lineTo(x,560);
+
+            this.ctx.stroke();
+        }
+
+
+        for (
+            let y=40;
+            y<560;
+            y+=40
+        ) {
+
+            this.ctx.beginPath();
+
+            this.ctx.moveTo(40,y);
+            this.ctx.lineTo(760,y);
+
+            this.ctx.stroke();
+        }
+
+
+        /* PAREDES */
+
+        this.ctx.fillStyle =
+            "#161f2e";
+
+        this.ctx.strokeStyle =
+            "#27364d";
+
+        for (
+            const wall of this.walls
+        ) {
+
+            this.ctx.fillRect(
+                wall.x,
+                wall.y,
+                wall.w,
+                wall.h
+            );
+
+            this.ctx.strokeRect(
+                wall.x,
+                wall.y,
+                wall.w,
+                wall.h
+            );
+        }
+
+
+        /* OBJETOS */
+
+        for (
+            const item of this.interactables
+        ) {
+
+            this.ctx.fillStyle =
+                "#1c2838";
+
+            this.ctx.fillRect(
+                item.x,
+                item.y,
+                item.w,
+                item.h
+            );
+
+            this.ctx.strokeStyle =
+                "#0088ff";
+
+            this.ctx.strokeRect(
+                item.x,
+                item.y,
+                item.w,
+                item.h
+            );
+        }
+
+
+        /* =================================================
+           CAMPO DE VISÃO
+        ================================================= */
+
+        this.ctx.save();
+
+        this.ctx.beginPath();
+
+        this.ctx.moveTo(
+            this.enemy.x,
+            this.enemy.y
+        );
+
+        this.ctx.arc(
+            this.enemy.x,
+            this.enemy.y,
+            this.enemy.viewDist,
+            this.enemy.angle -
+                this.enemy.fov / 2,
+            this.enemy.angle +
+                this.enemy.fov / 2
+        );
+
+        this.ctx.closePath();
+
+        this.ctx.fillStyle =
+            this.detecting
+                ? "rgba(255,42,63,.20)"
+                : "rgba(255,204,0,.12)";
+
+        this.ctx.fill();
+
+        this.ctx.restore();
+
+
+        /* =================================================
+           INIMIGO
+        ================================================= */
+
+        this.ctx.save();
+
+        /*
+         * Corpo
+         */
+
+        this.ctx.fillStyle =
+            "#202630";
+
+        this.ctx.fillRect(
+            this.enemy.x - 8,
+            this.enemy.y - 5,
+            16,
+            14
+        );
+
+
+        /*
+         * Cabeça / capacete
+         */
+
+        this.ctx.fillStyle =
+            "#303743";
+
+        this.ctx.beginPath();
+
+        this.ctx.arc(
+            this.enemy.x,
+            this.enemy.y - 7,
+            7,
+            0,
+            Math.PI*2
+        );
+
+        this.ctx.fill();
+
+
+        /*
+         * Direção / visor
+         */
+
+        this.ctx.fillStyle =
+            "#ff2a3f";
+
+        this.ctx.beginPath();
+
+        this.ctx.arc(
+            this.enemy.x +
+                Math.cos(this.enemy.angle)*6,
+            this.enemy.y - 7 +
+                Math.sin(this.enemy.angle)*3,
+            2.5,
+            0,
+            Math.PI*2
+        );
+
+        this.ctx.fill();
+
+
+        this.ctx.strokeStyle =
+            "#ff2a3f";
+
+        this.ctx.lineWidth = 1.5;
+
+        this.ctx.strokeRect(
+            this.enemy.x - 9,
+            this.enemy.y - 15,
+            18,
+            25
+        );
+
+        this.ctx.restore();
+
+
+        /* =================================================
+           BUCK
+        ================================================= */
+
+        this.ctx.save();
+
+
+        /*
+         * Corpo
+         */
+
+        this.ctx.fillStyle =
+            "#111622";
+
+        this.ctx.fillRect(
+            this.player.x - 7,
+            this.player.y - 4,
+            14,
+            15
+        );
+
+
+        /*
+         * Cabeça
+         */
+
+        this.ctx.fillStyle =
+            "#d7b29b";
+
+        this.ctx.beginPath();
+
+        this.ctx.arc(
+            this.player.x,
+            this.player.y - 9,
+            6,
+            0,
+            Math.PI*2
+        );
+
+        this.ctx.fill();
+
+
+        /*
+         * Cabelo loiro
+         */
+
+        this.ctx.fillStyle =
+            "#d6b34b";
+
+        this.ctx.beginPath();
+
+        this.ctx.arc(
+            this.player.x,
+            this.player.y - 12,
+            5.5,
+            Math.PI,
+            Math.PI*2
+        );
+
+        this.ctx.fill();
+
+
+        /*
+         * Contorno azul
+         */
+
+        this.ctx.strokeStyle =
+            "#0088ff";
+
+        this.ctx.lineWidth = 1.3;
+
+        this.ctx.strokeRect(
+            this.player.x - 9,
+            this.player.y - 16,
+            18,
+            29
+        );
+
+
+        /*
+         * Direção
+         */
+
+        this.ctx.fillStyle =
+            "#0088ff";
+
+        let eyeX = 0;
+        let eyeY = 0;
+
+        if (this.player.dir === "RIGHT")
+            eyeX = 4;
+
+        if (this.player.dir === "LEFT")
+            eyeX = -4;
+
+        if (this.player.dir === "UP")
+            eyeY = -3;
+
+        if (this.player.dir === "DOWN")
+            eyeY = 3;
+
+        this.ctx.fillRect(
+            this.player.x + eyeX - 1,
+            this.player.y - 9 + eyeY,
+            2,
+            2
+        );
+
+
+        /*
+         * Nome
+         */
+
+        this.ctx.fillStyle =
+            "#ffffff";
+
+        this.ctx.font =
+            "bold 9px Courier New";
+
+        this.ctx.textAlign =
+            "center";
+
+        this.ctx.fillText(
+            "BUCK",
+            this.player.x,
+            this.player.y - 22
+        );
+
+        this.ctx.restore();
+    }
+
+
+    /* =====================================================
+       LOOP
+    ===================================================== */
+
+    loop() {
+
+        this.update();
+        this.render();
+
+        requestAnimationFrame(
+            () => this.loop()
+        );
+    }
+}
+
+
+const Game =
+    new GameEngine();
+
+Game.loop();
+
+</script>
+
 </body>
-</html>
+    </html>
