@@ -1,0 +1,377 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+
+html,
+body {
+
+    width: 100%;
+    height: 100%;
+
+    background-color: #05070a;
+
+    color: #c4d0e0;
+
+    font-family:
+        "Courier New",
+        Courier,
+        monospace;
+
+    overflow: hidden;
+
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
+
+}
+
+
+button {
+    font-family: inherit;
+}
+
+
+/* =================================
+   CONTAINER
+================================= */
+
+#game-container {
+
+    position: relative;
+
+    width: 800px;
+    height: 600px;
+
+    background: #000;
+
+    border: 2px solid #0088ff;
+
+    box-shadow:
+        0 0 20px
+        rgba(0, 136, 255, 0.2);
+
+    overflow: hidden;
+
+}
+
+
+canvas {
+
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    background-color: #0a0d12;
+
+}
+
+
+/* =================================
+   CRT / ATMOSFERA
+================================= */
+
+#scanlines {
+
+    position: absolute;
+
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    background:
+        linear-gradient(
+            rgba(18, 16, 16, 0) 50%,
+            rgba(0, 0, 0, 0.25) 50%
+        );
+
+    background-size:
+        100% 4px;
+
+    z-index: 10;
+
+    pointer-events: none;
+
+}
+
+
+#vignette {
+
+    position: absolute;
+
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    background:
+        radial-gradient(
+            circle,
+            transparent 60%,
+            rgba(0, 0, 0, 0.8) 100%
+        );
+
+    z-index: 11;
+
+    pointer-events: none;
+
+}
+
+
+/* =================================
+   TELAS
+================================= */
+
+.screen {
+
+    position: absolute;
+
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100%;
+
+    display: none;
+
+    flex-direction: column;
+
+    justify-content: center;
+    align-items: center;
+
+    background:
+        rgba(5, 7, 10, 0.95);
+
+    z-index: 20;
+
+    padding: 20px;
+
+    text-align: center;
+
+}
+
+
+.screen.active {
+    display: flex;
+}
+
+
+/* =================================
+   TIPOGRAFIA
+================================= */
+
+h1 {
+
+    font-size: 1.8rem;
+
+    color: #0088ff;
+
+    margin-bottom: 10px;
+
+    letter-spacing: 2px;
+
+}
+
+
+.subtitle {
+
+    font-size: 0.8rem;
+
+    color: #ffcc00;
+
+    margin-bottom: 20px;
+
+    letter-spacing: 1px;
+
+}
+
+
+.danger {
+    color: #ff2a3f;
+}
+
+
+.success {
+    color: #00ff66;
+}
+
+
+/* =================================
+   BOTÕES
+================================= */
+
+.btn {
+
+    background: #001a33;
+
+    color: #0088ff;
+
+    border: 1px solid #0088ff;
+
+    padding: 10px 20px;
+
+    font-family: inherit;
+
+    font-size: 1rem;
+
+    cursor: pointer;
+
+    margin-top: 15px;
+
+    transition:
+        all 0.2s;
+
+}
+
+
+.btn:hover {
+
+    background: #0088ff;
+
+    color: #000;
+
+}
+
+
+/* =================================
+   HUD
+================================= */
+
+#hud {
+
+    position: absolute;
+
+    top: 10px;
+
+    left: 10px;
+    right: 10px;
+
+    display: flex;
+
+    justify-content:
+        space-between;
+
+    pointer-events: none;
+
+    z-index: 15;
+
+    font-size: 0.85rem;
+
+}
+
+
+.hud-panel {
+
+    background:
+        rgba(0, 0, 0, 0.6);
+
+    border:
+        1px solid
+        rgba(0, 136, 255, 0.4);
+
+    padding:
+        5px 10px;
+
+}
+
+
+/* =================================
+   CONTROLES MOBILE
+================================= */
+
+#mobile-controls {
+
+    position: absolute;
+
+    bottom: 10px;
+
+    left: 10px;
+    right: 10px;
+
+    display: none;
+
+    justify-content:
+        space-between;
+
+    align-items:
+        flex-end;
+
+    z-index: 15;
+
+}
+
+
+#dpad {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 40px);
+
+    gap: 5px;
+
+}
+
+
+.touch-btn {
+
+    width: 50px;
+    height: 50px;
+
+    background:
+        rgba(0, 136, 255, 0.2);
+
+    border:
+        1px solid #0088ff;
+
+    color: #fff;
+
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
+
+    border-radius: 50%;
+
+    touch-action: manipulation;
+
+}
+
+
+.crouch-btn {
+
+    width: 60px;
+    height: 60px;
+
+}
+
+
+/* =================================
+   MOBILE
+================================= */
+
+@media (max-width: 812px) {
+
+    #mobile-controls {
+        display: flex;
+    }
+
+
+    #game-container {
+
+        width: 100vw;
+        height: 100vh;
+
+        border: none;
+
+    }
+
+}
