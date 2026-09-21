@@ -1,272 +1,205 @@
-window.VisionSystem = {
+window.MissionSystem = {
 
-    drawGuardVisionCone(ctx, guard) {
+    name:
+        "OPERATION // NO DARK",
 
-        ctx.save();
+    id:
+        "MISSION 01",
 
+    location:
+        "BASE DINAMARQUESA",
 
-        const x = guard.x;
-        const y = guard.y;
+    agent:
+        "BUCK",
 
+    hasDocument:
+        false,
 
-        const viewDist =
-            guard.viewDist ??
-            guard.vision ??
-            235;
-
-
-        const fov =
-            guard.fov ??
-            (Math.PI * 0.9);
-
-
-        const angle =
-            guard.angle ??
-            guard.directionAngle ??
-            0;
-
-
-        const isAlert =
-            guard.alert ||
-            guard.state === "alert";
-
-
-        /*
-         * Gradiente
-         */
-
-        const gradient =
-            ctx.createRadialGradient(
-                x,
-                y,
-                8,
-                x,
-                y,
-                viewDist
-            );
-
-
-        if (isAlert) {
-
-            gradient.addColorStop(
-                0,
-                "rgba(255, 0, 0, 0.6)"
-            );
-
-            gradient.addColorStop(
-                0.5,
-                "rgba(255, 0, 0, 0.25)"
-            );
-
-            gradient.addColorStop(
-                1,
-                "rgba(255, 0, 0, 0)"
-            );
-
-        }
-
-        else {
-
-            gradient.addColorStop(
-                0,
-                "rgba(255, 42, 63, 0.32)"
-            );
-
-            gradient.addColorStop(
-                0.45,
-                "rgba(255, 42, 63, 0.14)"
-            );
-
-            gradient.addColorStop(
-                0.75,
-                "rgba(255, 42, 63, 0.055)"
-            );
-
-            gradient.addColorStop(
-                1,
-                "rgba(255, 42, 63, 0)"
-            );
-
-        }
-
-
-        /*
-         * Cone
-         */
-
-        ctx.beginPath();
-
-        ctx.moveTo(x, y);
-
-        ctx.arc(
-            x,
-            y,
-            viewDist,
-            angle - fov / 2,
-            angle + fov / 2
-        );
-
-        ctx.closePath();
-
-
-        ctx.fillStyle = gradient;
-
-        ctx.fill();
-
-
-        ctx.restore();
-
+    documentArea: {
+        x: 420,
+        y: 300,
+        w: 28,
+        h: 28
     },
 
+    extractionArea: {
+        x: 700,
+        y: 500,
+        w: 45,
+        h: 45
+    },
 
-    isPlayerDetected(
-        player,
-        guard,
-        walls
-    ) {
+    init() {
+        this.reset();
+    },
 
-        const gx = guard.x;
-        const gy = guard.y;
+    reset() {
 
+        this.hasDocument =
+            false;
+    },
 
-        const px =
-            player.x +
-            player.w / 2;
+    update(player) {
 
-
-        const py =
-            player.y +
-            player.h / 2;
-
-
-        const dx =
-            px - gx;
-
-
-        const dy =
-            py - gy;
-
-
-        const dist =
-            Math.hypot(dx, dy);
-
-
-        const viewDist =
-            guard.viewDist ??
-            guard.vision ??
-            235;
-
-
-        /*
-         * Fora do alcance
-         */
-
-        if (
-            dist > viewDist
-        ) {
-            return false;
-        }
-
-
-        /*
-         * Agachado
-         */
-
-        if (
-            player.isCrouching &&
-            dist > viewDist * 0.5
-        ) {
-
-            return false;
-
-        }
-
-
-        /*
-         * Ângulo
-         */
-
-        const angleToPlayer =
-            Math.atan2(dy, dx);
-
-
-        const guardAngle =
-            guard.angle ??
-            guard.directionAngle ??
-            0;
-
-
-        const fov =
-            guard.fov ??
-            (Math.PI * 0.9);
-
-
-        let diff =
-            angleToPlayer -
-            guardAngle;
-
-
-        while (
-            diff < -Math.PI
-        ) {
-
-            diff +=
-                Math.PI * 2;
-
-        }
-
-
-        while (
-            diff > Math.PI
-        ) {
-
-            diff -=
-                Math.PI * 2;
-
-        }
-
-
-        if (
-            Math.abs(diff) >
-            fov / 2
-        ) {
-
-            return false;
-
-        }
-
-
-        /*
-         * Linha de visão
-         */
-
-        for (
-            const wall of walls
-        ) {
+        if (!this.hasDocument) {
 
             if (
-                CollisionSystem.lineIntersectsRect(
-                    {
-                        x: gx,
-                        y: gy
-                    },
-                    {
-                        x: px,
-                        y: py
-                    },
-                    wall
+                CollisionSystem.rectsOverlap(
+                    player,
+                    this.documentArea
                 )
             ) {
 
-                return false;
+                this.hasDocument =
+                    true;
 
+                AudioSystem.playTone(
+                    880,
+                    "sine",
+                    0.15,
+                    0.12
+                );
+
+                UISystem.updateObjective(
+                    "OBJETIVO: VÁ PARA A EXTRAÇÃO"
+                );
             }
 
+        } else {
+
+            if (
+                CollisionSystem.rectsOverlap(
+                    player,
+                    this.extractionArea
+                )
+            ) {
+
+                Game.triggerVictory();
+            }
+        }
+    },
+
+    draw(ctx) {
+
+        /*
+         * OBJETIVO
+         */
+        if (!this.hasDocument) {
+
+            const cx =
+                this.documentArea.x + 14;
+
+            const cy =
+                this.documentArea.y + 14;
+
+            ctx.save();
+
+            ctx.shadowColor =
+                "#5b9bd5";
+
+            ctx.shadowBlur = 10;
+
+            ctx.fillStyle =
+                "#5b9bd5";
+
+            ctx.beginPath();
+
+            ctx.moveTo(
+                cx,
+                cy - 11
+            );
+
+            ctx.lineTo(
+                cx + 9,
+                cy
+            );
+
+            ctx.lineTo(
+                cx,
+                cy + 11
+            );
+
+            ctx.lineTo(
+                cx - 9,
+                cy
+            );
+
+            ctx.closePath();
+
+            ctx.fill();
+
+            ctx.shadowBlur = 0;
+
+            ctx.fillStyle =
+                "#e1e8ef";
+
+            ctx.fillRect(
+                cx - 2,
+                cy - 2,
+                4,
+                4
+            );
+
+            ctx.restore();
         }
 
+        /*
+         * EXTRAÇÃO
+         */
+        const ext =
+            this.extractionArea;
 
-        return true;
+        ctx.fillStyle =
+            this.hasDocument
+                ? "rgba(110,180,135,0.14)"
+                : "rgba(80,90,100,0.08)";
 
+        ctx.fillRect(
+            ext.x,
+            ext.y,
+            ext.w,
+            ext.h
+        );
+
+        ctx.strokeStyle =
+            this.hasDocument
+                ? "#72b88a"
+                : "#59616b";
+
+        ctx.lineWidth = 2;
+
+        ctx.strokeRect(
+            ext.x,
+            ext.y,
+            ext.w,
+            ext.h
+        );
+
+        /*
+         * Símbolo de saída.
+         */
+        ctx.fillStyle =
+            this.hasDocument
+                ? "#72b88a"
+                : "#59616b";
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+            ext.x + 13,
+            ext.y + 11
+        );
+
+        ctx.lineTo(
+            ext.x + 30,
+            ext.y + 22
+        );
+
+        ctx.lineTo(
+            ext.x + 13,
+            ext.y + 33
+        );
+
+        ctx.fill();
     }
-
 };
