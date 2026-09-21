@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 
 <title>THE DARK JEWEL // NO DARK</title>
 
@@ -14,11 +14,13 @@
     -webkit-tap-highlight-color:transparent;
 }
 
-body{
-    background:#05070a;
-    color:#dce3e8;
-    font-family:Arial,Helvetica,sans-serif;
+html,body{
+    width:100%;
+    height:100%;
     overflow:hidden;
+    background:#05070a;
+    color:#d8e0e5;
+    font-family:Arial,Helvetica,sans-serif;
     touch-action:none;
 }
 
@@ -26,19 +28,36 @@ body{
     width:100vw;
     height:100vh;
     display:flex;
-    justify-content:center;
     align-items:center;
-    background:#05070a;
+    justify-content:center;
+    position:relative;
 }
 
-#gameCanvas{
-    width:min(100vw,1100px);
+canvas{
+    width:min(100vw,1066px);
     height:auto;
     max-height:100vh;
     aspect-ratio:4/3;
-    background:#1c2024;
+    background:#171b1e;
+    border:1px solid #303940;
     image-rendering:auto;
-    border:1px solid #30383d;
+}
+
+#scanlines{
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+
+    background:
+        repeating-linear-gradient(
+            to bottom,
+            rgba(255,255,255,.018) 0px,
+            rgba(255,255,255,.018) 1px,
+            transparent 1px,
+            transparent 4px
+        );
+
+    mix-blend-mode:screen;
 }
 
 /* =========================
@@ -48,68 +67,149 @@ body{
 .screen{
     position:absolute;
     inset:0;
+
     display:flex;
     align-items:center;
     justify-content:center;
+
     pointer-events:none;
 }
 
 .panel{
-    pointer-events:auto;
-    background:rgba(5,8,11,.94);
-    border:1px solid #46515a;
-    box-shadow:0 0 35px rgba(0,0,0,.65);
+    width:min(92%,440px);
+
+    background:rgba(4,7,10,.95);
+
+    border:1px solid #46525b;
+
+    box-shadow:
+        0 0 35px rgba(0,0,0,.7);
+
     padding:28px;
-    width:min(90%,430px);
+
+    pointer-events:auto;
 }
 
 .logo{
-    font-size:clamp(28px,7vw,54px);
-    letter-spacing:5px;
-    font-weight:900;
     text-align:center;
-    margin-bottom:5px;
+
+    font-size:clamp(27px,7vw,54px);
+
+    letter-spacing:5px;
+
+    font-weight:900;
+
+    margin-bottom:6px;
 }
 
-.logo .blue{
-    color:#4c9dff;
+.logoBlue{
+    color:#4f9eff;
 }
 
-.logo .red{
-    color:#e64652;
+.logoRed{
+    color:#e14c59;
 }
 
 .subtitle{
     text-align:center;
-    color:#77838c;
-    font-size:12px;
+
+    color:#78858e;
+
+    font-size:11px;
+
     letter-spacing:4px;
+
     margin-bottom:30px;
 }
 
 button{
     width:100%;
-    min-height:48px;
-    margin:6px 0;
-    background:#11171c;
-    color:#dce3e8;
-    border:1px solid #3b464e;
-    cursor:pointer;
-    font-weight:bold;
-    letter-spacing:1px;
-}
 
-button:hover{
-    background:#182127;
-    border-color:#6c7b86;
+    min-height:48px;
+
+    margin:6px 0;
+
+    background:#11181d;
+
+    border:1px solid #3c484f;
+
+    color:#dce3e7;
+
+    font-weight:bold;
+
+    letter-spacing:1px;
+
+    cursor:pointer;
 }
 
 button:active{
-    background:#26333c;
+    background:#28343b;
+}
+
+button:hover{
+    border-color:#6a7881;
+    background:#182127;
 }
 
 .hidden{
     display:none!important;
+}
+
+/* =========================
+   RADIO
+========================= */
+
+#radioPanel{
+    width:min(92%,560px);
+
+    background:rgba(3,6,9,.96);
+
+    border:1px solid #40505b;
+
+    box-shadow:
+        0 0 40px rgba(0,0,0,.8);
+
+    padding:22px;
+
+    pointer-events:auto;
+}
+
+.radioHeader{
+    color:#6faeff;
+
+    font-size:11px;
+
+    letter-spacing:3px;
+
+    margin-bottom:15px;
+}
+
+.radioLine{
+    border-left:2px solid #4f9eff;
+
+    padding:12px 15px;
+
+    background:rgba(60,90,110,.08);
+
+    line-height:1.6;
+
+    min-height:70px;
+}
+
+.radioName{
+    color:#81baff;
+
+    font-weight:bold;
+
+    font-size:12px;
+
+    margin-bottom:5px;
+}
+
+.radioText{
+    color:#cbd4d9;
+
+    font-size:14px;
 }
 
 /* =========================
@@ -118,145 +218,177 @@ button:active{
 
 #hud{
     position:absolute;
+
     top:10px;
     left:10px;
     right:10px;
+
     display:none;
+
     justify-content:space-between;
+
     pointer-events:none;
-    font-size:12px;
+
+    font-size:11px;
 }
 
 .hudBox{
     background:rgba(3,6,8,.78);
-    border:1px solid #3d474e;
+
+    border:1px solid #39454d;
+
     padding:8px 10px;
 }
 
 #objective{
-    max-width:330px;
+    max-width:340px;
 }
 
 #status{
-    color:#78b7ff;
+    color:#72b2ff;
+
+    margin-top:3px;
 }
 
 /* =========================
-   CONTROLES MOBILE
+   CONTROLES
 ========================= */
 
 #mobileControls{
     position:absolute;
+
     inset:0;
-    display:none;
+
     pointer-events:none;
+
+    display:none;
 }
 
 #joystick{
     position:absolute;
-    left:22px;
-    bottom:25px;
-    width:130px;
-    height:130px;
+
+    left:20px;
+    bottom:24px;
+
+    width:132px;
+    height:132px;
+
     border-radius:50%;
-    background:rgba(80,95,105,.16);
+
+    background:rgba(90,105,115,.14);
+
     border:2px solid rgba(170,185,195,.28);
+
     pointer-events:auto;
+
     touch-action:none;
 }
 
 #joystick::after{
     content:"";
+
     position:absolute;
-    inset:13px;
+
+    inset:14px;
+
     border-radius:50%;
-    border:1px solid rgba(180,190,200,.12);
+
+    border:1px solid rgba(200,210,220,.10);
 }
 
 #stick{
     position:absolute;
-    width:54px;
-    height:54px;
+
+    width:52px;
+    height:52px;
+
     left:38px;
     top:38px;
+
     border-radius:50%;
-    background:rgba(100,125,140,.48);
-    border:2px solid rgba(190,205,215,.45);
-    box-shadow:0 0 12px rgba(0,0,0,.5);
-    transition:transform .04s linear;
+
+    background:rgba(95,120,135,.52);
+
+    border:2px solid rgba(200,210,220,.42);
+
+    box-shadow:0 0 14px rgba(0,0,0,.45);
+
     z-index:2;
 }
 
 .mobileButton{
     position:absolute;
+
     width:62px;
     height:62px;
+
     border-radius:50%;
-    pointer-events:auto;
+
     display:flex;
-    justify-content:center;
+
     align-items:center;
-    background:rgba(20,25,30,.75);
-    border:1px solid rgba(180,190,200,.4);
-    color:#dce3e8;
-    font-size:11px;
+    justify-content:center;
+
+    background:rgba(16,21,25,.82);
+
+    border:1px solid rgba(185,195,205,.38);
+
+    color:#dce4e8;
+
+    font-size:10px;
+
+    pointer-events:auto;
+
     user-select:none;
 }
 
-#crouchButton{
-    right:100px;
-    bottom:32px;
+#actionButton{
+    right:25px;
+    bottom:100px;
 }
 
-#actionButton{
-    right:28px;
-    bottom:98px;
+#crouchButton{
+    right:98px;
+    bottom:28px;
 }
 
 #pauseButton{
-    right:25px;
-    top:25px;
-    width:45px;
-    height:45px;
-    font-size:16px;
+    right:22px;
+    top:22px;
+
+    width:44px;
+    height:44px;
+
+    font-size:14px;
 }
 
 /* =========================
-   MENSAGENS
+   MENSAGEM
 ========================= */
 
 #message{
     position:absolute;
+
     left:50%;
-    bottom:30px;
+    bottom:28px;
+
     transform:translateX(-50%);
-    padding:9px 15px;
-    background:rgba(4,7,9,.88);
-    border:1px solid #414b52;
-    color:#c9d3d9;
-    font-size:12px;
+
+    background:rgba(3,6,8,.9);
+
+    border:1px solid #45515a;
+
+    padding:9px 16px;
+
+    color:#cbd4d9;
+
+    font-size:11px;
+
     opacity:0;
+
     transition:opacity .2s;
-    pointer-events:none;
-}
 
-/* =========================
-   SCANLINES
-========================= */
-
-#scanlines{
-    position:absolute;
-    inset:0;
     pointer-events:none;
-    background:
-        repeating-linear-gradient(
-            to bottom,
-            rgba(255,255,255,.018) 0px,
-            rgba(255,255,255,.018) 1px,
-            transparent 1px,
-            transparent 4px
-        );
-    mix-blend-mode:screen;
 }
 
 /* =========================
@@ -264,24 +396,30 @@ button:active{
 ========================= */
 
 @media(max-width:800px){
+
     #mobileControls{
         display:block;
     }
 
     #hud{
-        font-size:10px;
+        font-size:9px;
     }
 
     #objective{
-        max-width:230px;
+        max-width:235px;
     }
 
     .panel{
         padding:20px;
     }
+
+    .radioText{
+        font-size:13px;
+    }
 }
 
 @media(min-width:801px){
+
     #mobileControls{
         display:none!important;
     }
@@ -293,209 +431,344 @@ button:active{
 
 <div id="game">
 
-    <canvas id="gameCanvas" width="800" height="600"></canvas>
+<canvas id="gameCanvas" width="800" height="600"></canvas>
 
-    <div id="scanlines"></div>
+<div id="scanlines"></div>
 
-    <!-- MENU -->
 
-    <div id="menuScreen" class="screen">
-        <div class="panel">
+<!-- =========================
+     MENU
+========================= -->
 
-            <div class="logo">
-                <span class="blue">THE DARK</span>
-                <span class="red">JEWEL</span>
-            </div>
+<div id="menuScreen" class="screen">
 
-            <div class="subtitle">
-                OPERATION // NO DARK
-            </div>
+    <div class="panel">
 
-            <button id="startButton">
-                INICIAR MISSÃO
-            </button>
-
-            <button id="optionsButton">
-                OPÇÕES
-            </button>
-
-            <button id="creditsButton">
-                CRÉDITOS
-            </button>
-
-        </div>
-    </div>
-
-    <!-- OPÇÕES -->
-
-    <div id="optionsScreen" class="screen hidden">
-        <div class="panel">
-
-            <h2>OPÇÕES</h2>
-
-            <p style="margin:20px 0;color:#87939b;font-size:13px;">
-                Configurações básicas da operação.
-            </p>
-
-            <button id="audioButton">
-                ÁUDIO: LIGADO
-            </button>
-
-            <button id="backOptions">
-                VOLTAR
-            </button>
-
-        </div>
-    </div>
-
-    <!-- CRÉDITOS -->
-
-    <div id="creditsScreen" class="screen hidden">
-        <div class="panel">
-
-            <h2>CRÉDITOS</h2>
-
-            <p style="margin-top:25px;line-height:1.8;color:#aab5bc;">
-                Autor: O Escritor<br>
-                Criador: Felipe<br><br>
-
-                UNIVERSO W.B.<br>
-                Departamento de Defesa Global
-            </p>
-
-            <button id="backCredits">
-                VOLTAR
-            </button>
-
-        </div>
-    </div>
-
-    <!-- GAME OVER -->
-
-    <div id="gameOverScreen" class="screen hidden">
-        <div class="panel">
-
-            <h2 style="color:#e64652;">
-                OPERAÇÃO FRACASSADA
-            </h2>
-
-            <p style="margin:20px 0;color:#8d999f;">
-                Buck foi detectado.
-            </p>
-
-            <button id="restartButton">
-                TENTAR NOVAMENTE
-            </button>
-
-            <button id="menuButton">
-                MENU PRINCIPAL
-            </button>
-
-        </div>
-    </div>
-
-    <!-- VITÓRIA -->
-
-    <div id="victoryScreen" class="screen hidden">
-        <div class="panel">
-
-            <h2 style="color:#62b4ff;">
-                EXTRAÇÃO CONCLUÍDA
-            </h2>
-
-            <p style="margin:20px 0;color:#9ba7ae;">
-                A Dark Jewel foi recuperada.
-            </p>
-
-            <button id="victoryRestart">
-                NOVA OPERAÇÃO
-            </button>
-
-            <button id="victoryMenu">
-                MENU PRINCIPAL
-            </button>
-
-        </div>
-    </div>
-
-    <!-- HUD -->
-
-    <div id="hud">
-
-        <div class="hudBox">
-            <div>OPERATION // NO DARK</div>
-            <div id="status">INFILTRAÇÃO</div>
+        <div class="logo">
+            <span class="logoBlue">THE DARK</span>
+            <span class="logoRed">JEWEL</span>
         </div>
 
-        <div id="objective" class="hudBox">
-            OBJETIVO: LOCALIZAR A DARK JEWEL
+        <div class="subtitle">
+            OPERATION // NO DARK
         </div>
+
+        <button id="startButton">
+            INICIAR MISSÃO
+        </button>
+
+        <button id="optionsButton">
+            OPÇÕES
+        </button>
+
+        <button id="creditsButton">
+            CRÉDITOS
+        </button>
 
     </div>
-
-    <!-- CONTROLES -->
-
-    <div id="mobileControls">
-
-        <div id="joystick">
-            <div id="stick"></div>
-        </div>
-
-        <div
-            id="crouchButton"
-            class="mobileButton">
-            AGACHAR
-        </div>
-
-        <div
-            id="actionButton"
-            class="mobileButton">
-            AÇÃO
-        </div>
-
-        <div
-            id="pauseButton"
-            class="mobileButton">
-            II
-        </div>
-
-    </div>
-
-    <div id="message"></div>
 
 </div>
+
+
+<!-- =========================
+     RÁDIO
+========================= -->
+
+<div id="radioScreen" class="screen hidden">
+
+    <div id="radioPanel">
+
+        <div class="radioHeader">
+            DDD // COMUNICAÇÃO SEGURA
+        </div>
+
+        <div class="radioLine">
+
+            <div class="radioName">
+                KATHERINE
+            </div>
+
+            <div
+                id="radioText"
+                class="radioText">
+            </div>
+
+        </div>
+
+        <button id="radioContinue">
+            PROSSEGUIR
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     OPÇÕES
+========================= -->
+
+<div id="optionsScreen" class="screen hidden">
+
+    <div class="panel">
+
+        <h2>OPÇÕES</h2>
+
+        <p style="
+            color:#8a969d;
+            font-size:13px;
+            line-height:1.6;
+            margin:20px 0;
+        ">
+            Configurações básicas da operação.
+        </p>
+
+        <button id="audioButton">
+            ÁUDIO: LIGADO
+        </button>
+
+        <button id="backOptions">
+            VOLTAR
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     CRÉDITOS
+========================= -->
+
+<div id="creditsScreen" class="screen hidden">
+
+    <div class="panel">
+
+        <h2>CRÉDITOS</h2>
+
+        <p style="
+            margin-top:22px;
+            line-height:1.8;
+            color:#aeb9bf;
+        ">
+            Autor: O Escritor<br>
+            Criador: Felipe<br><br>
+
+            UNIVERSO W.B.<br>
+            Departamento de Defesa Global
+        </p>
+
+        <button id="backCredits">
+            VOLTAR
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     GAME OVER
+========================= -->
+
+<div id="gameOverScreen" class="screen hidden">
+
+    <div class="panel">
+
+        <h2 style="color:#df4c59;">
+            OPERAÇÃO FRACASSADA
+        </h2>
+
+        <p style="
+            color:#909ba1;
+            margin:20px 0;
+        ">
+            Buck foi detectado.
+        </p>
+
+        <button id="restartButton">
+            TENTAR NOVAMENTE
+        </button>
+
+        <button id="menuButton">
+            MENU PRINCIPAL
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     VITÓRIA
+========================= -->
+
+<div id="victoryScreen" class="screen hidden">
+
+    <div class="panel">
+
+        <h2 style="color:#62b4ff;">
+            OPERAÇÃO CONCLUÍDA
+        </h2>
+
+        <p style="
+            color:#a0adb4;
+            margin:20px 0;
+        ">
+            O arquivo foi recuperado.
+        </p>
+
+        <button id="victoryRestart">
+            NOVA OPERAÇÃO
+        </button>
+
+        <button id="victoryMenu">
+            MENU PRINCIPAL
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     HUD
+========================= -->
+
+<div id="hud">
+
+    <div class="hudBox">
+
+        <div>
+            OPERATION // NO DARK
+        </div>
+
+        <div id="status">
+            INFILTRAÇÃO
+        </div>
+
+    </div>
+
+    <div
+        id="objective"
+        class="hudBox">
+        OBJETIVO: ENCONTRAR O ARQUIVO CENTRAL
+    </div>
+
+</div>
+
+
+<!-- =========================
+     MOBILE
+========================= -->
+
+<div id="mobileControls">
+
+    <div id="joystick">
+        <div id="stick"></div>
+    </div>
+
+    <div
+        id="actionButton"
+        class="mobileButton">
+        AÇÃO
+    </div>
+
+    <div
+        id="crouchButton"
+        class="mobileButton">
+        AGACHAR
+    </div>
+
+    <div
+        id="pauseButton"
+        class="mobileButton">
+        II
+    </div>
+
+</div>
+
+
+<div id="message"></div>
+
+</div>
+
 
 <script>
 "use strict";
 
 /* =========================================================
-   CONFIGURAÇÕES
+   CANVAS
 ========================================================= */
 
-const canvas = document.getElementById("gameCanvas");
-const ctx = canvas.getContext("2d");
+const canvas =
+    document.getElementById("gameCanvas");
+
+const ctx =
+    canvas.getContext("2d");
 
 const WORLD = {
     width:800,
     height:600
 };
 
+
+/* =========================================================
+   TECLADO
+========================================================= */
+
 const keys = {};
 
-window.addEventListener("keydown", e=>{
-    keys[e.key.toLowerCase()] = true;
+window.addEventListener(
+    "keydown",
+    e=>{
 
-    if(
-        ["arrowup","arrowdown","arrowleft","arrowright"," "]
-        .includes(e.key.toLowerCase())
-    ){
-        e.preventDefault();
+        keys[e.key.toLowerCase()] = true;
+
+        if(
+            [
+                "arrowup",
+                "arrowdown",
+                "arrowleft",
+                "arrowright",
+                " "
+            ].includes(
+                e.key.toLowerCase()
+            )
+        ){
+            e.preventDefault();
+        }
+
+        if(e.key==="Escape"){
+
+            if(Game.running){
+                Game.pause();
+            }
+        }
+
+        if(
+            e.key===" " ||
+            e.key.toLowerCase()==="f"
+        ){
+
+            if(Game.running){
+
+                e.preventDefault();
+
+                Player.action(
+                    Game.enemies
+                );
+            }
+        }
     }
-});
+);
 
-window.addEventListener("keyup", e=>{
-    keys[e.key.toLowerCase()] = false;
-});
+window.addEventListener(
+    "keyup",
+    e=>{
+        keys[e.key.toLowerCase()] = false;
+    }
+);
 
 
 /* =========================================================
@@ -505,34 +778,51 @@ window.addEventListener("keyup", e=>{
 const AudioSystem = {
 
     ctx:null,
+
     enabled:true,
+
     lastStep:0,
+
+    ambient:null,
 
     init(){
 
         if(this.ctx) return;
 
         try{
-            this.ctx = new (window.AudioContext ||
-                window.webkitAudioContext)();
+
+            this.ctx =
+                new (
+                    window.AudioContext ||
+                    window.webkitAudioContext
+                )();
+
         }catch(e){
+
             this.enabled=false;
         }
     },
 
     resume(){
 
-        if(!this.ctx) this.init();
+        if(!this.ctx){
+            this.init();
+        }
 
         if(
             this.ctx &&
-            this.ctx.state === "suspended"
+            this.ctx.state==="suspended"
         ){
             this.ctx.resume();
         }
     },
 
-    tone(freq,duration,type="sine",volume=.035){
+    tone(
+        frequency,
+        duration,
+        type="sine",
+        volume=.03
+    ){
 
         if(!this.enabled) return;
 
@@ -540,82 +830,229 @@ const AudioSystem = {
 
         if(!this.ctx) return;
 
-        const osc = this.ctx.createOscillator();
-        const gain = this.ctx.createGain();
+        const osc =
+            this.ctx.createOscillator();
 
-        osc.type = type;
-        osc.frequency.value = freq;
+        const gain =
+            this.ctx.createGain();
 
-        gain.gain.setValueAtTime(volume,this.ctx.currentTime);
+        osc.type=type;
+
+        osc.frequency.value=frequency;
+
+        gain.gain.setValueAtTime(
+            volume,
+            this.ctx.currentTime
+        );
 
         gain.gain.exponentialRampToValueAtTime(
             .001,
-            this.ctx.currentTime + duration
+            this.ctx.currentTime+duration
         );
 
         osc.connect(gain);
-        gain.connect(this.ctx.destination);
+
+        gain.connect(
+            this.ctx.destination
+        );
 
         osc.start();
-        osc.stop(this.ctx.currentTime + duration);
+
+        osc.stop(
+            this.ctx.currentTime+duration
+        );
+    },
+
+    radioOpen(){
+
+        this.tone(
+            850,
+            .06,
+            "square",
+            .025
+        );
+
+        setTimeout(()=>{
+            this.tone(
+                620,
+                .06,
+                "square",
+                .02
+            );
+        },70);
+    },
+
+    radioClose(){
+
+        this.tone(
+            480,
+            .08,
+            "square",
+            .02
+        );
     },
 
     step(crouched=false){
 
-        const now = performance.now();
+        const now =
+            performance.now();
 
-        const interval = crouched ? 520 : 340;
+        const interval =
+            crouched
+            ? 540
+            : 315;
 
-        if(now-this.lastStep < interval) return;
+        if(
+            now-this.lastStep<
+            interval
+        ){
+            return;
+        }
 
-        this.lastStep = now;
+        this.lastStep=now;
+
+        /*
+         * Som curto e discreto.
+         */
 
         this.tone(
-            crouched ? 105 : 145,
-            .055,
+            crouched ? 90 : 125,
+            crouched ? .045 : .065,
             "triangle",
-            crouched ? .018 : .027
+            crouched ? .014 : .026
         );
+    },
+
+    objective(){
+
+        this.tone(
+            440,
+            .08,
+            "sine",
+            .025
+        );
+
+        setTimeout(()=>{
+            this.tone(
+                610,
+                .12,
+                "sine",
+                .025
+            );
+        },90);
     },
 
     alert(){
 
-        this.tone(280,.08,"square",.035);
+        this.tone(
+            310,
+            .08,
+            "square",
+            .04
+        );
 
         setTimeout(()=>{
-            this.tone(190,.12,"square",.025);
-        },90);
+            this.tone(
+                190,
+                .13,
+                "square",
+                .035
+            );
+        },100);
     },
 
-    takedown(){
+    action(){
 
-        this.tone(90,.08,"triangle",.035);
+        this.tone(
+            100,
+            .07,
+            "triangle",
+            .025
+        );
 
         setTimeout(()=>{
-            this.tone(60,.1,"triangle",.02);
+            this.tone(
+                70,
+                .09,
+                "triangle",
+                .018
+            );
         },80);
-    },
-
-    pickup(){
-
-        this.tone(440,.08,"sine",.035);
-
-        setTimeout(()=>{
-            this.tone(660,.12,"sine",.03);
-        },90);
     },
 
     victory(){
 
-        this.tone(330,.12,"sine",.04);
+        this.tone(
+            330,
+            .12,
+            "sine",
+            .035
+        );
 
         setTimeout(()=>{
-            this.tone(495,.12,"sine",.04);
-        },130);
+            this.tone(
+                495,
+                .12,
+                "sine",
+                .035
+            );
+        },120);
 
         setTimeout(()=>{
-            this.tone(660,.2,"sine",.04);
-        },260);
+            this.tone(
+                660,
+                .18,
+                "sine",
+                .035
+            );
+        },240);
+    },
+
+    startAmbient(){
+
+        if(
+            !this.enabled ||
+            !this.ctx ||
+            this.ambient
+        ){
+            return;
+        }
+
+        const osc =
+            this.ctx.createOscillator();
+
+        const gain =
+            this.ctx.createGain();
+
+        osc.type="sine";
+
+        osc.frequency.value=52;
+
+        gain.gain.value=.008;
+
+        osc.connect(gain);
+
+        gain.connect(
+            this.ctx.destination
+        );
+
+        osc.start();
+
+        this.ambient={
+            osc,
+            gain
+        };
+    },
+
+    stopAmbient(){
+
+        if(!this.ambient) return;
+
+        try{
+            this.ambient.osc.stop();
+        }catch(e){}
+
+        this.ambient=null;
     }
 };
 
@@ -626,7 +1063,7 @@ const AudioSystem = {
 
 const CollisionSystem = {
 
-    overlaps(a,b){
+    overlap(a,b){
 
         return (
             a.x < b.x+b.w &&
@@ -636,11 +1073,18 @@ const CollisionSystem = {
         );
     },
 
-    blocked(rect,walls){
+    blocked(rect,objects){
 
-        for(const wall of walls){
+        for(
+            const object of objects
+        ){
 
-            if(this.overlaps(rect,wall)){
+            if(
+                this.overlap(
+                    rect,
+                    object
+                )
+            ){
                 return true;
             }
         }
@@ -648,52 +1092,57 @@ const CollisionSystem = {
         return false;
     },
 
-    moveWithCollision(entity,dx,dy,walls){
+    move(entity,dx,dy,objects){
 
-        let nextX = {
+        const nextX={
             x:entity.x+dx,
             y:entity.y,
             w:entity.w,
             h:entity.h
         };
 
-        if(!this.blocked(nextX,walls)){
-            entity.x += dx;
+        if(
+            !this.blocked(
+                nextX,
+                objects
+            )
+        ){
+            entity.x+=dx;
         }
 
-        let nextY = {
+        const nextY={
             x:entity.x,
             y:entity.y+dy,
             w:entity.w,
             h:entity.h
         };
 
-        if(!this.blocked(nextY,walls)){
-            entity.y += dy;
+        if(
+            !this.blocked(
+                nextY,
+                objects
+            )
+        ){
+            entity.y+=dy;
         }
     },
 
-    pointInRect(point,rect){
+    segmentRect(p1,p2,rect){
 
-        return (
-            point.x>=rect.x &&
-            point.x<=rect.x+rect.w &&
-            point.y>=rect.y &&
-            point.y<=rect.y+rect.h
-        );
-    },
-
-    segmentIntersectsRect(p1,p2,rect){
-
-        const dx = p2.x-p1.x;
-        const dy = p2.y-p1.y;
+        const dx=p2.x-p1.x;
+        const dy=p2.y-p1.y;
 
         let t0=0;
         let t1=1;
 
-        const p = [-dx,dx,-dy,dy];
+        const p=[
+            -dx,
+            dx,
+            -dy,
+            dy
+        ];
 
-        const q = [
+        const q=[
             p1.x-rect.x,
             rect.x+rect.w-p1.x,
             p1.y-rect.y,
@@ -704,7 +1153,9 @@ const CollisionSystem = {
 
             if(p[i]===0){
 
-                if(q[i]<0) return false;
+                if(q[i]<0){
+                    return false;
+                }
 
             }else{
 
@@ -728,14 +1179,16 @@ const CollisionSystem = {
         return true;
     },
 
-    hasLineOfSight(p1,p2,walls){
+    lineOfSight(a,b,walls){
 
-        for(const wall of walls){
+        for(
+            const wall of walls
+        ){
 
             if(
-                this.segmentIntersectsRect(
-                    p1,
-                    p2,
+                this.segmentRect(
+                    a,
+                    b,
                     wall
                 )
             ){
@@ -749,761 +1202,27 @@ const CollisionSystem = {
 
 
 /* =========================================================
-   PLAYER / BUCK
-========================================================= */
-
-const Player = {
-
-    x:55,
-    y:510,
-
-    w:22,
-    h:22,
-
-    speed:2.35,
-
-    crouched:false,
-
-    angle:0,
-
-    moving:false,
-
-    reset(){
-
-        this.x=55;
-        this.y=510;
-        this.crouched=false;
-        this.angle=0;
-    },
-
-    center(){
-
-        return {
-            x:this.x+this.w/2,
-            y:this.y+this.h/2
-        };
-    },
-
-    update(walls){
-
-        let dx=0;
-        let dy=0;
-
-        if(keys["w"] || keys["arrowup"]) dy-=1;
-        if(keys["s"] || keys["arrowdown"]) dy+=1;
-        if(keys["a"] || keys["arrowleft"]) dx-=1;
-        if(keys["d"] || keys["arrowright"]) dx+=1;
-
-        dx += Joystick.x;
-        dy += Joystick.y;
-
-        const length=Math.hypot(dx,dy);
-
-        this.moving=length>.12;
-
-        if(length>1){
-
-            dx/=length;
-            dy/=length;
-        }
-
-        this.crouched =
-            keys["c"] ||
-            keys["shift"] ||
-            MobileControls.crouch;
-
-        const speed=this.crouched
-            ? this.speed*.55
-            : this.speed;
-
-        if(this.moving){
-
-            CollisionSystem.moveWithCollision(
-                this,
-                dx*speed,
-                dy*speed,
-                walls
-            );
-
-            this.angle=Math.atan2(dy,dx);
-
-            AudioSystem.step(this.crouched);
-        }
-
-        this.x=Math.max(31,Math.min(747,this.x));
-        this.y=Math.max(31,Math.min(547,this.y));
-    },
-
-    performTakedown(enemies){
-
-        const p=this.center();
-
-        for(const enemy of enemies){
-
-            if(enemy.eliminated) continue;
-
-            const e=enemy.center();
-
-            const dx=e.x-p.x;
-            const dy=e.y-p.y;
-
-            const distance=Math.hypot(dx,dy);
-
-            if(distance>40) continue;
-
-            /*
-             * Buck precisa estar atrás do inimigo.
-             *
-             * O vetor "para trás" do inimigo é
-             * contrário ao ângulo para o qual ele olha.
-             */
-
-            const behindAngle =
-                enemy.angle+Math.PI;
-
-            const angleToBuck =
-                Math.atan2(
-                    p.y-e.y,
-                    p.x-e.x
-                );
-
-            let difference =
-                angleToBuck-behindAngle;
-
-            while(difference>Math.PI)
-                difference-=Math.PI*2;
-
-            while(difference<-Math.PI)
-                difference+=Math.PI*2;
-
-            if(Math.abs(difference)<Math.PI*.7){
-
-                enemy.eliminated=true;
-
-                AudioSystem.takedown();
-
-                showMessage(
-                    "ALVO NEUTRALIZADO"
-                );
-
-                return;
-            }
-        }
-
-        showMessage(
-            "POSIÇÃO INADEQUADA"
-        );
-    },
-
-    draw(){
-
-        const p=this.center();
-
-        ctx.save();
-
-        ctx.translate(p.x,p.y);
-
-        /*
-         * Corpo estilizado.
-         */
-
-        ctx.fillStyle="#10171d";
-
-        ctx.fillRect(
-            -8,
-            -6,
-            16,
-            16
-        );
-
-        /*
-         * Mochila.
-         */
-
-        ctx.fillStyle="#28343b";
-
-        ctx.fillRect(
-            -11,
-            -5,
-            4,
-            12
-        );
-
-        /*
-         * Cabeça.
-         */
-
-        ctx.fillStyle="#d6b39a";
-
-        ctx.beginPath();
-
-        ctx.arc(
-            0,
-            -10,
-            6,
-            0,
-            Math.PI*2
-        );
-
-        ctx.fill();
-
-        /*
-         * Cabelo.
-         */
-
-        ctx.fillStyle="#d7c78e";
-
-        ctx.beginPath();
-
-        ctx.arc(
-            0,
-            -12,
-            6,
-            Math.PI,
-            Math.PI*2
-        );
-
-        ctx.fill();
-
-        /*
-         * Direção visual.
-         */
-
-        ctx.rotate(this.angle);
-
-        ctx.fillStyle="#202b32";
-
-        ctx.fillRect(
-            7,
-            -2,
-            7,
-            4
-        );
-
-        /*
-         * Pequeno indicador de direção.
-         */
-
-        ctx.fillStyle="#6faeff";
-
-        ctx.fillRect(
-            9,
-            -1,
-            2,
-            2
-        );
-
-        ctx.restore();
-
-        /*
-         * Indicador de agachamento.
-         */
-
-        if(this.crouched){
-
-            ctx.strokeStyle="rgba(100,170,220,.45)";
-            ctx.strokeRect(
-                this.x-2,
-                this.y-2,
-                this.w+4,
-                this.h+4
-            );
-        }
-    }
-};
-
-
-/* =========================================================
-   INIMIGO
-========================================================= */
-
-class Enemy{
-
-    constructor(waypoints){
-
-        this.x=waypoints[0].x;
-        this.y=waypoints[0].y;
-
-        this.w=22;
-        this.h=22;
-
-        this.waypoints=waypoints;
-        this.targetIndex=1;
-
-        this.speed=.85;
-
-        this.angle=0;
-
-        this.viewDist=205;
-        this.fov=Math.PI*.75;
-
-        this.eliminated=false;
-    }
-
-    center(){
-
-        return {
-            x:this.x+this.w/2,
-            y:this.y+this.h/2
-        };
-    }
-
-    update(walls){
-
-        if(this.eliminated) return;
-
-        const target=
-            this.waypoints[
-                this.targetIndex
-            ];
-
-        const center=this.center();
-
-        const dx=target.x-center.x;
-        const dy=target.y-center.y;
-
-        const distance=Math.hypot(dx,dy);
-
-        if(distance<10){
-
-            this.targetIndex=
-                (this.targetIndex+1)
-                % this.waypoints.length;
-
-            return;
-        }
-
-        const nx=dx/distance;
-        const ny=dy/distance;
-
-        /*
-         * Movimento em pequenos passos.
-         * Isso permite verificar obstáculos
-         * continuamente.
-         */
-
-        const step=this.speed;
-
-        const oldX=this.x;
-        const oldY=this.y;
-
-        CollisionSystem.moveWithCollision(
-            this,
-            nx*step,
-            ny*step,
-            walls
-        );
-
-        /*
-         * Se encontrou uma parede,
-         * tenta pequenas alternativas laterais.
-         */
-
-        if(
-            Math.abs(this.x-oldX)<.01 &&
-            Math.abs(this.y-oldY)<.01
-        ){
-
-            const alternatives=[
-                {x:-ny,y:nx},
-                {x:ny,y:-nx},
-                {x:-ny*.7+nx*.3,y:nx*.7+ny*.3},
-                {x:ny*.7+nx*.3,y:-nx*.7+ny*.3}
-            ];
-
-            for(const alt of alternatives){
-
-                const len=Math.hypot(
-                    alt.x,
-                    alt.y
-                );
-
-                if(len===0) continue;
-
-                const beforeX=this.x;
-                const beforeY=this.y;
-
-                CollisionSystem.moveWithCollision(
-                    this,
-                    alt.x/len*step,
-                    alt.y/len*step,
-                    walls
-                );
-
-                if(
-                    Math.abs(this.x-beforeX)>.01 ||
-                    Math.abs(this.y-beforeY)>.01
-                ){
-                    break;
-                }
-            }
-        }
-
-        if(
-            Math.abs(this.x-oldX)>.01 ||
-            Math.abs(this.y-oldY)>.01
-        ){
-
-            this.angle=Math.atan2(
-                this.y-oldY,
-                this.x-oldX
-            );
-        }
-    }
-
-    drawVision(){
-
-        const p=this.center();
-
-        ctx.save();
-
-        ctx.translate(p.x,p.y);
-        ctx.rotate(this.angle);
-
-        ctx.beginPath();
-
-        ctx.moveTo(0,0);
-
-        ctx.arc(
-            0,
-            0,
-            this.viewDist,
-            -this.fov/2,
-            this.fov/2
-        );
-
-        ctx.closePath();
-
-        const gradient=
-            ctx.createRadialGradient(
-                0,
-                0,
-                10,
-                0,
-                0,
-                this.viewDist
-            );
-
-        gradient.addColorStop(
-            0,
-            "rgba(225,45,60,.16)"
-        );
-
-        gradient.addColorStop(
-            1,
-            "rgba(225,45,60,0)"
-        );
-
-        ctx.fillStyle=gradient;
-
-        ctx.fill();
-
-        ctx.restore();
-    }
-
-    draw(){
-
-        if(this.eliminated){
-
-            ctx.fillStyle="#30373b";
-
-            ctx.fillRect(
-                this.x-4,
-                this.y+6,
-                30,
-                8
-            );
-
-            return;
-        }
-
-        this.drawVision();
-
-        const p=this.center();
-
-        ctx.save();
-
-        ctx.translate(p.x,p.y);
-
-        ctx.rotate(this.angle);
-
-        /*
-         * Corpo genérico.
-         */
-
-        ctx.fillStyle="#11161a";
-
-        ctx.fillRect(
-            -8,
-            -6,
-            16,
-            16
-        );
-
-        /*
-         * Cabeça coberta.
-         */
-
-        ctx.fillStyle="#252d32";
-
-        ctx.beginPath();
-
-        ctx.arc(
-            0,
-            -10,
-            7,
-            0,
-            Math.PI*2
-        );
-
-        ctx.fill();
-
-        /*
-         * Visor.
-
-         */
-
-        ctx.fillStyle="#4b5961";
-
-        ctx.fillRect(
-            -4,
-            -12,
-            8,
-            3
-        );
-
-        /*
-         * Equipamento visual.
-         */
-
-        ctx.fillStyle="#252d32";
-
-        ctx.fillRect(
-            7,
-            -2,
-            8,
-            4
-        );
-
-        ctx.restore();
-    }
-}
-
-
-/* =========================================================
-   VISÃO
-========================================================= */
-
-const VisionSystem={
-
-    detects(player,enemy,walls){
-
-        if(enemy.eliminated)
-            return false;
-
-        const p=player.center();
-        const e=enemy.center();
-
-        const dx=p.x-e.x;
-        const dy=p.y-e.y;
-
-        const distance=Math.hypot(dx,dy);
-
-        const effectiveDistance=
-            player.crouched
-            ? enemy.viewDist*.58
-            : enemy.viewDist;
-
-        if(distance>effectiveDistance)
-            return false;
-
-        const angleToPlayer=
-            Math.atan2(dy,dx);
-
-        let difference=
-            angleToPlayer-enemy.angle;
-
-        while(difference>Math.PI)
-            difference-=Math.PI*2;
-
-        while(difference<-Math.PI)
-            difference+=Math.PI*2;
-
-        if(
-            Math.abs(difference)>
-            enemy.fov/2
-        ){
-            return false;
-        }
-
-        /*
-         * Linha de visão verdadeira.
-         */
-
-        return CollisionSystem.hasLineOfSight(
-            e,
-            p,
-            walls
-        );
-    }
-};
-
-
-/* =========================================================
-   MISSÃO
-========================================================= */
-
-const MissionSystem={
-
-    jewel:{
-        x:675,
-        y:95,
-        w:24,
-        h:24
-    },
-
-    extraction:{
-        x:42,
-        y:505,
-        w:58,
-        h:48
-    },
-
-    hasJewel:false,
-
-    reset(){
-
-        this.hasJewel=false;
-
-        UI.setObjective(
-            "OBJETIVO: LOCALIZAR A DARK JEWEL"
-        );
-
-        UI.setStatus("INFILTRAÇÃO");
-    },
-
-    update(){
-
-        if(!this.hasJewel){
-
-            if(
-                CollisionSystem.overlaps(
-                    Player,
-                    this.jewel
-                )
-            ){
-
-                this.hasJewel=true;
-
-                AudioSystem.pickup();
-
-                UI.setObjective(
-                    "OBJETIVO: RETORNAR À EXTRAÇÃO"
-                );
-
-                UI.setStatus(
-                    "DARK JEWEL RECUPERADA"
-                );
-
-                showMessage(
-                    "DARK JEWEL RECUPERADA"
-                );
-            }
-
-        }else{
-
-            if(
-                CollisionSystem.overlaps(
-                    Player,
-                    this.extraction
-                )
-            ){
-
-                Game.victory();
-            }
-        }
-    },
-
-    draw(){
-
-        /*
-         * Jewel
-         */
-
-        if(!this.hasJewel){
-
-            const cx=
-                this.jewel.x+
-                this.jewel.w/2;
-
-            const cy=
-                this.jewel.y+
-                this.jewel.h/2;
-
-            ctx.save();
-
-            ctx.translate(cx,cy);
-            ctx.rotate(Math.PI/4);
-
-            ctx.fillStyle="#426b9d";
-
-            ctx.fillRect(
-                -8,
-                -8,
-                16,
-                16
-            );
-
-            ctx.strokeStyle="#8bc5ff";
-
-            ctx.strokeRect(
-                -8,
-                -8,
-                16,
-                16
-            );
-
-            ctx.restore();
-        }
-
-        /*
-         * Extração
-         */
-
-        ctx.strokeStyle=
-            this.hasJewel
-            ? "#62b4ff"
-            : "#39444b";
-
-        ctx.lineWidth=2;
-
-        ctx.strokeRect(
-            this.extraction.x,
-            this.extraction.y,
-            this.extraction.w,
-            this.extraction.h
-        );
-
-        ctx.lineWidth=1;
-    }
-};
-
-
-/* =========================================================
-   ANALÓGICO
+   JOYSTICK
 ========================================================= */
 
 const Joystick={
 
-    active:false,
-
     x:0,
     y:0,
 
+    active:false,
+
     pointerId:null,
 
-    base:document.getElementById("joystick"),
-    stick:document.getElementById("stick"),
+    base:
+        document.getElementById(
+            "joystick"
+        ),
+
+    stick:
+        document.getElementById(
+            "stick"
+        ),
 
     init(){
 
@@ -1513,7 +1232,10 @@ const Joystick={
 
                 e.preventDefault();
 
+                AudioSystem.resume();
+
                 this.active=true;
+
                 this.pointerId=e.pointerId;
 
                 this.base.setPointerCapture(
@@ -1531,7 +1253,9 @@ const Joystick={
                 if(
                     !this.active ||
                     e.pointerId!==this.pointerId
-                ) return;
+                ){
+                    return;
+                }
 
                 this.update(e);
             }
@@ -1540,6 +1264,7 @@ const Joystick={
         const release=()=>{
 
             this.active=false;
+
             this.pointerId=null;
 
             this.x=0;
@@ -1570,29 +1295,34 @@ const Joystick={
         const rect=
             this.base.getBoundingClientRect();
 
-        const centerX=
-            rect.left+rect.width/2;
+        const cx=
+            rect.left+
+            rect.width/2;
 
-        const centerY=
-            rect.top+rect.height/2;
+        const cy=
+            rect.top+
+            rect.height/2;
 
-        let dx=e.clientX-centerX;
-        let dy=e.clientY-centerY;
+        let dx=
+            e.clientX-cx;
+
+        let dy=
+            e.clientY-cy;
 
         const max=38;
 
         const distance=
             Math.hypot(dx,dy);
 
-        if(distance>max){
+        if(
+            distance>max
+        ){
 
             dx=
-                dx/distance*
-                max;
+                dx/distance*max;
 
             dy=
-                dy/distance*
-                max;
+                dy/distance*max;
         }
 
         this.x=dx/max;
@@ -1630,31 +1360,34 @@ const MobileControls={
             "pointerdown",
             e=>{
                 e.preventDefault();
+
                 this.crouch=true;
             }
         );
 
+        const release=()=>{
+            this.crouch=false;
+        };
+
         crouch.addEventListener(
             "pointerup",
-            ()=>{
-                this.crouch=false;
-            }
+            release
         );
 
         crouch.addEventListener(
             "pointercancel",
-            ()=>{
-                this.crouch=false;
-            }
+            release
         );
 
         action.addEventListener(
             "pointerdown",
             e=>{
+
                 e.preventDefault();
 
                 if(Game.running){
-                    Player.performTakedown(
+
+                    Player.action(
                         Game.enemies
                     );
                 }
@@ -1662,10 +1395,13 @@ const MobileControls={
         );
 
         document
-            .getElementById("pauseButton")
+            .getElementById(
+                "pauseButton"
+            )
             .addEventListener(
                 "pointerdown",
                 e=>{
+
                     e.preventDefault();
 
                     if(Game.running){
@@ -1677,6 +1413,1766 @@ const MobileControls={
 };
 
 MobileControls.init();
+
+
+/* =========================================================
+   PLAYER
+========================================================= */
+
+const Player={
+
+    x:55,
+    y:515,
+
+    w:20,
+    h:20,
+
+    speed:2.0,
+
+    angle:0,
+
+    crouched:false,
+
+    moving:false,
+
+    animationTime:0,
+
+    frame:0,
+
+    center(){
+
+        return {
+            x:this.x+this.w/2,
+            y:this.y+this.h/2
+        };
+    },
+
+    reset(){
+
+        this.x=55;
+        this.y=515;
+
+        this.angle=0;
+
+        this.crouched=false;
+
+        this.animationTime=0;
+        this.frame=0;
+    },
+
+    update(objects){
+
+        let dx=0;
+        let dy=0;
+
+        if(keys["w"] || keys["arrowup"])
+            dy-=1;
+
+        if(keys["s"] || keys["arrowdown"])
+            dy+=1;
+
+        if(keys["a"] || keys["arrowleft"])
+            dx-=1;
+
+        if(keys["d"] || keys["arrowright"])
+            dx+=1;
+
+        dx+=Joystick.x;
+        dy+=Joystick.y;
+
+        const length=
+            Math.hypot(dx,dy);
+
+        this.moving=
+            length>.12;
+
+        if(length>1){
+
+            dx/=length;
+            dy/=length;
+        }
+
+        this.crouched=
+            keys["c"] ||
+            keys["shift"] ||
+            MobileControls.crouch;
+
+        const speed=
+            this.crouched
+            ? this.speed*.52
+            : this.speed;
+
+        if(this.moving){
+
+            CollisionSystem.move(
+                this,
+                dx*speed,
+                dy*speed,
+                objects
+            );
+
+            this.angle=
+                Math.atan2(dy,dx);
+
+            this.animationTime+=
+                this.crouched
+                ? .07
+                : .13;
+
+            if(
+                this.animationTime>1
+            ){
+
+                this.animationTime=0;
+
+                this.frame=
+                    (this.frame+1)%4;
+            }
+
+            AudioSystem.step(
+                this.crouched
+            );
+
+        }else{
+
+            this.frame=0;
+        }
+
+        this.x=
+            Math.max(
+                31,
+                Math.min(
+                    749,
+                    this.x
+                )
+            );
+
+        this.y=
+            Math.max(
+                31,
+                Math.min(
+                    549,
+                    this.y
+                )
+            );
+    },
+
+    direction(){
+
+        let angle=this.angle;
+
+        while(angle<0)
+            angle+=Math.PI*2;
+
+        /*
+         * 0 = direita
+         * PI/2 = baixo
+         * PI = esquerda
+         * 3PI/2 = cima
+         */
+
+        if(
+            angle<Math.PI*.25 ||
+            angle>Math.PI*1.75
+        ){
+            return "right";
+        }
+
+        if(
+            angle>=Math.PI*.25 &&
+            angle<Math.PI*.75
+        ){
+            return "down";
+        }
+
+        if(
+            angle>=Math.PI*.75 &&
+            angle<Math.PI*1.25
+        ){
+            return "left";
+        }
+
+        return "up";
+    },
+
+    draw(){
+
+        const p=this.center();
+
+        const direction=
+            this.direction();
+
+        const walking=
+            this.moving;
+
+        const swing=
+            walking
+            ? Math.sin(
+                this.frame*Math.PI/2
+            )
+            : 0;
+
+        ctx.save();
+
+        ctx.translate(
+            p.x,
+            p.y
+        );
+
+        /*
+         * Pequeno movimento vertical.
+         */
+
+        const bob=
+            walking
+            ? Math.abs(swing)*.8
+            : 0;
+
+        ctx.translate(
+            0,
+            bob
+        );
+
+        this.drawBody(
+            direction,
+            swing,
+            false
+        );
+
+        ctx.restore();
+    },
+
+    drawBody(
+        direction,
+        swing,
+        enemy
+    ){
+
+        const skin=
+            enemy
+            ? "#1b2228"
+            : "#cba88e";
+
+        const hair=
+            enemy
+            ? "#141a1f"
+            : "#c9b687";
+
+        const uniform=
+            enemy
+            ? "#171e24"
+            : "#182027";
+
+        const gear=
+            enemy
+            ? "#28323a"
+            : "#25313a";
+
+        /*
+         * SOMBRA
+         */
+
+        ctx.fillStyle=
+            "rgba(0,0,0,.35)";
+
+        ctx.fillRect(
+            -9,
+            9,
+            18,
+            4
+        );
+
+        /*
+         * COSTAS
+         */
+
+        if(direction==="up"){
+
+            ctx.fillStyle=gear;
+
+            ctx.fillRect(
+                -7,
+                -3,
+                14,
+                15
+            );
+
+            ctx.fillStyle=
+                enemy
+                ? "#222b32"
+                : "#2d3941";
+
+            ctx.fillRect(
+                -6,
+                -2,
+                12,
+                10
+            );
+
+            ctx.fillStyle=uniform;
+
+            ctx.fillRect(
+                -10,
+                -1,
+                4,
+                10
+            );
+
+            ctx.fillRect(
+                6,
+                -1,
+                4,
+                10
+            );
+
+            ctx.fillStyle=skin;
+
+            if(!enemy){
+
+                ctx.fillRect(
+                    -5,
+                    -11,
+                    10,
+                    8
+                );
+
+                ctx.fillStyle=hair;
+
+                ctx.fillRect(
+                    -5,
+                    -12,
+                    10,
+                    4
+                );
+
+            }else{
+
+                ctx.fillStyle="#222a30";
+
+                ctx.fillRect(
+                    -6,
+                    -12,
+                    12,
+                    9
+                );
+
+            }
+
+        }else{
+
+            /*
+             * TRONCO
+             */
+
+            ctx.fillStyle=uniform;
+
+            ctx.fillRect(
+                -7,
+                -3,
+                14,
+                15
+            );
+
+            /*
+             * OMBROS
+             */
+
+            ctx.fillStyle=gear;
+
+            ctx.fillRect(
+                -10,
+                -2,
+                4,
+                8
+            );
+
+            ctx.fillRect(
+                6,
+                -2,
+                4,
+                8
+            );
+
+            /*
+             * BRAÇOS
+             */
+
+            ctx.fillStyle=uniform;
+
+            ctx.fillRect(
+                -10,
+                2+swing*2,
+                4,
+                9
+            );
+
+            ctx.fillRect(
+                6,
+                2-swing*2,
+                4,
+                9
+            );
+
+            /*
+             * PERNAS
+             */
+
+            ctx.fillRect(
+                -6,
+                9+swing*2,
+                5,
+                9
+            );
+
+            ctx.fillRect(
+                1,
+                9-swing*2,
+                5,
+                9
+            );
+
+            /*
+             * CABEÇA
+             */
+
+            if(enemy){
+
+                ctx.fillStyle="#20282f";
+
+                ctx.fillRect(
+                    -6,
+                    -13,
+                    12,
+                    10
+                );
+
+                ctx.fillStyle="#56636c";
+
+                ctx.fillRect(
+                    -5,
+                    -10,
+                    10,
+                    3
+                );
+
+            }else{
+
+                ctx.fillStyle=skin;
+
+                ctx.fillRect(
+                    -5,
+                    -12,
+                    10,
+                    9
+                );
+
+                /*
+                 * cabelo
+                 */
+
+                ctx.fillStyle=hair;
+
+                ctx.fillRect(
+                    -5,
+                    -13,
+                    10,
+                    4
+                );
+
+                ctx.fillRect(
+                    -6,
+                    -11,
+                    2,
+                    5
+                );
+            }
+        }
+
+        /*
+         * Mochila.
+         */
+
+        if(
+            direction==="right" ||
+            direction==="left"
+        ){
+
+            ctx.fillStyle=gear;
+
+            ctx.fillRect(
+                direction==="right"
+                ? -8
+                : 5,
+                -1,
+                4,
+                12
+            );
+        }
+
+        /*
+         * Equipamento visual simples.
+         */
+
+        if(
+            direction==="right" ||
+            direction==="left"
+        ){
+
+            ctx.fillStyle=
+                enemy
+                ? "#303b43"
+                : "#33414a";
+
+            ctx.fillRect(
+                direction==="right"
+                ? 8
+                : -15,
+                2,
+                7,
+                3
+            );
+        }
+
+        /*
+         * Olhos mínimos de Buck.
+         */
+
+        if(
+            !enemy &&
+            direction==="down"
+        ){
+
+            ctx.fillStyle="#6e91b5";
+
+            ctx.fillRect(
+                -4,
+                -8,
+                2,
+                2
+            );
+
+            ctx.fillRect(
+                2,
+                -8,
+                2,
+                2
+            );
+        }
+    },
+
+    action(enemies){
+
+        const p=this.center();
+
+        for(
+            const enemy of enemies
+        ){
+
+            if(enemy.eliminated)
+                continue;
+
+            const e=enemy.center();
+
+            const dx=e.x-p.x;
+            const dy=e.y-p.y;
+
+            const distance=
+                Math.hypot(dx,dy);
+
+            if(distance>38)
+                continue;
+
+            /*
+             * Buck precisa estar na região
+             * traseira do inimigo.
+             */
+
+            const angleToBuck=
+                Math.atan2(
+                    p.y-e.y,
+                    p.x-e.x
+                );
+
+            let difference=
+                angleToBuck-
+                (enemy.angle+Math.PI);
+
+            while(difference>Math.PI)
+                difference-=Math.PI*2;
+
+            while(difference<-Math.PI)
+                difference+=Math.PI*2;
+
+            if(
+                Math.abs(difference)<
+                Math.PI*.65
+            ){
+
+                enemy.eliminated=true;
+
+                AudioSystem.action();
+
+                showMessage(
+                    "ALVO NEUTRALIZADO"
+                );
+
+                return;
+            }
+        }
+
+        showMessage(
+            "POSIÇÃO INADEQUADA"
+        );
+    }
+};
+
+
+/* =========================================================
+   INIMIGO
+========================================================= */
+
+class Enemy{
+
+    constructor(waypoints){
+
+        this.waypoints=
+            waypoints;
+
+        this.x=
+            waypoints[0].x;
+
+        this.y=
+            waypoints[0].y;
+
+        this.w=20;
+        this.h=20;
+
+        this.targetIndex=1;
+
+        this.speed=.52;
+
+        this.angle=0;
+
+        /*
+         * Visão reduzida.
+         */
+
+        this.viewDist=155;
+
+        this.fov=
+            Math.PI*.58;
+
+        this.animationTime=0;
+
+        this.frame=0;
+
+        this.eliminated=false;
+    }
+
+    center(){
+
+        return {
+            x:this.x+this.w/2,
+            y:this.y+this.h/2
+        };
+    }
+
+    update(objects){
+
+        if(this.eliminated)
+            return;
+
+        const target=
+            this.waypoints[
+                this.targetIndex
+            ];
+
+        const center=
+            this.center();
+
+        const dx=
+            target.x-center.x;
+
+        const dy=
+            target.y-center.y;
+
+        const distance=
+            Math.hypot(dx,dy);
+
+        if(distance<12){
+
+            this.targetIndex=
+                (
+                    this.targetIndex+1
+                )%
+                this.waypoints.length;
+
+            return;
+        }
+
+        const nx=dx/distance;
+        const ny=dy/distance;
+
+        const oldX=this.x;
+        const oldY=this.y;
+
+        /*
+         * Movimento lento.
+         */
+
+        CollisionSystem.move(
+            this,
+            nx*this.speed,
+            ny*this.speed,
+            objects
+        );
+
+        /*
+         * Pequeno sistema de desvio.
+         */
+
+        if(
+            Math.abs(this.x-oldX)<.01 &&
+            Math.abs(this.y-oldY)<.01
+        ){
+
+            const alternatives=[
+
+                {
+                    x:-ny,
+                    y:nx
+                },
+
+                {
+                    x:ny,
+                    y:-nx
+                },
+
+                {
+                    x:-ny*.8+nx*.2,
+                    y:nx*.8+ny*.2
+                },
+
+                {
+                    x:ny*.8+nx*.2,
+                    y:-nx*.8+ny*.2
+                }
+            ];
+
+            for(
+                const alternative
+                of alternatives
+            ){
+
+                const len=
+                    Math.hypot(
+                        alternative.x,
+                        alternative.y
+                    );
+
+                if(len===0)
+                    continue;
+
+                const beforeX=this.x;
+                const beforeY=this.y;
+
+                CollisionSystem.move(
+                    this,
+                    alternative.x/len*
+                    this.speed,
+                    alternative.y/len*
+                    this.speed,
+                    objects
+                );
+
+                if(
+                    Math.abs(
+                        this.x-beforeX
+                    )>.01 ||
+                    Math.abs(
+                        this.y-beforeY
+                    )>.01
+                ){
+                    break;
+                }
+            }
+        }
+
+        if(
+            Math.abs(this.x-oldX)>.01 ||
+            Math.abs(this.y-oldY)>.01
+        ){
+
+            this.angle=
+                Math.atan2(
+                    this.y-oldY,
+                    this.x-oldX
+                );
+
+            this.animationTime+=.07;
+
+            if(
+                this.animationTime>1
+            ){
+
+                this.animationTime=0;
+
+                this.frame=
+                    (this.frame+1)%4;
+            }
+        }
+    }
+
+    direction(){
+
+        let angle=this.angle;
+
+        while(angle<0)
+            angle+=Math.PI*2;
+
+        if(
+            angle<Math.PI*.25 ||
+            angle>Math.PI*1.75
+        ){
+            return "right";
+        }
+
+        if(
+            angle<Math.PI*.75
+        ){
+            return "down";
+        }
+
+        if(
+            angle<Math.PI*1.25
+        ){
+            return "left";
+        }
+
+        return "up";
+    }
+
+    drawVision(){
+
+        const p=this.center();
+
+        ctx.save();
+
+        ctx.translate(
+            p.x,
+            p.y
+        );
+
+        ctx.rotate(
+            this.angle
+        );
+
+        ctx.beginPath();
+
+        ctx.moveTo(0,0);
+
+        ctx.arc(
+            0,
+            0,
+            this.viewDist,
+            -this.fov/2,
+            this.fov/2
+        );
+
+        ctx.closePath();
+
+        const gradient=
+            ctx.createRadialGradient(
+                0,
+                0,
+                8,
+                0,
+                0,
+                this.viewDist
+            );
+
+        gradient.addColorStop(
+            0,
+            "rgba(220,45,58,.18)"
+        );
+
+        gradient.addColorStop(
+            .55,
+            "rgba(220,45,58,.08)"
+        );
+
+        gradient.addColorStop(
+            1,
+            "rgba(220,45,58,0)"
+        );
+
+        ctx.fillStyle=gradient;
+
+        ctx.fill();
+
+        ctx.restore();
+    }
+
+    draw(){
+
+        if(this.eliminated){
+
+            ctx.fillStyle="#30373b";
+
+            ctx.fillRect(
+                this.x-4,
+                this.y+7,
+                29,
+                7
+            );
+
+            return;
+        }
+
+        this.drawVision();
+
+        const p=this.center();
+
+        const direction=
+            this.direction();
+
+        const swing=
+            Math.sin(
+                this.frame*Math.PI/2
+            );
+
+        ctx.save();
+
+        ctx.translate(
+            p.x,
+            p.y
+        );
+
+        Player.drawBody(
+            direction,
+            swing,
+            true
+        );
+
+        ctx.restore();
+    }
+}
+
+
+/* =========================================================
+   VISÃO
+========================================================= */
+
+const VisionSystem={
+
+    detects(
+        player,
+        enemy,
+        walls
+    ){
+
+        if(enemy.eliminated)
+            return false;
+
+        const p=player.center();
+        const e=enemy.center();
+
+        const dx=p.x-e.x;
+        const dy=p.y-e.y;
+
+        const distance=
+            Math.hypot(dx,dy);
+
+        const effectiveDistance=
+            player.crouched
+            ? enemy.viewDist*.58
+            : enemy.viewDist;
+
+        if(
+            distance>
+            effectiveDistance
+        ){
+            return false;
+        }
+
+        const angleToPlayer=
+            Math.atan2(dy,dx);
+
+        let difference=
+            angleToPlayer-
+            enemy.angle;
+
+        while(difference>Math.PI)
+            difference-=Math.PI*2;
+
+        while(difference<-Math.PI)
+            difference+=Math.PI*2;
+
+        if(
+            Math.abs(difference)>
+            enemy.fov/2
+        ){
+            return false;
+        }
+
+        return CollisionSystem.lineOfSight(
+            e,
+            p,
+            walls
+        );
+    }
+};
+
+
+/* =========================================================
+   MAPA
+========================================================= */
+
+const MapSystem={
+
+    walls:[
+
+        /* bordas */
+
+        {x:0,y:0,w:800,h:30},
+        {x:0,y:570,w:800,h:30},
+        {x:0,y:0,w:30,h:600},
+        {x:770,y:0,w:30,h:600},
+
+        /* sala 01 */
+
+        {x:170,y:30,w:25,h:120},
+        {x:170,y:150,w:150,h:25},
+
+        {x:320,y:30,w:25,h:85},
+
+        /* separação central */
+
+        {x:395,y:30,w:25,h:125},
+        {x:395,y:235,w:25,h:160},
+
+        /* corredor */
+
+        {x:420,y:155,w:155,h:25},
+
+        /* sala saída */
+
+        {x:575,y:30,w:25,h:150},
+        {x:600,y:180,w:120,h:25},
+
+        {x:575,y:400,w:25,h:170},
+
+        /* parte inferior */
+
+        {x:150,y:395,w:245,h:25},
+
+        {x:150,y:420,w:25,h:100},
+
+        {x:420,y:440,w:155,h:25},
+
+        /* pequenos recuos */
+
+        {x:680,y:300,w:90,h:20},
+        {x:30,y:280,w:95,h:20}
+    ],
+
+    objects:[
+
+        /*
+         * mesas
+         */
+
+        {
+            type:"table",
+            x:75,
+            y:80,
+            w:65,
+            h:30
+        },
+
+        {
+            type:"table",
+            x:455,
+            y:75,
+            w:70,
+            h:30
+        },
+
+        {
+            type:"table",
+            x:635,
+            y:250,
+            w:70,
+            h:30
+        },
+
+        /*
+         * caixas
+         */
+
+        {
+            type:"crate",
+            x:90,
+            y:180,
+            w:32,
+            h:32
+        },
+
+        {
+            type:"crate",
+            x:125,
+            y:180,
+            w:32,
+            h:32
+        },
+
+        {
+            type:"crate",
+            x:650,
+            y:330,
+            w:32,
+            h:32
+        },
+
+        /*
+         * computadores
+         */
+
+        {
+            type:"computer",
+            x:250,
+            y:70,
+            w:28,
+            h:20
+        },
+
+        {
+            type:"computer",
+            x:480,
+            y:210,
+            w:28,
+            h:20
+        },
+
+        /*
+         * cadeiras
+         */
+
+        {
+            type:"chair",
+            x:105,
+            y:120,
+            w:15,
+            h:15
+        },
+
+        {
+            type:"chair",
+            x:490,
+            y:115,
+            w:15,
+            h:15
+        },
+
+        {
+            type:"chair",
+            x:670,
+            y:290,
+            w:15,
+            h:15
+        },
+
+        /*
+         * terminais
+         */
+
+        {
+            type:"terminal",
+            x:710,
+            y:225,
+            w:18,
+            h:42
+        },
+
+        {
+            type:"terminal",
+            x:730,
+            y:475,
+            w:18,
+            h:42
+        }
+    ],
+
+    collisionObjects(){
+
+        return [
+            ...this.walls,
+            ...this.objects
+                .filter(
+                    object=>
+                        object.type==="crate" ||
+                        object.type==="table"
+                )
+                .map(
+                    object=>({
+                        x:object.x,
+                        y:object.y,
+                        w:object.w,
+                        h:object.h
+                    })
+                )
+        ];
+    },
+
+    draw(){
+
+        /*
+         * piso
+         */
+
+        ctx.fillStyle="#252a2d";
+
+        ctx.fillRect(
+            0,
+            0,
+            800,
+            600
+        );
+
+        /*
+         * placas do piso
+         */
+
+        ctx.strokeStyle=
+            "rgba(210,215,218,.055)";
+
+        for(
+            let x=30;
+            x<770;
+            x+=42
+        ){
+
+            ctx.beginPath();
+
+            ctx.moveTo(x,30);
+            ctx.lineTo(x,570);
+
+            ctx.stroke();
+        }
+
+        for(
+            let y=30;
+            y<570;
+            y+=42
+        ){
+
+            ctx.beginPath();
+
+            ctx.moveTo(30,y);
+            ctx.lineTo(770,y);
+
+            ctx.stroke();
+        }
+
+        /*
+         * paredes
+         */
+
+        for(
+            const wall of this.walls
+        ){
+
+            ctx.fillStyle="#d2d7da";
+
+            ctx.fillRect(
+                wall.x,
+                wall.y,
+                wall.w,
+                wall.h
+            );
+
+            ctx.strokeStyle="#8b9499";
+
+            ctx.strokeRect(
+                wall.x,
+                wall.y,
+                wall.w,
+                wall.h
+            );
+        }
+
+        /*
+         * objetos
+         */
+
+        for(
+            const object of this.objects
+        ){
+
+            this.drawObject(
+                object
+            );
+        }
+
+        /*
+         * iluminação
+         */
+
+        const lights=[
+            {x:100,y:55},
+            {x:270,y:55},
+            {x:465,y:55},
+            {x:680,y:55},
+            {x:520,y:310},
+            {x:690,y:410},
+            {x:90,y:470}
+        ];
+
+        for(
+            const light of lights
+        ){
+
+            ctx.fillStyle=
+                "#cfd5d8";
+
+            ctx.fillRect(
+                light.x-12,
+                light.y-3,
+                24,
+                5
+            );
+
+            const glow=
+                ctx.createRadialGradient(
+                    light.x,
+                    light.y,
+                    2,
+                    light.x,
+                    light.y,
+                    65
+                );
+
+            glow.addColorStop(
+                0,
+                "rgba(225,235,235,.08)"
+            );
+
+            glow.addColorStop(
+                1,
+                "rgba(225,235,235,0)"
+            );
+
+            ctx.fillStyle=glow;
+
+            ctx.fillRect(
+                light.x-65,
+                light.y-65,
+                130,
+                130
+            );
+        }
+
+        /*
+         * Identificação das duas áreas.
+         */
+
+        ctx.fillStyle=
+            "rgba(190,200,205,.25)";
+
+        ctx.font=
+            "10px Arial";
+
+        ctx.fillText(
+            "01 // SALA DO ARQUIVO",
+            48,
+            52
+        );
+
+        ctx.fillText(
+            "02 // SAÍDA",
+            625,
+            52
+        );
+    },
+
+    drawObject(object){
+
+        if(
+            object.type==="table"
+        ){
+
+            ctx.fillStyle="#4b555b";
+
+            ctx.fillRect(
+                object.x,
+                object.y,
+                object.w,
+                object.h
+            );
+
+            ctx.fillStyle="#69747a";
+
+            ctx.fillRect(
+                object.x+4,
+                object.y+4,
+                object.w-8,
+                5
+            );
+
+            return;
+        }
+
+        if(
+            object.type==="crate"
+        ){
+
+            ctx.fillStyle="#414a4f";
+
+            ctx.fillRect(
+                object.x,
+                object.y,
+                object.w,
+                object.h
+            );
+
+            ctx.strokeStyle="#667178";
+
+            ctx.strokeRect(
+                object.x,
+                object.y,
+                object.w,
+                object.h
+            );
+
+            ctx.beginPath();
+
+            ctx.moveTo(
+                object.x,
+                object.y
+            );
+
+            ctx.lineTo(
+                object.x+object.w,
+                object.y+object.h
+            );
+
+            ctx.moveTo(
+                object.x+object.w,
+                object.y
+            );
+
+            ctx.lineTo(
+                object.x,
+                object.y+object.h
+            );
+
+            ctx.stroke();
+
+            return;
+        }
+
+        if(
+            object.type==="computer"
+        ){
+
+            ctx.fillStyle="#202a30";
+
+            ctx.fillRect(
+                object.x,
+                object.y,
+                object.w,
+                object.h
+            );
+
+            ctx.fillStyle="#426d91";
+
+            ctx.fillRect(
+                object.x+4,
+                object.y+3,
+                object.w-8,
+                9
+            );
+
+            ctx.fillStyle="#59646a";
+
+            ctx.fillRect(
+                object.x+10,
+                object.y+object.h,
+                8,
+                5
+            );
+
+            return;
+        }
+
+        if(
+            object.type==="chair"
+        ){
+
+            ctx.strokeStyle="#59636a";
+
+            ctx.strokeRect(
+                object.x,
+                object.y,
+                object.w,
+                object.h
+            );
+
+            return;
+        }
+
+        if(
+            object.type==="terminal"
+        ){
+
+            ctx.fillStyle="#1b242a";
+
+            ctx.fillRect(
+                object.x,
+                object.y,
+                object.w,
+                object.h
+            );
+
+            ctx.fillStyle="#356f94";
+
+            ctx.fillRect(
+                object.x+4,
+                object.y+6,
+                object.w-8,
+                12
+            );
+
+            return;
+        }
+    }
+};
+
+
+/* =========================================================
+   MISSÃO
+========================================================= */
+
+const MissionSystem={
+
+    file:{
+        x:270,
+        y:45,
+        w:30,
+        h:28
+    },
+
+    extraction:{
+        x:700,
+        y:505,
+        w:48,
+        h:48
+    },
+
+    hasFile:false,
+
+    reset(){
+
+        this.hasFile=false;
+
+        UI.setObjective(
+            "OBJETIVO: ENCONTRAR O ARQUIVO CENTRAL"
+        );
+
+        UI.setStatus(
+            "INFILTRAÇÃO"
+        );
+    },
+
+    update(){
+
+        if(!this.hasFile){
+
+            if(
+                CollisionSystem.overlap(
+                    Player,
+                    this.file
+                )
+            ){
+
+                this.hasFile=true;
+
+                AudioSystem.objective();
+
+                UI.setObjective(
+                    "OBJETIVO: IR ATÉ O PONTO DE EXTRAÇÃO"
+                );
+
+                UI.setStatus(
+                    "ARQUIVO RECUPERADO"
+                );
+
+                showMessage(
+                    "ARQUIVO CENTRAL RECUPERADO"
+                );
+
+                Radio.show(
+                    "Muito bem Buck, agora vá até o ponto de extração.",
+                    ()=>{
+                        UI.setStatus(
+                            "EXTRAÇÃO"
+                        );
+                    }
+                );
+            }
+
+        }else{
+
+            if(
+                CollisionSystem.overlap(
+                    Player,
+                    this.extraction
+                )
+            ){
+
+                Game.complete();
+            }
+        }
+    },
+
+    draw(){
+
+        /*
+         * Arquivo.
+         */
+
+        if(!this.hasFile){
+
+            ctx.fillStyle="#273b4a";
+
+            ctx.fillRect(
+                this.file.x,
+                this.file.y,
+                this.file.w,
+                this.file.h
+            );
+
+            ctx.strokeStyle="#70b5ff";
+
+            ctx.strokeRect(
+                this.file.x,
+                this.file.y,
+                this.file.w,
+                this.file.h
+            );
+
+            ctx.fillStyle="#8bcaff";
+
+            ctx.fillRect(
+                this.file.x+9,
+                this.file.y+7,
+                12,
+                12
+            );
+        }
+
+        /*
+         * Saída.
+         */
+
+        ctx.strokeStyle=
+            this.hasFile
+            ? "#63b4ff"
+            : "#48535a";
+
+        ctx.lineWidth=2;
+
+        ctx.strokeRect(
+            this.extraction.x,
+            this.extraction.y,
+            this.extraction.w,
+            this.extraction.h
+        );
+
+        ctx.lineWidth=1;
+
+        if(this.hasFile){
+
+            ctx.fillStyle="#67b8ff";
+
+            ctx.fillRect(
+                this.extraction.x+17,
+                this.extraction.y+6,
+                14,
+                3
+            );
+        }
+    }
+};
+
+
+/* =========================================================
+   RÁDIO
+========================================================= */
+
+const Radio={
+
+    screen:
+        document.getElementById(
+            "radioScreen"
+        ),
+
+    text:
+        document.getElementById(
+            "radioText"
+        ),
+
+    button:
+        document.getElementById(
+            "radioContinue"
+        ),
+
+    callback:null,
+
+    show(text,callback){
+
+        this.text.textContent=text;
+
+        this.callback=
+            callback || null;
+
+        this.screen.classList.remove(
+            "hidden"
+        );
+
+        AudioSystem.radioOpen();
+
+        Game.radioOpen=true;
+    },
+
+    close(){
+
+        this.screen.classList.add(
+            "hidden"
+        );
+
+        AudioSystem.radioClose();
+
+        Game.radioOpen=false;
+
+        if(this.callback){
+
+            const callback=
+                this.callback;
+
+            this.callback=null;
+
+            callback();
+        }
+    }
+};
+
+Radio.button.addEventListener(
+    "click",
+    ()=>{
+        Radio.close();
+    }
+);
 
 
 /* =========================================================
@@ -1711,7 +3207,9 @@ const UI={
         ),
 
     hud:
-        document.getElementById("hud"),
+        document.getElementById(
+            "hud"
+        ),
 
     objective:
         document.getElementById(
@@ -1723,7 +3221,7 @@ const UI={
             "status"
         ),
 
-    show(screen){
+    hideAll(){
 
         [
             this.menu,
@@ -1731,32 +3229,49 @@ const UI={
             this.credits,
             this.gameover,
             this.victory
-        ].forEach(s=>
-            s.classList.add("hidden")
+        ].forEach(
+            screen=>
+                screen.classList.add(
+                    "hidden"
+                )
         );
+    },
 
-        if(screen)
-            screen.classList.remove("hidden");
+    show(screen){
+
+        this.hideAll();
+
+        if(screen){
+            screen.classList.remove(
+                "hidden"
+            );
+        }
     },
 
     setObjective(text){
-        this.objective.textContent=text;
+
+        this.objective.textContent=
+            text;
     },
 
     setStatus(text){
-        this.status.textContent=text;
+
+        this.status.textContent=
+            text;
     },
 
     startGame(){
 
         this.show(null);
 
-        this.hud.style.display="flex";
+        this.hud.style.display=
+            "flex";
     },
 
     endGame(){
 
-        this.hud.style.display="none";
+        this.hud.style.display=
+            "none";
     }
 };
 
@@ -1768,26 +3283,12 @@ const UI={
 const Game={
 
     running:false,
+
     paused:false,
 
+    radioOpen:false,
+
     enemies:[],
-
-    walls:[
-        {x:0,y:0,w:800,h:30},
-        {x:0,y:570,w:800,h:30},
-        {x:0,y:0,w:30,h:600},
-        {x:770,y:0,w:30,h:600},
-
-        {x:180,y:150,w:250,h:25},
-        {x:430,y:150,w:25,h:250},
-        {x:200,y:380,w:350,h:25},
-        {x:600,y:220,w:20,h:200}
-    ],
-
-    boxes:[
-        {x:260,y:210,w:32,h:32},
-        {x:620,y:320,w:32,h:32}
-    ],
 
     init(){
 
@@ -1801,125 +3302,175 @@ const Game={
     start(){
 
         AudioSystem.init();
+
         AudioSystem.resume();
+
+        AudioSystem.startAmbient();
 
         Player.reset();
 
         MissionSystem.reset();
 
         /*
-         * Pontos de patrulha.
-         *
-         * O inimigo tenta seguir esses pontos,
-         * mas agora respeita os obstáculos.
+         * Patrulhas mais lentas.
          */
 
         this.enemies=[
 
             new Enemy([
-                {x:230,y:85},
-                {x:390,y:85},
-                {x:390,y:125},
-                {x:150,y:125},
-                {x:150,y:85}
+                {x:65,y:100},
+                {x:150,y:100},
+                {x:150,y:135},
+                {x:65,y:135}
             ]),
 
             new Enemy([
-                {x:665,y:470},
-                {x:710,y:470},
-                {x:710,y:445},
-                {x:560,y:445},
-                {x:560,y:470},
-                {x:665,y:470}
+                {x:455,y:70},
+                {x:540,y:70},
+                {x:540,y:135},
+                {x:455,y:135}
+            ]),
+
+            new Enemy([
+                {x:620,y:235},
+                {x:720,y:235},
+                {x:720,y:275},
+                {x:620,y:275}
             ])
         ];
 
         this.running=true;
+
         this.paused=false;
 
         UI.startGame();
 
         UI.setStatus(
-            "INFILTRAÇÃO"
+            "COMUNICAÇÃO"
         );
 
-        showMessage(
-            "OPERAÇÃO NO DARK INICIADA"
+        /*
+         * Primeira transmissão
+         */
+
+        Radio.show(
+            "Prossiga até encontrar um dos arquivos centrais, depois... Saia daí o mais rápido possível!",
+            ()=>{
+                UI.setStatus(
+                    "INFILTRAÇÃO"
+                );
+
+                showMessage(
+                    "OPERAÇÃO NO DARK INICIADA"
+                );
+            }
         );
     },
 
     pause(){
 
-        if(!this.running) return;
+        if(
+            !this.running ||
+            this.radioOpen
+        ){
+            return;
+        }
 
-        this.paused=!this.paused;
+        this.paused=
+            !this.paused;
 
         UI.setStatus(
             this.paused
             ? "PAUSADO"
-            : "INFILTRAÇÃO"
+            : (
+                MissionSystem.hasFile
+                ? "EXTRAÇÃO"
+                : "INFILTRAÇÃO"
+            )
         );
     },
 
     fail(){
 
-        if(!this.running) return;
+        if(!this.running)
+            return;
 
         this.running=false;
 
         AudioSystem.alert();
 
+        AudioSystem.stopAmbient();
+
         UI.endGame();
 
-        UI.show(UI.gameover);
+        UI.show(
+            UI.gameover
+        );
     },
 
-    victory(){
+    complete(){
 
-        if(!this.running) return;
+        if(!this.running)
+            return;
 
         this.running=false;
 
-        AudioSystem.victory();
+        AudioSystem.stopAmbient();
 
         UI.endGame();
 
-        UI.show(UI.victory);
+        /*
+         * Última transmissão.
+         */
+
+        Radio.show(
+            "Muito bem, aguarde mais ordens.",
+            ()=>{
+                AudioSystem.victory();
+
+                UI.show(
+                    UI.victory
+                );
+            }
+        );
     },
 
-    getCollisionObjects(){
+    collisionObjects(){
 
-        return [
-            ...this.walls,
-            ...this.boxes
-        ];
+        return MapSystem.collisionObjects();
     },
 
     update(){
 
         if(
             !this.running ||
-            this.paused
-        ) return;
+            this.paused ||
+            this.radioOpen
+        ){
+            return;
+        }
 
-        const collisionObjects=
-            this.getCollisionObjects();
+        const objects=
+            this.collisionObjects();
 
         Player.update(
-            collisionObjects
+            objects
         );
 
-        for(const enemy of this.enemies){
+        for(
+            const enemy
+            of this.enemies
+        ){
 
             enemy.update(
-                collisionObjects
+                objects
             );
 
             if(
                 VisionSystem.detects(
                     Player,
                     enemy,
-                    collisionObjects
+                    MapSystem.walls
                 )
             ){
 
@@ -1936,134 +3487,6 @@ const Game={
         MissionSystem.update();
     },
 
-    drawFloor(){
-
-        ctx.fillStyle="#252a2d";
-
-        ctx.fillRect(
-            0,
-            0,
-            WORLD.width,
-            WORLD.height
-        );
-
-        /*
-         * Piso modular.
-         */
-
-        ctx.strokeStyle=
-            "rgba(190,200,205,.045)";
-
-        for(let x=30;x<770;x+=40){
-
-            ctx.beginPath();
-
-            ctx.moveTo(x,30);
-            ctx.lineTo(x,570);
-
-            ctx.stroke();
-        }
-
-        for(let y=30;y<570;y+=40){
-
-            ctx.beginPath();
-
-            ctx.moveTo(30,y);
-            ctx.lineTo(770,y);
-
-            ctx.stroke();
-        }
-
-        /*
-         * Iluminação discreta.
-         */
-
-        const lights=[
-            {x:110,y:85},
-            {x:470,y:90},
-            {x:700,y:170},
-            {x:110,y:470},
-            {x:500,y:500}
-        ];
-
-        for(const light of lights){
-
-            const g=
-                ctx.createRadialGradient(
-                    light.x,
-                    light.y,
-                    2,
-                    light.x,
-                    light.y,
-                    75
-                );
-
-            g.addColorStop(
-                0,
-                "rgba(150,180,190,.08)"
-            );
-
-            g.addColorStop(
-                1,
-                "rgba(150,180,190,0)"
-            );
-
-            ctx.fillStyle=g;
-
-            ctx.fillRect(
-                light.x-75,
-                light.y-75,
-                150,
-                150
-            );
-        }
-    },
-
-    drawWalls(){
-
-        for(const wall of this.walls){
-
-            ctx.fillStyle="#d4d9dc";
-
-            ctx.fillRect(
-                wall.x,
-                wall.y,
-                wall.w,
-                wall.h
-            );
-
-            ctx.strokeStyle="#899298";
-
-            ctx.strokeRect(
-                wall.x,
-                wall.y,
-                wall.w,
-                wall.h
-            );
-        }
-
-        for(const box of this.boxes){
-
-            ctx.fillStyle="#454e53";
-
-            ctx.fillRect(
-                box.x,
-                box.y,
-                box.w,
-                box.h
-            );
-
-            ctx.strokeStyle="#69747a";
-
-            ctx.strokeRect(
-                box.x,
-                box.y,
-                box.w,
-                box.h
-            );
-        }
-    },
-
     draw(){
 
         ctx.clearRect(
@@ -2073,13 +3496,15 @@ const Game={
             WORLD.height
         );
 
-        this.drawFloor();
-
-        this.drawWalls();
+        MapSystem.draw();
 
         MissionSystem.draw();
 
-        for(const enemy of this.enemies){
+        for(
+            const enemy
+            of this.enemies
+        ){
+
             enemy.draw();
         }
 
@@ -2096,7 +3521,7 @@ const Game={
                 170,
                 400,
                 300,
-                470
+                500
             );
 
         vignette.addColorStop(
@@ -2106,7 +3531,7 @@ const Game={
 
         vignette.addColorStop(
             1,
-            "rgba(0,0,0,.45)"
+            "rgba(0,0,0,.48)"
         );
 
         ctx.fillStyle=vignette;
@@ -2114,8 +3539,8 @@ const Game={
         ctx.fillRect(
             0,
             0,
-            WORLD.width,
-            WORLD.height
+            800,
+            600
         );
     },
 
@@ -2133,7 +3558,7 @@ const Game={
 
 
 /* =========================================================
-   MENSAGENS
+   MENSAGEM
 ========================================================= */
 
 let messageTimer=null;
@@ -2146,13 +3571,19 @@ function showMessage(text){
         );
 
     element.textContent=text;
+
     element.style.opacity="1";
 
-    clearTimeout(messageTimer);
+    clearTimeout(
+        messageTimer
+    );
 
-    messageTimer=setTimeout(()=>{
-        element.style.opacity="0";
-    },1600);
+    messageTimer=setTimeout(
+        ()=>{
+            element.style.opacity="0";
+        },
+        1700
+    );
 }
 
 
@@ -2174,7 +3605,9 @@ document
     .addEventListener(
         "click",
         ()=>{
-            UI.show(UI.options);
+            UI.show(
+                UI.options
+            );
         }
     );
 
@@ -2183,7 +3616,9 @@ document
     .addEventListener(
         "click",
         ()=>{
-            UI.show(UI.credits);
+            UI.show(
+                UI.credits
+            );
         }
     );
 
@@ -2192,7 +3627,9 @@ document
     .addEventListener(
         "click",
         ()=>{
-            UI.show(UI.menu);
+            UI.show(
+                UI.menu
+            );
         }
     );
 
@@ -2201,7 +3638,9 @@ document
     .addEventListener(
         "click",
         ()=>{
-            UI.show(UI.menu);
+            UI.show(
+                UI.menu
+            );
         }
     );
 
@@ -2210,6 +3649,7 @@ document
     .addEventListener(
         "click",
         ()=>{
+
             AudioSystem.enabled=
                 !AudioSystem.enabled;
 
@@ -2238,7 +3678,9 @@ document
     .addEventListener(
         "click",
         ()=>{
-            UI.show(UI.menu);
+            UI.show(
+                UI.menu
+            );
         }
     );
 
@@ -2256,42 +3698,11 @@ document
     .addEventListener(
         "click",
         ()=>{
-            UI.show(UI.menu);
+            UI.show(
+                UI.menu
+            );
         }
     );
-
-
-/* =========================================================
-   CONTROLES DE TECLADO
-========================================================= */
-
-window.addEventListener(
-    "keydown",
-    e=>{
-
-        if(e.key==="Escape"){
-
-            if(Game.running){
-                Game.pause();
-            }
-        }
-
-        if(
-            e.key===" " ||
-            e.key.toLowerCase()==="f"
-        ){
-
-            if(Game.running){
-
-                e.preventDefault();
-
-                Player.performTakedown(
-                    Game.enemies
-                );
-            }
-        }
-    }
-);
 
 
 /* =========================================================
@@ -2305,4 +3716,4 @@ Game.init();
 </script>
 
 </body>
-</html>
+    </html>
