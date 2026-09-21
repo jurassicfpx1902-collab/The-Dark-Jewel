@@ -1,211 +1,122 @@
-window.Game = {
+window.CollisionSystem = {
 
-    canvas: null,
-    ctx: null,
+    rectsOverlap(a, b) {
 
-    running: false,
-
-    walls: [
-
-        {
-            x: 200,
-            y: 100,
-            w: 20,
-            h: 400
-        },
-
-        {
-            x: 500,
-            y: 0,
-            w: 20,
-            h: 350
-        },
-
-        {
-            x: 350,
-            y: 300,
-            w: 300,
-            h: 20
-        }
-
-    ],
-
-
-    init() {
-
-        this.canvas =
-            document.getElementById("gameCanvas");
-
-        this.ctx =
-            this.canvas.getContext("2d");
-
-
-        Player.init();
-        Enemy.init();
-        MissionSystem.init();
-
+        return (
+            a.x < b.x + b.w &&
+            a.x + a.w > b.x &&
+            a.y < b.y + b.h &&
+            a.y + a.h > b.y
+        );
     },
 
+    checkWallCollision(rect, walls) {
 
-    startMission() {
+        for (const wall of walls) {
 
-        Player.reset();
-        Enemy.reset();
-        MissionSystem.reset();
-
-
-        UISystem.updateStatus(
-            "OCULTO",
-            "#c4d0e0"
-        );
-
-        UISystem.updateObjective(
-            "OBJETIVO: RECUPERAR ARQUIVO"
-        );
-
-
-        this.running = true;
-
-        this.loop();
-
-    },
-
-
-    triggerGameOver() {
-
-        this.running = false;
-
-        AudioSystem.playAlertSound();
-
-        UISystem.showScreen(
-            "gameover-screen"
-        );
-
-    },
-
-
-    triggerVictory() {
-
-        this.running = false;
-
-        AudioSystem.playTone(
-            523.25,
-            "sine",
-            0.3,
-            0.2
-        );
-
-        UISystem.showScreen(
-            "victory-screen"
-        );
-
-    },
-
-
-    update() {
-
-        if (!this.running) {
-            return;
-        }
-
-
-        Player.update(this.walls);
-
-        Enemy.update();
-
-        MissionSystem.update(Player);
-
-
-        const detected =
-            VisionSystem.isPlayerDetected(
-                Player,
-                Enemy,
-                this.walls
-            );
-
-
-        if (detected) {
-
-            Enemy.alert = true;
-
-            UISystem.updateStatus(
-                "ALERTA",
-                "#ff2a3f"
-            );
-
-            this.triggerGameOver();
+            if (this.rectsOverlap(rect, wall)) {
+                return true;
+            }
 
         }
 
+        return false;
     },
 
+    pointInsideRect(point, rect) {
 
-    draw() {
-
-        this.ctx.clearRect(
-            0,
-            0,
-            this.canvas.width,
-            this.canvas.height
+        return (
+            point.x >= rect.x &&
+            point.x <= rect.x + rect.w &&
+            point.y >= rect.y &&
+            point.y <= rect.y + rect.h
         );
-
-
-        /*
-         * Paredes
-         */
-
-        this.ctx.fillStyle = "#162030";
-
-        for (const wall of this.walls) {
-
-            this.ctx.fillRect(
-                wall.x,
-                wall.y,
-                wall.w,
-                wall.h
-            );
-
-        }
-
-
-        /*
-         * Elementos da missão
-         */
-
-        MissionSystem.draw(this.ctx);
-
-
-        /*
-         * Inimigo
-         */
-
-        Enemy.draw(this.ctx);
-
-
-        /*
-         * Jogador
-         */
-
-        Player.draw(this.ctx);
-
     },
 
+    orientation(a, b, c) {
 
-    loop() {
+        const value =
+            (b.y - a.y) * (c.x - b.x) -
+            (b.x - a.x) * (c.y - b.y);
 
-        if (!Game.running) {
-            return;
+        if (Math.abs(value) < 0.00001) {
+            return 0;
         }
 
+        return value > 0 ? 1 : 2;
+    },
 
-        Game.update();
-        Game.draw();
+    segmentsIntersect(a, b, c, d) {
 
+        const o1 = this.orientation(a, b, c);
+        const o2 = this.orientation(a, b, d);
+        const o3 = this.orientation(c, d, a);
+        const o4 = this.orientation(c, d, b);
 
-        requestAnimationFrame(
-            Game.loop
+        return (
+            o1 !== o2 &&
+            o3 !== o4
         );
+    },
 
+    lineIntersectsRect(p1, p2, rect) {
+
+        if (
+            this.pointInsideRect(p1, rect) ||
+            this.pointInsideRect(p2, rect)
+        ) {
+            return true;
+        }
+
+        const topLeft = {
+            x: rect.x,
+            y: rect.y
+        };
+
+        const topRight = {
+            x: rect.x + rect.w,
+            y: rect.y
+        };
+
+        const bottomLeft = {
+            x: rect.x,
+            y: rect.y + rect.h
+        };
+
+        const bottomRight = {
+            x: rect.x + rect.w,
+            y: rect.y + rect.h
+        };
+
+        return (
+
+            this.segmentsIntersect(
+                p1,
+                p2,
+                topLeft,
+                topRight
+            ) ||
+
+            this.segmentsIntersect(
+                p1,
+                p2,
+                topRight,
+                bottomRight
+            ) ||
+
+            this.segmentsIntersect(
+                p1,
+                p2,
+                bottomRight,
+                bottomLeft
+            ) ||
+
+            this.segmentsIntersect(
+                p1,
+                p2,
+                bottomLeft,
+                topLeft
+            )
+        );
     }
-
 };
