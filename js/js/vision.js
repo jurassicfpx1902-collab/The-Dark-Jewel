@@ -1,201 +1,165 @@
-window.UISystem = {
+window.VisionSystem = {
 
-    init() {
+    drawGuardVisionCone(ctx, guard) {
 
-        this.bindEvents();
+        const x = guard.x;
+        const y = guard.y;
 
+        const distance =
+            guard.viewDist ?? 220;
+
+        const fov =
+            guard.fov ?? Math.PI * 0.75;
+
+        const angle =
+            guard.angle ?? 0;
+
+        const gradient =
+            ctx.createRadialGradient(
+                x,
+                y,
+                4,
+                x,
+                y,
+                distance
+            );
+
+        if (guard.alert) {
+
+            gradient.addColorStop(
+                0,
+                "rgba(210,45,55,0.50)"
+            );
+
+            gradient.addColorStop(
+                0.6,
+                "rgba(170,35,45,0.18)"
+            );
+
+            gradient.addColorStop(
+                1,
+                "rgba(120,20,30,0)"
+            );
+
+        } else {
+
+            gradient.addColorStop(
+                0,
+                "rgba(180,45,50,0.32)"
+            );
+
+            gradient.addColorStop(
+                0.5,
+                "rgba(150,35,40,0.12)"
+            );
+
+            gradient.addColorStop(
+                1,
+                "rgba(100,20,25,0)"
+            );
+        }
+
+        ctx.save();
+
+        ctx.beginPath();
+
+        ctx.moveTo(x, y);
+
+        ctx.arc(
+            x,
+            y,
+            distance,
+            angle - fov / 2,
+            angle + fov / 2
+        );
+
+        ctx.closePath();
+
+        ctx.fillStyle = gradient;
+
+        ctx.fill();
+
+        ctx.restore();
     },
 
+    isPlayerDetected(player, guard, walls) {
 
-    bindEvents() {
+        const gx = guard.x;
+        const gy = guard.y;
 
-        document
-            .getElementById("btn-start")
-            .onclick = () => {
+        const px =
+            player.x + player.w / 2;
 
-                this.showScreen(null);
+        const py =
+            player.y + player.h / 2;
 
-                Game.startMission();
+        const dx = px - gx;
+        const dy = py - gy;
 
-            };
+        const distance =
+            Math.hypot(dx, dy);
 
+        const viewDist =
+            guard.viewDist ?? 220;
 
-        document
-            .getElementById("btn-restart")
-            .onclick = () => {
+        if (distance > viewDist) {
+            return false;
+        }
 
-                this.showScreen(null);
+        /*
+         * Agachado:
+         * reduz a distância efetiva de detecção.
+         */
+        if (
+            player.isCrouching &&
+            distance > viewDist * 0.5
+        ) {
+            return false;
+        }
 
-                Game.startMission();
+        const playerAngle =
+            Math.atan2(dy, dx);
 
-            };
+        const guardAngle =
+            guard.angle ?? 0;
 
+        const fov =
+            guard.fov ?? Math.PI * 0.75;
 
-        document
-            .getElementById("btn-victory-restart")
-            .onclick = () => {
+        let difference =
+            playerAngle - guardAngle;
 
-                this.showScreen("menu-screen");
+        while (difference < -Math.PI) {
+            difference += Math.PI * 2;
+        }
 
-            };
+        while (difference > Math.PI) {
+            difference -= Math.PI * 2;
+        }
 
+        if (
+            Math.abs(difference) >
+            fov / 2
+        ) {
+            return false;
+        }
 
-        document
-            .getElementById("btn-audio")
-            .onclick = (event) => {
+        /*
+         * Verificação real de linha de visão.
+         */
+        for (const wall of walls) {
 
-                const state =
-                    AudioSystem.toggle();
-
-                event.target.innerText =
-                    `ÁUDIO: ${
-                        state
-                            ? "LIGADO"
-                            : "DESLIGADO"
-                    }`;
-
-            };
-
-
-        this.bindMobileControls();
-
-    },
-
-
-    bindMobileControls() {
-
-        const mapBtn = (id, key) => {
-
-            const element =
-                document.getElementById(id);
-
-            if (!element) {
-                return;
+            if (
+                CollisionSystem.lineIntersectsRect(
+                    { x: gx, y: gy },
+                    { x: px, y: py },
+                    wall
+                )
+            ) {
+                return false;
             }
-
-
-            element.addEventListener(
-                "pointerdown",
-                (event) => {
-
-                    event.preventDefault();
-
-                    Player.keys[key] = true;
-
-                }
-            );
-
-
-            element.addEventListener(
-                "pointerup",
-                (event) => {
-
-                    event.preventDefault();
-
-                    Player.keys[key] = false;
-
-                }
-            );
-
-
-            element.addEventListener(
-                "pointerleave",
-                (event) => {
-
-                    event.preventDefault();
-
-                    Player.keys[key] = false;
-
-                }
-            );
-
-        };
-
-
-        mapBtn("btn-up", "w");
-        mapBtn("btn-down", "s");
-        mapBtn("btn-left", "a");
-        mapBtn("btn-right", "d");
-        mapBtn("btn-crouch", "c");
-
-    },
-
-
-    showScreen(screenId) {
-
-        const screens =
-            document.querySelectorAll(
-                ".screen"
-            );
-
-
-        screens.forEach(screen => {
-
-            screen.classList.remove(
-                "active"
-            );
-
-        });
-
-
-        if (screenId) {
-
-            const screen =
-                document.getElementById(
-                    screenId
-                );
-
-            if (screen) {
-
-                screen.classList.add(
-                    "active"
-                );
-
-            }
-
         }
 
-    },
-
-
-    updateStatus(
-        text,
-        color = "#c4d0e0"
-    ) {
-
-        const element =
-            document.getElementById(
-                "hud-status"
-            );
-
-
-        if (element) {
-
-            element.innerText =
-                `STATUS: ${text}`;
-
-            element.style.color =
-                color;
-
-        }
-
-    },
-
-
-    updateObjective(text) {
-
-        const element =
-            document.getElementById(
-                "hud-objective"
-            );
-
-
-        if (element) {
-
-            element.innerText = text;
-
-        }
-
+        return true;
     }
-
 };
