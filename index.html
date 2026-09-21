@@ -2,708 +2,171 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <meta
+        name="viewport"
+        content="width=device-width,
+                 initial-scale=1.0,
+                 maximum-scale=1.0,
+                 user-scalable=no"
+    >
+
     <title>THE DARK JEWEL — Operation NO DARK</title>
-    <style>
-        /* ==========================================================================
-           3. CSS — css/style.css
-           ========================================================================== */
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            user-select: none;
-            -webkit-user-select: none;
-        }
 
-        body, html {
-            width: 100%;
-            height: 100%;
-            background-color: #05070a;
-            color: #c4d0e0;
-            font-family: 'Courier New', Courier, monospace;
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        #game-container {
-            position: relative;
-            width: 800px;
-            height: 600px;
-            background: #000;
-            border: 2px solid #0088ff;
-            box-shadow: 0 0 20px rgba(0, 136, 255, 0.2);
-            overflow: hidden;
-        }
-
-        canvas {
-            display: block;
-            width: 100%;
-            height: 100%;
-            background-color: #0a0d12;
-        }
-
-        /* Efeitos Visuais Retro (CRT / Vignette) */
-        #scanlines {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: linear-gradient(
-                rgba(18, 16, 16, 0) 50%, 
-                rgba(0, 0, 0, 0.25) 50%
-            );
-            background-size: 100% 4px;
-            z-index: 10;
-            pointer-events: none;
-        }
-
-        #vignette {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: radial-gradient(
-                circle, 
-                transparent 60%, 
-                rgba(0, 0, 0, 0.8) 100%
-            );
-            z-index: 11;
-            pointer-events: none;
-        }
-
-        /* Interface e Telas */
-        .screen {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            display: none;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            background: rgba(5, 7, 10, 0.95);
-            z-index: 20;
-            padding: 20px;
-            text-align: center;
-        }
-
-        .screen.active {
-            display: flex;
-        }
-
-        h1 {
-            font-size: 1.8rem;
-            color: #0088ff;
-            margin-bottom: 10px;
-            letter-spacing: 2px;
-        }
-
-        .subtitle {
-            font-size: 0.8rem;
-            color: #ffcc00;
-            margin-bottom: 20px;
-            letter-spacing: 1px;
-        }
-
-        .btn {
-            background: #001a33;
-            color: #0088ff;
-            border: 1px solid #0088ff;
-            padding: 10px 20px;
-            font-family: inherit;
-            font-size: 1rem;
-            cursor: pointer;
-            margin-top: 15px;
-            transition: all 0.2s;
-        }
-
-        .btn:hover {
-            background: #0088ff;
-            color: #000;
-        }
-
-        /* HUD Overlay */
-        #hud {
-            position: absolute;
-            top: 10px; left: 10px; right: 10px;
-            display: flex;
-            justify-content: space-between;
-            pointer-events: none;
-            z-index: 15;
-            font-size: 0.85rem;
-        }
-
-        .hud-panel {
-            background: rgba(0, 0, 0, 0.6);
-            border: 1px solid rgba(0, 136, 255, 0.4);
-            padding: 5px 10px;
-        }
-
-        /* Controles Mobile */
-        #mobile-controls {
-            position: absolute;
-            bottom: 10px; left: 10px; right: 10px;
-            display: none;
-            justify-content: space-between;
-            align-items: flex-end;
-            z-index: 15;
-        }
-
-        @media (max-width: 812px) {
-            #mobile-controls { display: flex; }
-            #game-container { width: 100vw; height: 100vh; border: none; }
-        }
-
-        .touch-btn {
-            width: 50px; height: 50px;
-            background: rgba(0, 136, 255, 0.2);
-            border: 1px solid #0088ff;
-            color: #fff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border-radius: 50%;
-            touch-action: manipulation;
-        }
-    </style>
+    <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
 
-    <!-- ==========================================================================
-         2. INDEX.HTML — Estrutura HTML da Aplicação
-         ========================================================================== -->
     <div id="game-container">
+
+        <canvas
+            id="gameCanvas"
+            width="800"
+            height="600"
+        ></canvas>
+
+        <!-- Efeitos visuais -->
         <div id="scanlines"></div>
         <div id="vignette"></div>
 
-        <!-- Canvas Principal -->
-        <canvas id="gameCanvas" width="800" height="600"></canvas>
-
-        <!-- HUD em Jogo -->
+        <!-- HUD -->
         <div id="hud">
-            <div class="hud-panel" id="hud-agent">AGENTE: BUCK</div>
-            <div class="hud-panel" id="hud-status">STATUS: OCULTO</div>
-            <div class="hud-panel" id="hud-objective">OBJETIVO: RECUPERAR ARQUIVO</div>
+
+            <div class="hud-panel" id="hud-agent">
+                AGENTE: BUCK
+            </div>
+
+            <div class="hud-panel" id="hud-status">
+                STATUS: OCULTO
+            </div>
+
+            <div class="hud-panel" id="hud-objective">
+                OBJETIVO: RECUPERAR ARQUIVO
+            </div>
+
         </div>
 
-        <!-- Tela Principal / Briefing -->
+        <!-- MENU -->
         <div id="menu-screen" class="screen active">
+
             <h1>THE DARK JEWEL</h1>
-            <div class="subtitle">OPERATION // NO DARK</div>
+
+            <div class="subtitle">
+                OPERATION // NO DARK
+            </div>
+
             <p>LOCAL: BASE DINAMARQUESA</p>
             <p>AGENTE: BUCK</p>
+
             <br>
-            <button id="btn-start" class="btn">INICIAR MISSÃO</button>
-            <button id="btn-audio" class="btn">ÁUDIO: LIGADO</button>
+
+            <button id="btn-start" class="btn">
+                INICIAR MISSÃO
+            </button>
+
+            <button id="btn-audio" class="btn">
+                ÁUDIO: LIGADO
+            </button>
+
         </div>
 
-        <!-- Tela de Derrota / Detecção -->
+        <!-- GAME OVER -->
         <div id="gameover-screen" class="screen">
-            <h1 style="color: #ff2a3f;">ALERTA // DETECTADO</h1>
-            <p>O Agente Buck foi capturado pelas forças de patrulha.</p>
-            <button id="btn-restart" class="btn">REINICIAR OPERAÇÃO</button>
+
+            <h1 class="danger">
+                ALERTA // DETECTADO
+            </h1>
+
+            <p>
+                O Agente Buck foi detectado pelas forças de patrulha.
+            </p>
+
+            <button id="btn-restart" class="btn">
+                REINICIAR OPERAÇÃO
+            </button>
+
         </div>
 
-        <!-- Tela de Vitória -->
+        <!-- VITÓRIA -->
         <div id="victory-screen" class="screen">
-            <h1 style="color: #00ff66;">MISSÃO CONCLUÍDA</h1>
-            <p>Dados recuperados e extração realizada com sucesso.</p>
-            <button id="btn-victory-restart" class="btn">JOGAR NOVAMENTE</button>
+
+            <h1 class="success">
+                MISSÃO CONCLUÍDA
+            </h1>
+
+            <p>
+                Dados recuperados e extração realizada.
+            </p>
+
+            <button id="btn-victory-restart" class="btn">
+                JOGAR NOVAMENTE
+            </button>
+
         </div>
 
-        <!-- Controles Mobile -->
+        <!-- CONTROLES MOBILE -->
         <div id="mobile-controls">
-            <div id="dpad" style="display: grid; grid-template-columns: repeat(3, 40px); gap: 5px;">
-                <div></div><div class="touch-btn" id="btn-up">▲</div><div></div>
-                <div class="touch-btn" id="btn-left">◄</div><div></div><div class="touch-btn" id="btn-right">►</div>
-                <div></div><div class="touch-btn" id="btn-down">▼</div><div></div>
+
+            <div id="dpad">
+
+                <div></div>
+
+                <button
+                    class="touch-btn"
+                    id="btn-up"
+                >▲</button>
+
+                <div></div>
+
+                <button
+                    class="touch-btn"
+                    id="btn-left"
+                >◀</button>
+
+                <div></div>
+
+                <button
+                    class="touch-btn"
+                    id="btn-right"
+                >▶</button>
+
+                <div></div>
+
+                <button
+                    class="touch-btn"
+                    id="btn-down"
+                >▼</button>
+
+                <div></div>
+
             </div>
-            <div class="touch-btn" id="btn-crouch" style="width: 60px; height: 60px;">AGACH</div>
+
+            <button
+                class="touch-btn crouch"
+                id="btn-crouch"
+            >
+                AGACH
+            </button>
+
         </div>
+
     </div>
 
-    <!-- ==========================================================================
-         MÓDULOS JAVASCRIPT (Separados por responsabilidade)
-         ========================================================================== -->
-    <script>
-        /* ----------------------------------------------------------------------
-           13. AUDIO.JS — js/audio.js
-           ---------------------------------------------------------------------- */
-        window.AudioSystem = {
-            enabled: true,
-            ctx: null,
+    <!-- =====================================================
+         JAVASCRIPT MODULAR
+         A ORDEM DESTES ARQUIVOS É IMPORTANTE.
+         ===================================================== -->
+
+    <script src="js/audio.js"></script>
+    <script src="js/collision.js"></script>
+    <script src="js/vision.js"></script>
+    <script src="js/player.js"></script>
+    <script src="js/enemy.js"></script>
+    <script src="js/missions.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/game.js"></script>
+    <script src="js/main.js"></script>
 
-            init() {
-                try {
-                    const AudioCtx = window.AudioContext || window.webkitAudioContext;
-                    if (AudioCtx) this.ctx = new AudioCtx();
-                } catch (e) {
-                    console.warn("Web Audio API não suportada.");
-                }
-            },
-
-            playTone(freq, type = 'sine', duration = 0.1, vol = 0.1) {
-                if (!this.enabled || !this.ctx) return;
-                if (this.ctx.state === 'suspended') this.ctx.resume();
-
-                const osc = this.ctx.createOscillator();
-                const gain = this.ctx.createGain();
-
-                osc.type = type;
-                osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
-                
-                gain.gain.setValueAtTime(vol, this.ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.00001, this.ctx.currentTime + duration);
-
-                osc.connect(gain);
-                gain.connect(this.ctx.destination);
-
-                osc.start();
-                osc.stop(this.ctx.currentTime + duration);
-            },
-
-            playAlertSound() {
-                this.playTone(600, 'sawtooth', 0.2, 0.25);
-            },
-
-            toggle() {
-                this.enabled = !this.enabled;
-                return this.enabled;
-            }
-        };
-
-        /* ----------------------------------------------------------------------
-           10. COLLISION.JS — js/collision.js
-           ---------------------------------------------------------------------- */
-        window.CollisionSystem = {
-            checkWallCollision(rect, walls) {
-                for (let wall of walls) {
-                    if (
-                        rect.x < wall.x + wall.w &&
-                        rect.x + rect.w > wall.x &&
-                        rect.y < wall.y + wall.h &&
-                        rect.y + rect.h > wall.y
-                    ) {
-                        return true;
-                    }
-                }
-                return false;
-            },
-
-            lineIntersectsRect(p1, p2, rect) {
-                const minX = Math.min(p1.x, p2.x);
-                const maxX = Math.max(p1.x, p2.x);
-                const minY = Math.min(p1.y, p2.y);
-                const maxY = Math.max(p1.y, p2.y);
-
-                if (maxX < rect.x || minX > rect.x + rect.w || maxY < rect.y || minY > rect.y + rect.h) {
-                    return false;
-                }
-                return true;
-            }
-        };
-
-        /* ----------------------------------------------------------------------
-           8 & 9. VISION.JS & DETECÇÃO — js/vision.js
-           ---------------------------------------------------------------------- */
-        window.VisionSystem = {
-            drawGuardVisionCone(ctx, guard) {
-                ctx.save();
-
-                const x = guard.x;
-                const y = guard.y;
-
-                const viewDist = guard.viewDist ?? guard.vision ?? 235;
-                const fov = guard.fov ?? (Math.PI * 0.9);
-                const angle = guard.angle ?? guard.directionAngle ?? 0;
-
-                const isAlert = guard.alert || guard.state === 'alert';
-
-                const gradient = ctx.createRadialGradient(x, y, 8, x, y, viewDist);
-
-                if (isAlert) {
-                    gradient.addColorStop(0, "rgba(255, 0, 0, 0.6)");
-                    gradient.addColorStop(0.5, "rgba(255, 0, 0, 0.25)");
-                    gradient.addColorStop(1, "rgba(255, 0, 0, 0)");
-                } else {
-                    gradient.addColorStop(0, "rgba(255, 42, 63, 0.32)");
-                    gradient.addColorStop(0.45, "rgba(255, 42, 63, 0.14)");
-                    gradient.addColorStop(0.75, "rgba(255, 42, 63, 0.055)");
-                    gradient.addColorStop(1, "rgba(255, 42, 63, 0)");
-                }
-
-                ctx.beginPath();
-                ctx.moveTo(x, y);
-                ctx.arc(x, y, viewDist, angle - fov / 2, angle + fov / 2);
-                ctx.closePath();
-
-                ctx.fillStyle = gradient;
-                ctx.fill();
-
-                ctx.restore();
-            },
-
-            isPlayerDetected(player, guard, walls) {
-                const gx = guard.x;
-                const gy = guard.y;
-                const px = player.x + player.w / 2;
-                const py = player.y + player.h / 2;
-
-                const dx = px - gx;
-                const dy = py - gy;
-                const dist = Math.hypot(dx, dy);
-
-                const viewDist = guard.viewDist ?? guard.vision ?? 235;
-                if (dist > viewDist) return false;
-
-                if (player.isCrouching && dist > viewDist * 0.5) {
-                    return false;
-                }
-
-                const angleToPlayer = Math.atan2(dy, dx);
-                const guardAngle = guard.angle ?? guard.directionAngle ?? 0;
-                const fov = guard.fov ?? (Math.PI * 0.9);
-
-                let diff = angleToPlayer - guardAngle;
-                while (diff < -Math.PI) diff += Math.PI * 2;
-                while (diff > Math.PI) diff -= Math.PI * 2;
-
-                if (Math.abs(diff) > fov / 2) return false;
-
-                for (let wall of walls) {
-                    if (CollisionSystem.lineIntersectsRect({x: gx, y: gy}, {x: px, y: py}, wall)) {
-                        return false;
-                    }
-                }
-
-                return true;
-            }
-        };
-
-        /* ----------------------------------------------------------------------
-           6. PLAYER.JS — js/player.js
-           ---------------------------------------------------------------------- */
-        window.Player = {
-            x: 50,
-            y: 550,
-            w: 20,
-            h: 20,
-            speed: 2.5,
-            isCrouching: false,
-            keys: {},
-
-            init() {
-                this.reset();
-                window.addEventListener('keydown', (e) => this.keys[e.key.toLowerCase()] = true);
-                window.addEventListener('keyup', (e) => this.keys[e.key.toLowerCase()] = false);
-            },
-
-            reset() {
-                this.x = 50;
-                this.y = 550;
-                this.isCrouching = false;
-            },
-
-            update(walls) {
-                let vx = 0;
-                let vy = 0;
-
-                if (this.keys['w'] || this.keys['arrowup']) vy -= 1;
-                if (this.keys['s'] || this.keys['arrowdown']) vy += 1;
-                if (this.keys['a'] || this.keys['arrowleft']) vx -= 1;
-                if (this.keys['d'] || this.keys['arrowright']) vx += 1;
-
-                this.isCrouching = !!(this.keys['c'] || this.keys['shift'] || this.mobileCrouch);
-
-                const currentSpeed = this.isCrouching ? this.speed * 0.5 : this.speed;
-
-                if (vx !== 0 && vy !== 0) {
-                    vx *= 0.7071;
-                    vy *= 0.7071;
-                }
-
-                this.x += vx * currentSpeed;
-                if (CollisionSystem.checkWallCollision(this, walls)) {
-                    this.x -= vx * currentSpeed;
-                }
-
-                this.y += vy * currentSpeed;
-                if (CollisionSystem.checkWallCollision(this, walls)) {
-                    this.y -= vy * currentSpeed;
-                }
-            },
-
-            draw(ctx) {
-                ctx.save();
-                ctx.fillStyle = this.isCrouching ? "#0055aa" : "#0088ff";
-                ctx.fillRect(this.x, this.y, this.w, this.h);
-                
-                ctx.fillStyle = "#ffffff";
-                ctx.fillRect(this.x + 4, this.y + 4, 12, 12);
-                ctx.restore();
-            }
-        };
-
-        /* ----------------------------------------------------------------------
-           7. ENEMY.JS — js/enemy.js
-           ---------------------------------------------------------------------- */
-        window.Enemy = {
-            x: 400,
-            y: 200,
-            w: 22,
-            h: 22,
-            angle: 0,
-            viewDist: 235,
-            fov: Math.PI * 0.85,
-            alert: false,
-            waypoints: [
-                {x: 400, y: 200},
-                {x: 700, y: 200},
-                {x: 700, y: 450},
-                {x: 400, y: 450}
-            ],
-            targetIdx: 0,
-            speed: 1.2,
-
-            init() {
-                this.reset();
-            },
-
-            reset() {
-                this.x = this.waypoints[0].x;
-                this.y = this.waypoints[0].y;
-                this.targetIdx = 0;
-                this.alert = false;
-            },
-
-            update() {
-                const target = this.waypoints[this.targetIdx];
-                const dx = target.x - this.x;
-                const dy = target.y - this.y;
-                const dist = Math.hypot(dx, dy);
-
-                if (dist < 5) {
-                    this.targetIdx = (this.targetIdx + 1) % this.waypoints.length;
-                } else {
-                    this.angle = Math.atan2(dy, dx);
-                    this.x += Math.cos(this.angle) * this.speed;
-                    this.y += Math.sin(this.angle) * this.speed;
-                }
-            },
-
-            draw(ctx) {
-                VisionSystem.drawGuardVisionCone(ctx, this);
-
-                ctx.save();
-                ctx.fillStyle = this.alert ? "#ff2a3f" : "#cc3333";
-                ctx.fillRect(this.x - this.w/2, this.y - this.h/2, this.w, this.h);
-                ctx.restore();
-            }
-        };
-
-        /* ----------------------------------------------------------------------
-           11. MISSIONS.JS — js/missions.js
-           ---------------------------------------------------------------------- */
-        window.MissionSystem = {
-            name: "OPERATION // NO DARK",
-            id: "MISSION 01",
-            location: "Base Dinamarquesa",
-            agent: "BUCK",
-            hasDocument: false,
-            
-            documentArea: { x: 720, y: 70, w: 30, h: 30 },
-            extractionArea: { x: 30, y: 520, w: 50, h: 50 },
-
-            init() {
-                this.reset();
-            },
-
-            reset() {
-                this.hasDocument = false;
-            },
-
-            update(player) {
-                if (!this.hasDocument) {
-                    if (CollisionSystem.checkWallCollision(player, [this.documentArea])) {
-                        this.hasDocument = true;
-                        AudioSystem.playTone(880, 'sine', 0.15, 0.2);
-                        UISystem.updateObjective("OBJETIVO: VÁ PARA A EXTRAÇÃO");
-                    }
-                } else {
-                    if (CollisionSystem.checkWallCollision(player, [this.extractionArea])) {
-                        Game.triggerVictory();
-                    }
-                }
-            },
-
-            draw(ctx) {
-                ctx.save();
-                if (!this.hasDocument) {
-                    ctx.fillStyle = "#ffcc00";
-                    ctx.fillRect(this.documentArea.x, this.documentArea.y, this.documentArea.w, this.documentArea.h);
-                }
-
-                ctx.strokeStyle = this.hasDocument ? "#00ff66" : "#555555";
-                ctx.lineWidth = 2;
-                ctx.strokeRect(this.extractionArea.x, this.extractionArea.y, this.extractionArea.w, this.extractionArea.h);
-                ctx.restore();
-            }
-        };
-
-        /* ----------------------------------------------------------------------
-           12. UI.JS — js/ui.js
-           ---------------------------------------------------------------------- */
-        window.UISystem = {
-            init() {
-                this.bindEvents();
-            },
-
-            bindEvents() {
-                document.getElementById('btn-start').onclick = () => {
-                    this.showScreen(null);
-                    Game.startMission();
-                };
-
-                document.getElementById('btn-restart').onclick = () => {
-                    this.showScreen(null);
-                    Game.startMission();
-                };
-
-                document.getElementById('btn-victory-restart').onclick = () => {
-                    this.showScreen('menu-screen');
-                };
-
-                document.getElementById('btn-audio').onclick = (e) => {
-                    const state = AudioSystem.toggle();
-                    e.target.innerText = `ÁUDIO: ${state ? 'LIGADO' : 'DESLIGADO'}`;
-                };
-
-                this.bindMobileControls();
-            },
-
-            bindMobileControls() {
-                const mapBtn = (id, key) => {
-                    const el = document.getElementById(id);
-                    if (!el) return;
-                    el.addEventListener('pointerdown', (e) => { e.preventDefault(); Player.keys[key] = true; });
-                    el.addEventListener('pointerup', (e) => { e.preventDefault(); Player.keys[key] = false; });
-                    el.addEventListener('pointerleave', (e) => { e.preventDefault(); Player.keys[key] = false; });
-                };
-
-                mapBtn('btn-up', 'w');
-                mapBtn('btn-down', 's');
-                mapBtn('btn-left', 'a');
-                mapBtn('btn-right', 'd');
-                mapBtn('btn-crouch', 'c');
-            },
-
-            showScreen(screenId) {
-                const screens = document.querySelectorAll('.screen');
-                screens.forEach(s => s.classList.remove('active'));
-                if (screenId) {
-                    document.getElementById(screenId).classList.add('active');
-                }
-            },
-
-            updateStatus(text, color = '#c4d0e0') {
-                const el = document.getElementById('hud-status');
-                if (el) {
-                    el.innerText = `STATUS: ${text}`;
-                    el.style.color = color;
-                }
-            },
-
-            updateObjective(text) {
-                const el = document.getElementById('hud-objective');
-                if (el) el.innerText = text;
-            }
-        };
-
-        /* ----------------------------------------------------------------------
-           5. GAME.JS — js/game.js
-           ---------------------------------------------------------------------- */
-        window.Game = {
-            canvas: null,
-            ctx: null,
-            running: false,
-            walls: [
-                { x: 200, y: 100, w: 20, h: 400 },
-                { x: 500, y: 0, w: 20, h: 350 },
-                { x: 350, y: 300, w: 300, h: 20 }
-            ],
-
-            init() {
-                this.canvas = document.getElementById('gameCanvas');
-                this.ctx = this.canvas.getContext('2d');
-                
-                Player.init();
-                Enemy.init();
-                MissionSystem.init();
-            },
-
-            startMission() {
-                Player.reset();
-                Enemy.reset();
-                MissionSystem.reset();
-                UISystem.updateStatus("OCULTO", "#c4d0e0");
-                UISystem.updateObjective("OBJETIVO: RECUPERAR ARQUIVO");
-                this.running = true;
-                this.loop();
-            },
-
-            triggerGameOver() {
-                this.running = false;
-                AudioSystem.playAlertSound();
-                UISystem.showScreen('gameover-screen');
-            },
-
-            triggerVictory() {
-                this.running = false;
-                AudioSystem.playTone(523.25, 'sine', 0.3, 0.2);
-                UISystem.showScreen('victory-screen');
-            },
-
-            update() {
-                if (!this.running) return;
-
-                Player.update(this.walls);
-                Enemy.update();
-                MissionSystem.update(Player);
-
-                const detected = VisionSystem.isPlayerDetected(Player, Enemy, this.walls);
-                if (detected) {
-                    Enemy.alert = true;
-                    UISystem.updateStatus("ALERTA", "#ff2a3f");
-                    this.triggerGameOver();
-                }
-            },
-
-            draw() {
-                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
-                this.ctx.fillStyle = "#162030";
-                for (let wall of this.walls) {
-                    this.ctx.fillRect(wall.x, wall.y, wall.w, wall.h);
-                }
-
-                MissionSystem.draw(this.ctx);
-                Enemy.draw(this.ctx);
-                Player.draw(this.ctx);
-            },
-
-            loop() {
-                if (!Game.running) return;
-                Game.update();
-                Game.draw();
-                requestAnimationFrame(Game.loop);
-            }
-        };
-
-        /* ----------------------------------------------------------------------
-           4. MAIN.JS — js/main.js
-           ---------------------------------------------------------------------- */
-        window.addEventListener("DOMContentLoaded", () => {
-            AudioSystem.init();
-            UISystem.init();
-            Game.init();
-        });
-    </script>
 </body>
 </html>
