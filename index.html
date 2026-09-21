@@ -1,848 +1,3180 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
+<!DOCTYPE html><html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>THE DARK JEWEL — Operation NO DARK</title>
-    <style>
-        /* ==========================================================================
-           3. CSS — css/style.css
-           ========================================================================== */
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            user-select: none;
-            -webkit-user-select: none;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>THE DARK JEWEL — Operation NO DARK</title><style>
+/* ============================================================
+   THE DARK JEWEL
+   OPERATION // NO DARK
+   Prototype 0.4
+   ============================================================ */
 
-        body, html {
-            width: 100%;
-            height: 100%;
-            background-color: #05070a;
-            color: #c4d0e0;
-            font-family: 'Courier New', Courier, monospace;
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    user-select: none;
+    -webkit-user-select: none;
+}
 
-        #game-container {
-            position: relative;
-            width: 800px;
-            height: 600px;
-            background: #000;
-            border: 2px solid #0088ff;
-            box-shadow: 0 0 20px rgba(0, 136, 255, 0.2);
-            overflow: hidden;
-        }
+html,
+body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #05070a;
+    color: #c4d0e0;
+    font-family: "Courier New", Courier, monospace;
+}
 
-        canvas {
-            display: block;
-            width: 100%;
-            height: 100%;
-            background-color: #1a1c1f;
-        }
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
-        /* Efeitos Visuais Retro (CRT / Vignette) */
-        #scanlines {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: linear-gradient(
-                rgba(18, 16, 16, 0) 50%, 
-                rgba(0, 0, 0, 0.25) 50%
-            );
-            background-size: 100% 4px;
-            z-index: 10;
-            pointer-events: none;
-        }
+button {
+    font-family: inherit;
+}
 
-        #vignette {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: radial-gradient(
-                circle, 
-                transparent 55%, 
-                rgba(0, 0, 0, 0.85) 100%
-            );
-            z-index: 11;
-            pointer-events: none;
-        }
+/* ============================================================
+   GAME CONTAINER
+   ============================================================ */
 
-        /* Interface e Telas */
-        .screen {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            display: none;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            background: rgba(5, 7, 10, 0.95);
-            z-index: 20;
-            padding: 20px;
-            text-align: center;
-        }
+#game-container {
+    position: relative;
+    width: 800px;
+    height: 600px;
+    background: #000;
+    border: 2px solid #0088ff;
+    box-shadow: 0 0 20px rgba(0, 136, 255, 0.2);
+    overflow: hidden;
+}
 
-        .screen.active {
-            display: flex;
-        }
+canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: #1a1c1f;
+}
 
-        h1 {
-            font-size: 1.8rem;
-            color: #0088ff;
-            margin-bottom: 10px;
-            letter-spacing: 2px;
-        }
+/* ============================================================
+   CRT / VISUAL EFFECTS
+   ============================================================ */
 
-        .subtitle {
-            font-size: 0.8rem;
-            color: #ffcc00;
-            margin-bottom: 20px;
-            letter-spacing: 1px;
-        }
+#scanlines {
+    position: absolute;
+    inset: 0;
 
-        .btn {
-            background: #001a33;
-            color: #0088ff;
-            border: 1px solid #0088ff;
-            padding: 10px 20px;
-            font-family: inherit;
-            font-size: 1rem;
-            cursor: pointer;
-            margin-top: 15px;
-            transition: all 0.2s;
-        }
+    background:
+        linear-gradient(
+            rgba(18, 16, 16, 0) 50%,
+            rgba(0, 0, 0, 0.25) 50%
+        );
 
-        .btn:hover {
-            background: #0088ff;
-            color: #000;
-        }
+    background-size: 100% 4px;
 
-        /* HUD Overlay */
-        #hud {
-            position: absolute;
-            top: 10px; left: 10px; right: 10px;
-            display: flex;
-            justify-content: space-between;
-            pointer-events: none;
-            z-index: 15;
-            font-size: 0.85rem;
-        }
+    z-index: 30;
+    pointer-events: none;
+}
 
-        .hud-panel {
-            background: rgba(0, 0, 0, 0.7);
-            border: 1px solid rgba(0, 136, 255, 0.4);
-            padding: 5px 10px;
-        }
+#vignette {
+    position: absolute;
+    inset: 0;
 
-        /* Controles Mobile */
-        #mobile-controls {
-            position: absolute;
-            bottom: 10px; left: 10px; right: 10px;
-            display: none;
-            justify-content: space-between;
-            align-items: flex-end;
-            z-index: 15;
-        }
+    background:
+        radial-gradient(
+            circle,
+            transparent 55%,
+            rgba(0, 0, 0, 0.85) 100%
+        );
 
-        @media (max-width: 812px) {
-            #mobile-controls { display: flex; }
-            #game-container { width: 100vw; height: 100vh; border: none; }
-        }
+    z-index: 31;
+    pointer-events: none;
+}
 
-        .touch-btn {
-            width: 50px; height: 50px;
-            background: rgba(0, 136, 255, 0.2);
-            border: 1px solid #0088ff;
-            color: #fff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border-radius: 50%;
-            touch-action: manipulation;
-        }
-    </style>
-</head>
-<body>
+/* ============================================================
+   SCREENS
+   ============================================================ */
 
-    <!-- ==========================================================================
-         2. INDEX.HTML — Estrutura HTML da Aplicação
-         ========================================================================== -->
-    <div id="game-container">
-        <div id="scanlines"></div>
-        <div id="vignette"></div>
+.screen {
+    position: absolute;
+    inset: 0;
 
-        <!-- Canvas Principal -->
-        <canvas id="gameCanvas" width="800" height="600"></canvas>
+    display: none;
 
-        <!-- HUD em Jogo -->
-        <div id="hud">
-            <div class="hud-panel" id="hud-agent">AGENTE: BUCK</div>
-            <div class="hud-panel" id="hud-status">STATUS: OCULTO</div>
-            <div class="hud-panel" id="hud-objective">OBJETIVO: RECUPERAR ARQUIVO</div>
-        </div>
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 
-        <!-- Tela Principal / Briefing -->
-        <div id="menu-screen" class="screen active">
-            <h1>THE DARK JEWEL</h1>
-            <div class="subtitle">OPERATION // NO DARK</div>
-            <p>LOCAL: BASE DINAMARQUESA</p>
-            <p>AGENTE: BUCK</p>
-            <br>
-            <button id="btn-start" class="btn">INICIAR MISSÃO</button>
-            <button id="btn-audio" class="btn">ÁUDIO: LIGADO</button>
-        </div>
+    padding: 20px;
 
-        <!-- Tela de Derrota / Detecção -->
-        <div id="gameover-screen" class="screen">
-            <h1 style="color: #ff2a3f;">ALERTA // DETECTADO</h1>
-            <p>O Agente Buck foi capturado pelas forças de patrulha.</p>
-            <button id="btn-restart" class="btn">REINICIAR OPERAÇÃO</button>
-        </div>
+    background: rgba(5, 7, 10, 0.95);
 
-        <!-- Tela de Vitória -->
-        <div id="victory-screen" class="screen">
-            <h1 style="color: #00ff66;">MISSÃO CONCLUÍDA</h1>
-            <p>Dados recuperados e extração realizada com sucesso.</p>
-            <button id="btn-victory-restart" class="btn">JOGAR NOVAMENTE</button>
-        </div>
+    text-align: center;
 
-        <!-- Controles Mobile -->
-        <div id="mobile-controls">
-            <div id="dpad" style="display: grid; grid-template-columns: repeat(3, 40px); gap: 5px;">
-                <div></div><div class="touch-btn" id="btn-up">▲</div><div></div>
-                <div class="touch-btn" id="btn-left">◄</div><div></div><div class="touch-btn" id="btn-right">►</div>
-                <div></div><div class="touch-btn" id="btn-down">▼</div><div></div>
-            </div>
-            <div class="touch-btn" id="btn-crouch" style="width: 60px; height: 60px;">AGACH</div>
-        </div>
+    z-index: 40;
+}
+
+.screen.active {
+    display: flex;
+}
+
+.screen h1 {
+    margin-bottom: 10px;
+
+    color: #0088ff;
+
+    font-size: 1.8rem;
+    letter-spacing: 2px;
+}
+
+.screen p {
+    max-width: 600px;
+    margin: 5px 0;
+
+    color: #aeb9c8;
+
+    font-size: 0.85rem;
+}
+
+.subtitle {
+    margin-bottom: 20px;
+
+    color: #ffcc00;
+
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+}
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+
+.btn {
+    min-width: 220px;
+
+    margin-top: 12px;
+    padding: 10px 20px;
+
+    background: #001a33;
+
+    border: 1px solid #0088ff;
+
+    color: #0088ff;
+
+    font-size: 0.95rem;
+
+    cursor: pointer;
+
+    transition:
+        background 0.15s,
+        color 0.15s,
+        transform 0.15s;
+}
+
+.btn:hover {
+    background: #0088ff;
+    color: #000;
+}
+
+.btn:active {
+    transform: scale(0.97);
+}
+
+.btn.danger {
+    border-color: #ff2a3f;
+    color: #ff2a3f;
+}
+
+.btn.danger:hover {
+    background: #ff2a3f;
+    color: #000;
+}
+
+/* ============================================================
+   HUD
+   ============================================================ */
+
+#hud {
+    position: absolute;
+
+    top: 10px;
+    left: 10px;
+    right: 10px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+
+    gap: 8px;
+
+    z-index: 20;
+
+    pointer-events: none;
+
+    font-size: 0.75rem;
+}
+
+.hud-panel {
+    padding: 5px 9px;
+
+    background: rgba(0, 0, 0, 0.72);
+
+    border: 1px solid rgba(0, 136, 255, 0.4);
+
+    color: #c4d0e0;
+}
+
+#hud-objective {
+    max-width: 260px;
+    text-align: right;
+}
+
+/* ============================================================
+   PAUSE
+   ============================================================ */
+
+#pause-screen {
+    background: rgba(2, 4, 7, 0.9);
+}
+
+.pause-title {
+    color: #ffcc00 !important;
+}
+
+/* ============================================================
+   OPTIONS
+   ============================================================ */
+
+.option-row {
+    width: min(420px, 90%);
+
+    margin: 8px 0;
+    padding: 12px;
+
+    border: 1px solid rgba(0, 136, 255, 0.35);
+
+    background: rgba(0, 20, 40, 0.5);
+
+    text-align: left;
+}
+
+.option-title {
+    color: #0088ff;
+    font-size: 0.85rem;
+}
+
+.option-description {
+    margin-top: 5px;
+    color: #8995a6;
+    font-size: 0.72rem;
+}
+
+/* ============================================================
+   MOBILE
+   ============================================================ */
+
+#mobile-controls {
+    position: absolute;
+
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+
+    display: none;
+
+    justify-content: space-between;
+    align-items: flex-end;
+
+    z-index: 25;
+}
+
+#dpad {
+    display: grid;
+
+    grid-template-columns: repeat(3, 44px);
+    gap: 5px;
+}
+
+.touch-btn {
+    width: 44px;
+    height: 44px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background: rgba(0, 136, 255, 0.2);
+
+    border: 1px solid #0088ff;
+
+    color: #fff;
+
+    border-radius: 50%;
+
+    touch-action: none;
+
+    font-size: 0.75rem;
+}
+
+.touch-btn:active {
+    background: rgba(0, 136, 255, 0.55);
+}
+
+#btn-crouch {
+    width: 60px;
+    height: 60px;
+}
+
+@media (max-width: 812px) {
+
+    #game-container {
+        width: 100vw;
+        height: 100vh;
+
+        border: none;
+    }
+
+    #mobile-controls {
+        display: flex;
+    }
+
+    #hud {
+        font-size: 0.65rem;
+    }
+
+    #hud-objective {
+        max-width: 180px;
+    }
+}
+</style></head><body><div id="game-container"><canvas
+    id="gameCanvas"
+    width="800"
+    height="600">
+</canvas>
+
+<div id="scanlines"></div>
+<div id="vignette"></div>
+
+<!-- ========================================================
+     HUD
+     ======================================================== -->
+
+<div id="hud">
+
+    <div class="hud-panel" id="hud-agent">
+        AGENTE: BUCK
     </div>
 
-    <!-- ==========================================================================
-         MÓDULOS JAVASCRIPT
-         ========================================================================== -->
-    <script>
-        /* ----------------------------------------------------------------------
-           AUDIO.JS
-           ---------------------------------------------------------------------- */
-        window.AudioSystem = {
-            enabled: true,
-            ctx: null,
+    <div class="hud-panel" id="hud-status">
+        STATUS: OCULTO
+    </div>
 
-            init() {
-                try {
-                    const AudioCtx = window.AudioContext || window.webkitAudioContext;
-                    if (AudioCtx) this.ctx = new AudioCtx();
-                } catch (e) {
-                    console.warn("Web Audio API não suportada.");
-                }
-            },
+    <div class="hud-panel" id="hud-objective">
+        OBJETIVO: RECUPERAR ARQUIVO
+    </div>
 
-            playTone(freq, type = 'sine', duration = 0.1, vol = 0.1) {
-                if (!this.enabled || !this.ctx) return;
-                if (this.ctx.state === 'suspended') this.ctx.resume();
+</div>
 
-                const osc = this.ctx.createOscillator();
-                const gain = this.ctx.createGain();
+<!-- ========================================================
+     MENU PRINCIPAL
+     ======================================================== -->
 
-                osc.type = type;
-                osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
-                
-                gain.gain.setValueAtTime(vol, this.ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.00001, this.ctx.currentTime + duration);
+<div id="menu-screen" class="screen active">
 
-                osc.connect(gain);
-                gain.connect(this.ctx.destination);
+    <h1>THE DARK JEWEL</h1>
 
-                osc.start();
-                osc.stop(this.ctx.currentTime + duration);
-            },
+    <div class="subtitle">
+        OPERATION // NO DARK
+    </div>
 
-            playAlertSound() {
-                this.playTone(600, 'sawtooth', 0.2, 0.25);
-            },
+    <p>LOCAL: BASE DINAMARQUESA</p>
+    <p>AGENTE: BUCK</p>
 
-            toggle() {
-                this.enabled = !this.enabled;
-                return this.enabled;
+    <br>
+
+    <button id="btn-start" class="btn">
+        INICIAR MISSÃO
+    </button>
+
+    <button id="btn-operation" class="btn">
+        OPERAÇÃO BUCK
+    </button>
+
+    <button id="btn-options" class="btn">
+        OPÇÕES
+    </button>
+
+    <button id="btn-credits" class="btn">
+        CRÉDITOS
+    </button>
+
+    <button id="btn-exit" class="btn danger">
+        SAIR
+    </button>
+
+</div>
+
+<!-- ========================================================
+     OPERAÇÃO BUCK
+     ======================================================== -->
+
+<div id="operation-screen" class="screen">
+
+    <h1>OPERAÇÃO BUCK</h1>
+
+    <div class="subtitle">
+        MISSION FILE // 01
+    </div>
+
+    <p>
+        Buck foi enviado para uma instalação na Dinamarca.
+    </p>
+
+    <p>
+        O objetivo é recuperar um arquivo e alcançar a extração.
+    </p>
+
+    <p>
+        Evite as patrulhas e permaneça fora do campo de visão.
+    </p>
+
+    <br>
+
+    <button id="btn-operation-back" class="btn">
+        VOLTAR
+    </button>
+
+</div>
+
+<!-- ========================================================
+     OPÇÕES
+     ======================================================== -->
+
+<div id="options-screen" class="screen">
+
+    <h1>OPÇÕES</h1>
+
+    <div class="option-row">
+
+        <div class="option-title">
+            ÁUDIO
+        </div>
+
+        <div class="option-description">
+            Ativa ou desativa os efeitos sonoros do protótipo.
+        </div>
+
+        <button id="btn-audio" class="btn">
+            ÁUDIO: LIGADO
+        </button>
+
+    </div>
+
+    <div class="option-row">
+
+        <div class="option-title">
+            CONTROLES
+        </div>
+
+        <div class="option-description">
+            Teclado: WASD ou setas. Agachar: C ou Shift.
+            No celular, utilize os controles na tela.
+        </div>
+
+    </div>
+
+    <button id="btn-options-back" class="btn">
+        VOLTAR
+    </button>
+
+</div>
+
+<!-- ========================================================
+     CRÉDITOS
+     ======================================================== -->
+
+<div id="credits-screen" class="screen">
+
+    <h1>CRÉDITOS</h1>
+
+    <div class="subtitle">
+        THE DARK JEWEL
+    </div>
+
+    <p>Autor: O Escritor</p>
+    <p>Criador: Felipe</p>
+
+    <br>
+
+    <p>
+        Universo de W.B.
+    </p>
+
+    <p>
+        Prototype — Operation NO DARK
+    </p>
+
+    <button id="btn-credits-back" class="btn">
+        VOLTAR
+    </button>
+
+</div>
+
+<!-- ========================================================
+     GAME OVER
+     ======================================================== -->
+
+<div id="gameover-screen" class="screen">
+
+    <h1 style="color:#ff2a3f;">
+        ALERTA // DETECTADO
+    </h1>
+
+    <p>
+        Buck foi detectado pelas forças de patrulha.
+    </p>
+
+    <button id="btn-restart" class="btn">
+        REINICIAR OPERAÇÃO
+    </button>
+
+    <button id="btn-gameover-menu" class="btn">
+        MENU PRINCIPAL
+    </button>
+
+</div>
+
+<!-- ========================================================
+     VITÓRIA
+     ======================================================== -->
+
+<div id="victory-screen" class="screen">
+
+    <h1 style="color:#00ff66;">
+        MISSÃO CONCLUÍDA
+    </h1>
+
+    <p>
+        Dados recuperados e extração realizada com sucesso.
+    </p>
+
+    <button id="btn-victory-restart" class="btn">
+        JOGAR NOVAMENTE
+    </button>
+
+    <button id="btn-victory-menu" class="btn">
+        MENU PRINCIPAL
+    </button>
+
+</div>
+
+<!-- ========================================================
+     PAUSA
+     ======================================================== -->
+
+<div id="pause-screen" class="screen">
+
+    <h1 class="pause-title">
+        PAUSADO
+    </h1>
+
+    <div class="subtitle">
+        OPERATION // NO DARK
+    </div>
+
+    <button id="btn-resume" class="btn">
+        CONTINUAR
+    </button>
+
+    <button id="btn-pause-restart" class="btn">
+        REINICIAR MISSÃO
+    </button>
+
+    <button id="btn-pause-menu" class="btn danger">
+        SAIR DA MISSÃO
+    </button>
+
+</div>
+
+<!-- ========================================================
+     CONTROLES MOBILE
+     ======================================================== -->
+
+<div id="mobile-controls">
+
+    <div id="dpad">
+
+        <div></div>
+
+        <div
+            class="touch-btn"
+            id="btn-up">
+            ▲
+        </div>
+
+        <div></div>
+
+        <div
+            class="touch-btn"
+            id="btn-left">
+            ◄
+        </div>
+
+        <div></div>
+
+        <div
+            class="touch-btn"
+            id="btn-right">
+            ►
+        </div>
+
+        <div></div>
+
+        <div
+            class="touch-btn"
+            id="btn-down">
+            ▼
+        </div>
+
+        <div></div>
+
+    </div>
+
+    <div
+        class="touch-btn"
+        id="btn-crouch">
+
+        AGACH
+
+    </div>
+
+</div>
+
+</div><script>
+/* ============================================================
+   AUDIO.JS
+   ============================================================ */
+
+window.AudioSystem = {
+
+    enabled: true,
+    ctx: null,
+
+    init() {
+
+        try {
+
+            const AudioCtx =
+                window.AudioContext ||
+                window.webkitAudioContext;
+
+            if (AudioCtx) {
+                this.ctx = new AudioCtx();
             }
-        };
 
-        /* ----------------------------------------------------------------------
-           COLLISION.JS
-           ---------------------------------------------------------------------- */
-        window.CollisionSystem = {
-            checkWallCollision(rect, walls) {
-                for (let wall of walls) {
-                    if (
-                        rect.x < wall.x + wall.w &&
-                        rect.x + rect.w > wall.x &&
-                        rect.y < wall.y + wall.h &&
-                        rect.y + rect.h > wall.y
-                    ) {
-                        return true;
-                    }
-                }
+        } catch (error) {
+
+            console.warn(
+                "Web Audio API não suportada."
+            );
+
+        }
+
+    },
+
+    resume() {
+
+        if (
+            this.ctx &&
+            this.ctx.state === "suspended"
+        ) {
+
+            this.ctx.resume();
+
+        }
+
+    },
+
+    playTone(
+        frequency,
+        type = "sine",
+        duration = 0.1,
+        volume = 0.1
+    ) {
+
+        if (!this.enabled || !this.ctx) {
+            return;
+        }
+
+        this.resume();
+
+        const oscillator =
+            this.ctx.createOscillator();
+
+        const gain =
+            this.ctx.createGain();
+
+        oscillator.type = type;
+
+        oscillator.frequency.setValueAtTime(
+            frequency,
+            this.ctx.currentTime
+        );
+
+        gain.gain.setValueAtTime(
+            volume,
+            this.ctx.currentTime
+        );
+
+        gain.gain.exponentialRampToValueAtTime(
+            0.00001,
+            this.ctx.currentTime + duration
+        );
+
+        oscillator.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        oscillator.start();
+
+        oscillator.stop(
+            this.ctx.currentTime + duration
+        );
+
+    },
+
+    playMenu() {
+
+        this.playTone(
+            440,
+            "sine",
+            0.08,
+            0.08
+        );
+
+    },
+
+    playCollect() {
+
+        this.playTone(
+            880,
+            "sine",
+            0.12,
+            0.16
+        );
+
+        setTimeout(() => {
+
+            this.playTone(
+                1100,
+                "sine",
+                0.15,
+                0.12
+            );
+
+        }, 90);
+
+    },
+
+    playAlert() {
+
+        this.playTone(
+            600,
+            "sawtooth",
+            0.18,
+            0.22
+        );
+
+    },
+
+    playVictory() {
+
+        this.playTone(
+            523.25,
+            "sine",
+            0.2,
+            0.15
+        );
+
+        setTimeout(() => {
+
+            this.playTone(
+                659.25,
+                "sine",
+                0.25,
+                0.15
+            );
+
+        }, 160);
+
+    },
+
+    toggle() {
+
+        this.enabled = !this.enabled;
+
+        return this.enabled;
+
+    }
+
+};
+
+
+/* ============================================================
+   COLLISION.JS
+   ============================================================ */
+
+window.CollisionSystem = {
+
+    rectanglesOverlap(a, b) {
+
+        return (
+            a.x < b.x + b.w &&
+            a.x + a.w > b.x &&
+            a.y < b.y + b.h &&
+            a.y + a.h > b.y
+        );
+
+    },
+
+    checkWallCollision(rect, walls) {
+
+        for (const wall of walls) {
+
+            if (
+                this.rectanglesOverlap(
+                    rect,
+                    wall
+                )
+            ) {
+
+                return true;
+
+            }
+
+        }
+
+        return false;
+
+    },
+
+    /*
+     * Verifica se um segmento atravessa um retângulo.
+     *
+     * Diferente da versão anterior, esta função
+     * realmente testa as bordas do retângulo.
+     */
+
+    lineIntersectsRect(p1, p2, rect) {
+
+        if (
+            this.pointInsideRect(
+                p1,
+                rect
+            ) ||
+            this.pointInsideRect(
+                p2,
+                rect
+            )
+        ) {
+
+            return true;
+
+        }
+
+        const edges = [
+
+            [
+                { x: rect.x, y: rect.y },
+                { x: rect.x + rect.w, y: rect.y }
+            ],
+
+            [
+                { x: rect.x + rect.w, y: rect.y },
+                { x: rect.x + rect.w, y: rect.y + rect.h }
+            ],
+
+            [
+                { x: rect.x + rect.w, y: rect.y + rect.h },
+                { x: rect.x, y: rect.y + rect.h }
+            ],
+
+            [
+                { x: rect.x, y: rect.y + rect.h },
+                { x: rect.x, y: rect.y }
+            ]
+
+        ];
+
+        for (const edge of edges) {
+
+            if (
+                this.segmentsIntersect(
+                    p1,
+                    p2,
+                    edge[0],
+                    edge[1]
+                )
+            ) {
+
+                return true;
+
+            }
+
+        }
+
+        return false;
+
+    },
+
+    pointInsideRect(point, rect) {
+
+        return (
+            point.x >= rect.x &&
+            point.x <= rect.x + rect.w &&
+            point.y >= rect.y &&
+            point.y <= rect.y + rect.h
+        );
+
+    },
+
+    orientation(a, b, c) {
+
+        const value =
+            (b.y - a.y) * (c.x - b.x) -
+            (b.x - a.x) * (c.y - b.y);
+
+        if (Math.abs(value) < 0.00001) {
+            return 0;
+        }
+
+        return value > 0 ? 1 : 2;
+
+    },
+
+    onSegment(a, b, c) {
+
+        return (
+            b.x <= Math.max(a.x, c.x) &&
+            b.x >= Math.min(a.x, c.x) &&
+            b.y <= Math.max(a.y, c.y) &&
+            b.y >= Math.min(a.y, c.y)
+        );
+
+    },
+
+    segmentsIntersect(p1, p2, p3, p4) {
+
+        const o1 =
+            this.orientation(p1, p2, p3);
+
+        const o2 =
+            this.orientation(p1, p2, p4);
+
+        const o3 =
+            this.orientation(p3, p4, p1);
+
+        const o4 =
+            this.orientation(p3, p4, p2);
+
+        if (
+            o1 !== o2 &&
+            o3 !== o4
+        ) {
+
+            return true;
+
+        }
+
+        if (
+            o1 === 0 &&
+            this.onSegment(p1, p3, p2)
+        ) {
+            return true;
+        }
+
+        if (
+            o2 === 0 &&
+            this.onSegment(p1, p4, p2)
+        ) {
+            return true;
+        }
+
+        if (
+            o3 === 0 &&
+            this.onSegment(p3, p1, p4)
+        ) {
+            return true;
+        }
+
+        if (
+            o4 === 0 &&
+            this.onSegment(p3, p2, p4)
+        ) {
+            return true;
+        }
+
+        return false;
+
+    },
+
+    hasLineOfSight(p1, p2, walls) {
+
+        for (const wall of walls) {
+
+            if (
+                this.lineIntersectsRect(
+                    p1,
+                    p2,
+                    wall
+                )
+            ) {
+
                 return false;
-            },
 
-            lineIntersectsRect(p1, p2, rect) {
-                const minX = Math.min(p1.x, p2.x);
-                const maxX = Math.max(p1.x, p2.x);
-                const minY = Math.min(p1.y, p2.y);
-                const maxY = Math.max(p1.y, p2.y);
-
-                if (maxX < rect.x || minX > rect.x + rect.w || maxY < rect.y || minY > rect.y + rect.h) {
-                    return false;
-                }
-                return true;
             }
-        };
 
-        /* ----------------------------------------------------------------------
-           VISION.JS — Sistema visual idêntico ao "Exemplo no Jogo"
-           ---------------------------------------------------------------------- */
-        window.VisionSystem = {
-            drawGuardVisionCone(ctx, guard) {
-                ctx.save();
+        }
 
-                const x = guard.x;
-                const y = guard.y;
+        return true;
 
-                const viewDist = guard.viewDist ?? 220;
-                const fov = guard.fov ?? (Math.PI * 0.75);
-                const angle = guard.angle ?? 0;
+    }
 
-                const isAlert = guard.alert || guard.state === 'alert';
+};
 
-                const gradient = ctx.createRadialGradient(x, y, 5, x, y, viewDist);
 
-                if (isAlert) {
-                    gradient.addColorStop(0, "rgba(255, 0, 0, 0.6)");
-                    gradient.addColorStop(0.6, "rgba(255, 0, 0, 0.25)");
-                    gradient.addColorStop(1, "rgba(255, 0, 0, 0)");
-                } else {
-                    gradient.addColorStop(0, "rgba(230, 45, 45, 0.4)");
-                    gradient.addColorStop(0.5, "rgba(200, 35, 35, 0.18)");
-                    gradient.addColorStop(1, "rgba(180, 20, 20, 0)");
+/* ============================================================
+   VISION.JS
+   ============================================================ */
+
+window.VisionSystem = {
+
+    drawGuardVisionCone(ctx, guard) {
+
+        const x = guard.x;
+        const y = guard.y;
+
+        const viewDist =
+            guard.viewDist ?? 220;
+
+        const fov =
+            guard.fov ?? Math.PI * 0.75;
+
+        const angle =
+            guard.angle ?? 0;
+
+        const gradient =
+            ctx.createRadialGradient(
+                x,
+                y,
+                5,
+                x,
+                y,
+                viewDist
+            );
+
+        if (guard.alert) {
+
+            gradient.addColorStop(
+                0,
+                "rgba(255,0,0,0.55)"
+            );
+
+            gradient.addColorStop(
+                0.55,
+                "rgba(255,0,0,0.22)"
+            );
+
+            gradient.addColorStop(
+                1,
+                "rgba(255,0,0,0)"
+            );
+
+        } else {
+
+            gradient.addColorStop(
+                0,
+                "rgba(230,45,45,0.35)"
+            );
+
+            gradient.addColorStop(
+                0.5,
+                "rgba(200,35,35,0.15)"
+            );
+
+            gradient.addColorStop(
+                1,
+                "rgba(180,20,20,0)"
+            );
+
+        }
+
+        ctx.save();
+
+        ctx.beginPath();
+
+        ctx.moveTo(x, y);
+
+        ctx.arc(
+            x,
+            y,
+            viewDist,
+            angle - fov / 2,
+            angle + fov / 2
+        );
+
+        ctx.closePath();
+
+        ctx.fillStyle = gradient;
+
+        ctx.fill();
+
+        ctx.restore();
+
+    },
+
+    isPlayerDetected(
+        player,
+        guard,
+        walls
+    ) {
+
+        const gx = guard.x;
+        const gy = guard.y;
+
+        const px =
+            player.x + player.w / 2;
+
+        const py =
+            player.y + player.h / 2;
+
+        const dx = px - gx;
+        const dy = py - gy;
+
+        const distance =
+            Math.hypot(dx, dy);
+
+        const viewDist =
+            guard.viewDist ?? 220;
+
+        if (distance > viewDist) {
+            return false;
+        }
+
+        /*
+         * Agachado:
+         * Buck fica mais difícil de detectar
+         * à distância.
+         */
+
+        if (
+            player.isCrouching &&
+            distance > viewDist * 0.5
+        ) {
+
+            return false;
+
+        }
+
+        const angleToPlayer =
+            Math.atan2(dy, dx);
+
+        const guardAngle =
+            guard.angle ?? 0;
+
+        const fov =
+            guard.fov ?? Math.PI * 0.75;
+
+        let difference =
+            angleToPlayer - guardAngle;
+
+        while (
+            difference < -Math.PI
+        ) {
+
+            difference += Math.PI * 2;
+
+        }
+
+        while (
+            difference > Math.PI
+        ) {
+
+            difference -= Math.PI * 2;
+
+        }
+
+        if (
+            Math.abs(difference) >
+            fov / 2
+        ) {
+
+            return false;
+
+        }
+
+        /*
+         * Parede bloqueia visão.
+         */
+
+        if (
+            !CollisionSystem.hasLineOfSight(
+                { x: gx, y: gy },
+                { x: px, y: py },
+                walls
+            )
+        ) {
+
+            return false;
+
+        }
+
+        return true;
+
+    }
+
+};
+
+
+/* ============================================================
+   PLAYER.JS
+   ============================================================ */
+
+window.Player = {
+
+    x: 80,
+    y: 500,
+
+    w: 24,
+    h: 24,
+
+    speed: 2.2,
+
+    direction: "up",
+
+    isCrouching: false,
+
+    animTimer: 0,
+    animFrame: 0,
+
+    mobileCrouch: false,
+
+    keys: {},
+
+    init() {
+
+        this.reset();
+
+        window.addEventListener(
+            "keydown",
+            (event) => {
+
+                const key =
+                    event.key.toLowerCase();
+
+                this.keys[key] = true;
+
+                if (
+                    key === "escape" &&
+                    Game.running
+                ) {
+
+                    Game.togglePause();
+
                 }
 
-                ctx.beginPath();
-                ctx.moveTo(x, y);
-                ctx.arc(x, y, viewDist, angle - fov / 2, angle + fov / 2);
-                ctx.closePath();
-
-                ctx.fillStyle = gradient;
-                ctx.fill();
-
-                ctx.restore();
-            },
-
-            isPlayerDetected(player, guard, walls) {
-                const gx = guard.x;
-                const gy = guard.y;
-                const px = player.x + player.w / 2;
-                const py = player.y + player.h / 2;
-
-                const dx = px - gx;
-                const dy = py - gy;
-                const dist = Math.hypot(dx, dy);
-
-                const viewDist = guard.viewDist ?? 220;
-                if (dist > viewDist) return false;
-
-                if (player.isCrouching && dist > viewDist * 0.5) {
-                    return false;
-                }
-
-                const angleToPlayer = Math.atan2(dy, dx);
-                const guardAngle = guard.angle ?? 0;
-                const fov = guard.fov ?? (Math.PI * 0.75);
-
-                let diff = angleToPlayer - guardAngle;
-                while (diff < -Math.PI) diff += Math.PI * 2;
-                while (diff > Math.PI) diff -= Math.PI * 2;
-
-                if (Math.abs(diff) > fov / 2) return false;
-
-                for (let wall of walls) {
-                    if (CollisionSystem.lineIntersectsRect({x: gx, y: gy}, {x: px, y: py}, wall)) {
-                        return false;
-                    }
-                }
-
-                return true;
             }
-        };
+        );
 
-        /* ----------------------------------------------------------------------
-           PLAYER.JS — Agente Buck (pixel art procedural)
-           ---------------------------------------------------------------------- */
-        window.Player = {
-            x: 80,
-            y: 500,
-            w: 24,
-            h: 24,
-            speed: 2.2,
-            angle: 0,
-            isCrouching: false,
-            animTimer: 0,
-            animFrame: 0,
-            keys: {},
+        window.addEventListener(
+            "keyup",
+            (event) => {
 
-            init() {
-                this.reset();
-                window.addEventListener('keydown', (e) => this.keys[e.key.toLowerCase()] = true);
-                window.addEventListener('keyup', (e) => this.keys[e.key.toLowerCase()] = false);
-            },
+                const key =
+                    event.key.toLowerCase();
 
-            reset() {
-                this.x = 80;
-                this.y = 500;
-                this.isCrouching = false;
-            },
+                this.keys[key] = false;
 
-            update(walls) {
-                let vx = 0;
-                let vy = 0;
-
-                if (this.keys['w'] || this.keys['arrowup']) vy -= 1;
-                if (this.keys['s'] || this.keys['arrowdown']) vy += 1;
-                if (this.keys['a'] || this.keys['arrowleft']) vx -= 1;
-                if (this.keys['d'] || this.keys['arrowright']) vx += 1;
-
-                this.isCrouching = !!(this.keys['c'] || this.keys['shift'] || this.mobileCrouch);
-
-                const currentSpeed = this.isCrouching ? this.speed * 0.5 : this.speed;
-
-                if (vx !== 0 || vy !== 0) {
-                    this.angle = Math.atan2(vy, vx);
-                    this.animTimer += 0.15;
-                    if (this.animTimer >= 1) {
-                        this.animFrame = (this.animFrame + 1) % 4;
-                        this.animTimer = 0;
-                    }
-                    if (vx !== 0 && vy !== 0) {
-                        vx *= 0.7071;
-                        vy *= 0.7071;
-                    }
-                }
-
-                this.x += vx * currentSpeed;
-                if (CollisionSystem.checkWallCollision(this, walls)) {
-                    this.x -= vx * currentSpeed;
-                }
-
-                this.y += vy * currentSpeed;
-                if (CollisionSystem.checkWallCollision(this, walls)) {
-                    this.y -= vy * currentSpeed;
-                }
-            },
-
-            draw(ctx) {
-                ctx.save();
-                ctx.translate(this.x + this.w/2, this.y + this.h/2);
-
-                // Mochila Tática
-                ctx.fillStyle = "#2c3138";
-                ctx.fillRect(-10, -8, 6, 16);
-
-                // Corço / Traje Tático Escuro (Paleta da Referência)
-                ctx.fillStyle = this.isCrouching ? "#1a2332" : "#283243";
-                ctx.beginPath();
-                ctx.arc(0, 0, 10, 0, Math.PI * 2);
-                ctx.fill();
-
-                // Cabelo Loiro do Buck
-                ctx.fillStyle = "#e2b17a";
-                ctx.beginPath();
-                ctx.arc(-2, -2, 6, 0, Math.PI * 2);
-                ctx.fill();
-
-                // Pistola Tática na mão
-                ctx.fillStyle = "#111";
-                ctx.fillRect(4, 2, 8, 3);
-
-                ctx.restore();
             }
-        };
+        );
 
-        /* ----------------------------------------------------------------------
-           ENEMY.JS — Inimigo Dark Obsidian (estilo referência)
-           ---------------------------------------------------------------------- */
-        window.Enemy = {
-            x: 620,
-            y: 180,
-            w: 26,
-            h: 26,
-            angle: Math.PI,
-            viewDist: 220,
-            fov: Math.PI * 0.75,
-            alert: false,
-            waypoints: [
-                {x: 620, y: 180},
-                {x: 620, y: 420},
-                {x: 350, y: 420},
-                {x: 350, y: 180}
-            ],
-            targetIdx: 0,
-            speed: 1.1,
+    },
 
-            init() {
-                this.reset();
-            },
+    reset() {
 
-            reset() {
-                this.x = this.waypoints[0].x;
-                this.y = this.waypoints[0].y;
-                this.targetIdx = 0;
-                this.alert = false;
-            },
+        this.x = 80;
+        this.y = 500;
 
-            update() {
-                const target = this.waypoints[this.targetIdx];
-                const dx = target.x - this.x;
-                const dy = target.y - this.y;
-                const dist = Math.hypot(dx, dy);
+        this.direction = "up";
 
-                if (dist < 5) {
-                    this.targetIdx = (this.targetIdx + 1) % this.waypoints.length;
-                } else {
-                    this.angle = Math.atan2(dy, dx);
-                    this.x += Math.cos(this.angle) * this.speed;
-                    this.y += Math.sin(this.angle) * this.speed;
-                }
-            },
+        this.isCrouching = false;
 
-            draw(ctx) {
-                // Desenha o Cone de Visão
-                VisionSystem.drawGuardVisionCone(ctx, this);
+        this.animTimer = 0;
+        this.animFrame = 0;
 
-                ctx.save();
-                ctx.translate(this.x, this.y);
-                ctx.rotate(this.angle);
+        this.keys = {};
 
-                // Mochila/Mochila Tática
-                ctx.fillStyle = "#15171c";
-                ctx.fillRect(-12, -7, 5, 14);
+        this.mobileCrouch = false;
 
-                // Traje Tático Completo de Proteção Dark Obsidian
-                ctx.fillStyle = this.alert ? "#591c21" : "#1f2229";
-                ctx.beginPath();
-                ctx.arc(0, 0, 11, 0, Math.PI * 2);
-                ctx.fill();
+    },
 
-                // Capacete Escuro
-                ctx.fillStyle = "#111317";
-                ctx.beginPath();
-                ctx.arc(2, 0, 7, 0, Math.PI * 2);
-                ctx.fill();
+    update(walls) {
 
-                // Visor do Capacete (Azul / Vermelho em Alerta)
-                ctx.fillStyle = this.alert ? "#ff2a3f" : "#0088ff";
-                ctx.fillRect(6, -3, 3, 6);
+        if (!Game.running) {
+            return;
+        }
 
-                // Fuzil Tático
-                ctx.fillStyle = "#08090a";
-                ctx.fillRect(4, 3, 14, 4);
+        let vx = 0;
+        let vy = 0;
 
-                ctx.restore();
+        if (
+            this.keys["w"] ||
+            this.keys["arrowup"]
+        ) {
+
+            vy -= 1;
+
+        }
+
+        if (
+            this.keys["s"] ||
+            this.keys["arrowdown"]
+        ) {
+
+            vy += 1;
+
+        }
+
+        if (
+            this.keys["a"] ||
+            this.keys["arrowleft"]
+        ) {
+
+            vx -= 1;
+
+        }
+
+        if (
+            this.keys["d"] ||
+            this.keys["arrowright"]
+        ) {
+
+            vx += 1;
+
+        }
+
+        this.isCrouching =
+            !!(
+                this.keys["c"] ||
+                this.keys["shift"] ||
+                this.mobileCrouch
+            );
+
+        const speed =
+            this.isCrouching
+                ? this.speed * 0.5
+                : this.speed;
+
+        if (
+            vx !== 0 ||
+            vy !== 0
+        ) {
+
+            if (
+                Math.abs(vx) >
+                Math.abs(vy)
+            ) {
+
+                this.direction =
+                    vx > 0
+                        ? "right"
+                        : "left";
+
+            } else {
+
+                this.direction =
+                    vy > 0
+                        ? "down"
+                        : "up";
+
             }
-        };
 
-        /* ----------------------------------------------------------------------
-           MISSIONS.JS — Terminal de Dados & Saída
-           ---------------------------------------------------------------------- */
-        window.MissionSystem = {
-            name: "OPERATION // NO DARK",
-            id: "MISSION 01",
-            location: "Base Dinamarquesa",
-            agent: "BUCK",
-            hasDocument: false,
-            
-            documentArea: { x: 450, y: 280, w: 28, h: 28 },
-            extractionArea: { x: 700, y: 500, w: 45, h: 50 },
+            this.animTimer += 0.15;
 
-            init() {
-                this.reset();
-            },
+            if (
+                this.animTimer >= 1
+            ) {
 
-            reset() {
-                this.hasDocument = false;
-            },
+                this.animFrame =
+                    (this.animFrame + 1) % 4;
 
-            update(player) {
-                if (!this.hasDocument) {
-                    if (CollisionSystem.checkWallCollision(player, [this.documentArea])) {
-                        this.hasDocument = true;
-                        AudioSystem.playTone(880, 'sine', 0.15, 0.2);
-                        UISystem.updateObjective("OBJETIVO: VÁ PARA A EXTRAÇÃO");
-                    }
-                } else {
-                    if (CollisionSystem.checkWallCollision(player, [this.extractionArea])) {
-                        Game.triggerVictory();
-                    }
-                }
-            },
+                this.animTimer = 0;
 
-            draw(ctx) {
-                ctx.save();
-                
-                // Desenho do Terminal Objetivo (Diamante Azul com Brilho)
-                if (!this.hasDocument) {
-                    const cx = this.documentArea.x + 14;
-                    const cy = this.documentArea.y + 14;
-
-                    ctx.shadowColor = "#0088ff";
-                    ctx.shadowBlur = 12;
-                    ctx.fillStyle = "#00aaff";
-
-                    ctx.beginPath();
-                    ctx.moveTo(cx, cy - 12);
-                    ctx.lineTo(cx + 10, cy);
-                    ctx.lineTo(cx, cy + 12);
-                    ctx.lineTo(cx - 10, cy);
-                    ctx.closePath();
-                    ctx.fill();
-
-                    ctx.fillStyle = "#ffffff";
-                    ctx.beginPath();
-                    ctx.arc(cx, cy, 3, 0, Math.PI * 2);
-                    ctx.fill();
-                    ctx.shadowBlur = 0;
-                }
-
-                // Zona de Extração / Saída Iluminada
-                const ext = this.extractionArea;
-                ctx.fillStyle = "rgba(0, 255, 102, 0.08)";
-                ctx.fillRect(ext.x, ext.y, ext.w, ext.h);
-
-                ctx.strokeStyle = this.hasDocument ? "#00ff66" : "#006633";
-                ctx.lineWidth = 2;
-                ctx.strokeRect(ext.x, ext.y, ext.w, ext.h);
-
-                // Setas indicativas de saída
-                ctx.fillStyle = this.hasDocument ? "#00ff66" : "#555";
-                ctx.beginPath();
-                ctx.moveTo(ext.x + 15, ext.y + 15);
-                ctx.lineTo(ext.x + 30, ext.y + 25);
-                ctx.lineTo(ext.x + 15, ext.y + 35);
-                ctx.fill();
-
-                ctx.restore();
             }
-        };
 
-        /* ----------------------------------------------------------------------
-           UI.JS
-           ---------------------------------------------------------------------- */
-        window.UISystem = {
-            init() {
-                this.bindEvents();
-            },
+            if (
+                vx !== 0 &&
+                vy !== 0
+            ) {
 
-            bindEvents() {
-                document.getElementById('btn-start').onclick = () => {
-                    this.showScreen(null);
-                    Game.startMission();
+                vx *= 0.7071;
+                vy *= 0.7071;
+
+            }
+
+        } else {
+
+            this.animFrame = 0;
+
+        }
+
+        /*
+         * Movimento horizontal
+         */
+
+        const oldX = this.x;
+
+        this.x += vx * speed;
+
+        if (
+            CollisionSystem.checkWallCollision(
+                this,
+                walls
+            )
+        ) {
+
+            this.x = oldX;
+
+        }
+
+        /*
+         * Movimento vertical
+         */
+
+        const oldY = this.y;
+
+        this.y += vy * speed;
+
+        if (
+            CollisionSystem.checkWallCollision(
+                this,
+                walls
+            )
+        ) {
+
+            this.y = oldY;
+
+        }
+
+        /*
+         * Limites do mapa
+         */
+
+        this.x = Math.max(
+            50,
+            Math.min(
+                this.x,
+                750 - this.w
+            )
+        );
+
+        this.y = Math.max(
+            50,
+            Math.min(
+                this.y,
+                550 - this.h
+            )
+        );
+
+    },
+
+    draw(ctx) {
+
+        ctx.save();
+
+        const centerX =
+            this.x + this.w / 2;
+
+        const centerY =
+            this.y + this.h / 2;
+
+        ctx.translate(
+            centerX,
+            centerY
+        );
+
+        /*
+         * Pequena movimentação visual
+         * para simular animação.
+         */
+
+        let bob = 0;
+
+        if (this.animFrame !== 0) {
+
+            bob =
+                this.animFrame % 2 === 0
+                    ? 1
+                    : -1;
+
+        }
+
+        if (this.isCrouching) {
+
+            ctx.translate(
+                0,
+                3
+            );
+
+            ctx.scale(
+                1.05,
+                0.78
+            );
+
+        }
+
+        /*
+         * Mochila / volume traseiro
+         */
+
+        ctx.fillStyle = "#252b33";
+
+        if (
+            this.direction === "left"
+        ) {
+
+            ctx.fillRect(
+                5,
+                -7,
+                5,
+                14
+            );
+
+        } else {
+
+            ctx.fillRect(
+                -10,
+                -7,
+                5,
+                14
+            );
+
+        }
+
+        /*
+         * Corpo
+         */
+
+        ctx.fillStyle = "#283243";
+
+        ctx.beginPath();
+
+        ctx.arc(
+            0,
+            bob,
+            10,
+            0,
+            Math.PI * 2
+        );
+
+        ctx.fill();
+
+        /*
+         * Cabeça
+         */
+
+        ctx.fillStyle = "#e2b17a";
+
+        ctx.beginPath();
+
+        ctx.arc(
+            0,
+            -7 + bob,
+            5.5,
+            0,
+            Math.PI * 2
+        );
+
+        ctx.fill();
+
+        /*
+         * Cabelo
+         */
+
+        ctx.fillStyle = "#d5a86e";
+
+        ctx.beginPath();
+
+        if (
+            this.direction === "right"
+        ) {
+
+            ctx.arc(
+                2,
+                -9 + bob,
+                5,
+                Math.PI,
+                Math.PI * 2
+            );
+
+        } else if (
+            this.direction === "left"
+        ) {
+
+            ctx.arc(
+                -2,
+                -9 + bob,
+                5,
+                Math.PI,
+                Math.PI * 2
+            );
+
+        } else {
+
+            ctx.arc(
+                0,
+                -10 + bob,
+                5,
+                Math.PI,
+                Math.PI * 2
+            );
+
+        }
+
+        ctx.fill();
+
+        /*
+         * Olhos simplificados.
+         * Apenas aparecem quando Buck está
+         * virado para frente.
+         */
+
+        if (
+            this.direction === "down"
+        ) {
+
+            ctx.fillStyle = "#527ba8";
+
+            ctx.fillRect(
+                -3,
+                -7 + bob,
+                2,
+                1
+            );
+
+            ctx.fillRect(
+                1,
+                -7 + bob,
+                2,
+                1
+            );
+
+        }
+
+        /*
+         * Braços
+         */
+
+        ctx.fillStyle = "#222a35";
+
+        if (
+            this.direction === "left" ||
+            this.direction === "right"
+        ) {
+
+            ctx.fillRect(
+                this.direction === "right"
+                    ? 7
+                    : -10,
+                -2 + bob,
+                4,
+                8
+            );
+
+        } else {
+
+            ctx.fillRect(
+                -9,
+                -2 + bob,
+                4,
+                8
+            );
+
+            ctx.fillRect(
+                5,
+                -2 + bob,
+                4,
+                8
+            );
+
+        }
+
+        ctx.restore();
+
+    }
+
+};
+
+
+/* ============================================================
+   ENEMY.JS
+   ============================================================ */
+
+window.Enemy = {
+
+    x: 620,
+    y: 180,
+
+    w: 26,
+    h: 26,
+
+    angle: Math.PI,
+
+    viewDist: 220,
+
+    fov: Math.PI * 0.75,
+
+    alert: false,
+
+    speed: 1.1,
+
+    targetIdx: 0,
+
+    waypoints: [
+
+        { x: 620, y: 180 },
+
+        { x: 620, y: 420 },
+
+        { x: 350, y: 420 },
+
+        { x: 350, y: 180 }
+
+    ],
+
+    init() {
+
+        this.reset();
+
+    },
+
+    reset() {
+
+        this.x =
+            this.waypoints[0].x;
+
+        this.y =
+            this.waypoints[0].y;
+
+        this.targetIdx = 1;
+
+        this.alert = false;
+
+        const target =
+            this.waypoints[
+                this.targetIdx
+            ];
+
+        this.angle =
+            Math.atan2(
+                target.y - this.y,
+                target.x - this.x
+            );
+
+    },
+
+    update(walls) {
+
+        if (!Game.running) {
+            return;
+        }
+
+        const target =
+            this.waypoints[
+                this.targetIdx
+            ];
+
+        const dx =
+            target.x - this.x;
+
+        const dy =
+            target.y - this.y;
+
+        const distance =
+            Math.hypot(dx, dy);
+
+        if (
+            distance < 4
+        ) {
+
+            this.targetIdx =
+                (this.targetIdx + 1) %
+                this.waypoints.length;
+
+            return;
+
+        }
+
+        this.angle =
+            Math.atan2(
+                dy,
+                dx
+            );
+
+        const moveX =
+            Math.cos(this.angle) *
+            this.speed;
+
+        const moveY =
+            Math.sin(this.angle) *
+            this.speed;
+
+        /*
+         * O inimigo também respeita paredes.
+         */
+
+        const oldX = this.x;
+        const oldY = this.y;
+
+        this.x += moveX;
+
+        if (
+            CollisionSystem.checkWallCollision(
+                this,
+                walls
+            )
+        ) {
+
+            this.x = oldX;
+
+        }
+
+        this.y += moveY;
+
+        if (
+            CollisionSystem.checkWallCollision(
+                this,
+                walls
+            )
+        ) {
+
+            this.y = oldY;
+
+        }
+
+    },
+
+    draw(ctx) {
+
+        VisionSystem.drawGuardVisionCone(
+            ctx,
+            this
+        );
+
+        ctx.save();
+
+        ctx.translate(
+            this.x,
+            this.y
+        );
+
+        ctx.rotate(
+            this.angle
+        );
+
+        /*
+         * Corpo
+         */
+
+        ctx.fillStyle =
+            this.alert
+                ? "#591c21"
+                : "#1f2229";
+
+        ctx.beginPath();
+
+        ctx.arc(
+            0,
+            0,
+            11,
+            0,
+            Math.PI * 2
+        );
+
+        ctx.fill();
+
+        /*
+         * Cabeça/capacete
+         */
+
+        ctx.fillStyle = "#111317";
+
+        ctx.beginPath();
+
+        ctx.arc(
+            2,
+            0,
+            7,
+            0,
+            Math.PI * 2
+        );
+
+        ctx.fill();
+
+        /*
+         * Visor
+         */
+
+        ctx.fillStyle =
+            this.alert
+                ? "#ff2a3f"
+                : "#0088ff";
+
+        ctx.fillRect(
+            6,
+            -3,
+            3,
+            6
+        );
+
+        /*
+         * Mochila
+         */
+
+        ctx.fillStyle = "#15171c";
+
+        ctx.fillRect(
+            -12,
+            -7,
+            5,
+            14
+        );
+
+        ctx.restore();
+
+    }
+
+};
+
+
+/* ============================================================
+   MISSIONS.JS
+   ============================================================ */
+
+window.MissionSystem = {
+
+    name: "OPERATION // NO DARK",
+
+    id: "MISSION 01",
+
+    location: "Base Dinamarquesa",
+
+    agent: "BUCK",
+
+    state: "objective",
+
+    hasDocument: false,
+
+    documentArea: {
+        x: 450,
+        y: 280,
+        w: 28,
+        h: 28
+    },
+
+    extractionArea: {
+        x: 700,
+        y: 500,
+        w: 45,
+        h: 50
+    },
+
+    init() {
+
+        this.reset();
+
+    },
+
+    reset() {
+
+        this.state = "objective";
+
+        this.hasDocument = false;
+
+    },
+
+    update(player) {
+
+        if (
+            this.state === "objective"
+        ) {
+
+            if (
+                CollisionSystem.rectanglesOverlap(
+                    player,
+                    this.documentArea
+                )
+            ) {
+
+                this.hasDocument = true;
+
+                this.state =
+                    "extraction";
+
+                AudioSystem.playCollect();
+
+                UISystem.updateObjective(
+                    "OBJETIVO: VÁ PARA A EXTRAÇÃO"
+                );
+
+            }
+
+        } else if (
+            this.state === "extraction"
+        ) {
+
+            if (
+                CollisionSystem.rectanglesOverlap(
+                    player,
+                    this.extractionArea
+                )
+            ) {
+
+                this.state =
+                    "complete";
+
+                Game.triggerVictory();
+
+            }
+
+        }
+
+    },
+
+    draw(ctx) {
+
+        ctx.save();
+
+        /*
+         * Arquivo
+         */
+
+        if (
+            !this.hasDocument
+        ) {
+
+            const cx =
+                this.documentArea.x +
+                this.documentArea.w / 2;
+
+            const cy =
+                this.documentArea.y +
+                this.documentArea.h / 2;
+
+            ctx.shadowColor =
+                "#0088ff";
+
+            ctx.shadowBlur = 12;
+
+            ctx.fillStyle =
+                "#00aaff";
+
+            ctx.beginPath();
+
+            ctx.moveTo(
+                cx,
+                cy - 12
+            );
+
+            ctx.lineTo(
+                cx + 10,
+                cy
+            );
+
+            ctx.lineTo(
+                cx,
+                cy + 12
+            );
+
+            ctx.lineTo(
+                cx - 10,
+                cy
+            );
+
+            ctx.closePath();
+
+            ctx.fill();
+
+            ctx.shadowBlur = 0;
+
+            ctx.fillStyle =
+                "#ffffff";
+
+            ctx.beginPath();
+
+            ctx.arc(
+                cx,
+                cy,
+                3,
+                0,
+                Math.PI * 2
+            );
+
+            ctx.fill();
+
+        }
+
+        /*
+         * Extração
+         */
+
+        const ext =
+            this.extractionArea;
+
+        ctx.fillStyle =
+            this.hasDocument
+                ? "rgba(0,255,102,0.12)"
+                : "rgba(0,255,102,0.04)";
+
+        ctx.fillRect(
+            ext.x,
+            ext.y,
+            ext.w,
+            ext.h
+        );
+
+        ctx.strokeStyle =
+            this.hasDocument
+                ? "#00ff66"
+                : "#006633";
+
+        ctx.lineWidth = 2;
+
+        ctx.strokeRect(
+            ext.x,
+            ext.y,
+            ext.w,
+            ext.h
+        );
+
+        ctx.fillStyle =
+            this.hasDocument
+                ? "#00ff66"
+                : "#555";
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+            ext.x + 10,
+            ext.y + 25
+        );
+
+        ctx.lineTo(
+            ext.x + 28,
+            ext.y + 25
+        );
+
+        ctx.lineTo(
+            ext.x + 20,
+            ext.y + 16
+        );
+
+        ctx.moveTo(
+            ext.x + 28,
+            ext.y + 25
+        );
+
+        ctx.lineTo(
+            ext.x + 20,
+            ext.y + 34
+        );
+
+        ctx.strokeStyle =
+            this.hasDocument
+                ? "#00ff66"
+                : "#555";
+
+        ctx.stroke();
+
+        ctx.restore();
+
+    }
+
+};
+
+
+/* ============================================================
+   UI.JS
+   ============================================================ */
+
+window.UISystem = {
+
+    init() {
+
+        this.bindEvents();
+
+    },
+
+    bindEvents() {
+
+        /*
+         * Menu
+         */
+
+        document
+            .getElementById("btn-start")
+            .onclick = () => {
+
+                AudioSystem.playMenu();
+
+                this.showScreen(null);
+
+                Game.startMission();
+
+            };
+
+        document
+            .getElementById("btn-operation")
+            .onclick = () => {
+
+                this.showScreen(
+                    "operation-screen"
+                );
+
+            };
+
+        document
+            .getElementById("btn-options")
+            .onclick = () => {
+
+                this.showScreen(
+                    "options-screen"
+                );
+
+            };
+
+        document
+            .getElementById("btn-credits")
+            .onclick = () => {
+
+                this.showScreen(
+                    "credits-screen"
+                );
+
+            };
+
+        document
+            .getElementById("btn-exit")
+            .onclick = () => {
+
+                /*
+                 * Navegadores normalmente bloqueiam
+                 * scripts de fechar a própria página.
+                 *
+                 * Portanto "SAIR" retorna ao menu.
+                 */
+
+                this.showScreen(
+                    "menu-screen"
+                );
+
+            };
+
+        /*
+         * Operação
+         */
+
+        document
+            .getElementById("btn-operation-back")
+            .onclick = () => {
+
+                this.showScreen(
+                    "menu-screen"
+                );
+
+            };
+
+        /*
+         * Opções
+         */
+
+        document
+            .getElementById("btn-options-back")
+            .onclick = () => {
+
+                this.showScreen(
+                    "menu-screen"
+                );
+
+            };
+
+        document
+            .getElementById("btn-audio")
+            .onclick = (event) => {
+
+                const state =
+                    AudioSystem.toggle();
+
+                event.target.innerText =
+                    `ÁUDIO: ${
+                        state
+                            ? "LIGADO"
+                            : "DESLIGADO"
+                    }`;
+
+            };
+
+        /*
+         * Créditos
+         */
+
+        document
+            .getElementById("btn-credits-back")
+            .onclick = () => {
+
+                this.showScreen(
+                    "menu-screen"
+                );
+
+            };
+
+        /*
+         * Game Over
+         */
+
+        document
+            .getElementById("btn-restart")
+            .onclick = () => {
+
+                this.showScreen(null);
+
+                Game.startMission();
+
+            };
+
+        document
+            .getElementById("btn-gameover-menu")
+            .onclick = () => {
+
+                Game.goToMenu();
+
+            };
+
+        /*
+         * Vitória
+         */
+
+        document
+            .getElementById("btn-victory-restart")
+            .onclick = () => {
+
+                this.showScreen(null);
+
+                Game.startMission();
+
+            };
+
+        document
+            .getElementById("btn-victory-menu")
+            .onclick = () => {
+
+                Game.goToMenu();
+
+            };
+
+        /*
+         * Pausa
+         */
+
+        document
+            .getElementById("btn-resume")
+            .onclick = () => {
+
+                Game.resume();
+
+            };
+
+        document
+            .getElementById("btn-pause-restart")
+            .onclick = () => {
+
+                this.showScreen(null);
+
+                Game.startMission();
+
+            };
+
+        document
+            .getElementById("btn-pause-menu")
+            .onclick = () => {
+
+                Game.goToMenu();
+
+            };
+
+        this.bindMobileControls();
+
+    },
+
+    bindMobileControls() {
+
+        const mapButton =
+            (id, key) => {
+
+                const element =
+                    document.getElementById(id);
+
+                if (!element) {
+                    return;
+                }
+
+                const press = (event) => {
+
+                    event.preventDefault();
+
+                    Player.keys[key] = true;
+
                 };
 
-                document.getElementById('btn-restart').onclick = () => {
-                    this.showScreen(null);
-                    Game.startMission();
+                const release = (event) => {
+
+                    event.preventDefault();
+
+                    Player.keys[key] = false;
+
                 };
 
-                document.getElementById('btn-victory-restart').onclick = () => {
-                    this.showScreen('menu-screen');
-                };
+                element.addEventListener(
+                    "pointerdown",
+                    press
+                );
 
-                document.getElementById('btn-audio').onclick = (e) => {
-                    const state = AudioSystem.toggle();
-                    e.target.innerText = `ÁUDIO: ${state ? 'LIGADO' : 'DESLIGADO'}`;
-                };
+                element.addEventListener(
+                    "pointerup",
+                    release
+                );
 
-                this.bindMobileControls();
-            },
+                element.addEventListener(
+                    "pointerleave",
+                    release
+                );
 
-            bindMobileControls() {
-                const mapBtn = (id, key) => {
-                    const el = document.getElementById(id);
-                    if (!el) return;
-                    el.addEventListener('pointerdown', (e) => { e.preventDefault(); Player.keys[key] = true; });
-                    el.addEventListener('pointerup', (e) => { e.preventDefault(); Player.keys[key] = false; });
-                    el.addEventListener('pointerleave', (e) => { e.preventDefault(); Player.keys[key] = false; });
-                };
+                element.addEventListener(
+                    "pointercancel",
+                    release
+                );
 
-                mapBtn('btn-up', 'w');
-                mapBtn('btn-down', 's');
-                mapBtn('btn-left', 'a');
-                mapBtn('btn-right', 'd');
-                mapBtn('btn-crouch', 'c');
-            },
+            };
 
-            showScreen(screenId) {
-                const screens = document.querySelectorAll('.screen');
-                screens.forEach(s => s.classList.remove('active'));
-                if (screenId) {
-                    document.getElementById(screenId).classList.add('active');
-                }
-            },
+        mapButton(
+            "btn-up",
+            "w"
+        );
 
-            updateStatus(text, color = '#c4d0e0') {
-                const el = document.getElementById('hud-status');
-                if (el) {
-                    el.innerText = `STATUS: ${text}`;
-                    el.style.color = color;
-                }
-            },
+        mapButton(
+            "btn-down",
+            "s"
+        );
 
-            updateObjective(text) {
-                const el = document.getElementById('hud-objective');
-                if (el) el.innerText = text;
+        mapButton(
+            "btn-left",
+            "a"
+        );
+
+        mapButton(
+            "btn-right",
+            "d"
+        );
+
+        const crouch =
+            document.getElementById(
+                "btn-crouch"
+            );
+
+        if (crouch) {
+
+            const press = (event) => {
+
+                event.preventDefault();
+
+                Player.mobileCrouch = true;
+
+            };
+
+            const release = (event) => {
+
+                event.preventDefault();
+
+                Player.mobileCrouch = false;
+
+            };
+
+            crouch.addEventListener(
+                "pointerdown",
+                press
+            );
+
+            crouch.addEventListener(
+                "pointerup",
+                release
+            );
+
+            crouch.addEventListener(
+                "pointerleave",
+                release
+            );
+
+            crouch.addEventListener(
+                "pointercancel",
+                release
+            );
+
+        }
+
+    },
+
+    showScreen(screenId) {
+
+        const screens =
+            document.querySelectorAll(
+                ".screen"
+            );
+
+        screens.forEach(
+            screen => {
+                screen.classList.remove(
+                    "active"
+                );
             }
-        };
+        );
 
-        /* ----------------------------------------------------------------------
-           GAME.JS — Renderizador do Cenário idêntico à imagem de referência
-           ---------------------------------------------------------------------- */
-        window.Game = {
-            canvas: null,
-            ctx: null,
-            running: false,
-            // Paredes do layout tático inspirado no Exemplo de Mapa
-            walls: [
-                // Bordas do Mapa
-                { x: 30, y: 30, w: 740, h: 20 },
-                { x: 30, y: 550, w: 740, h: 20 },
-                { x: 30, y: 30, w: 20, h: 540 },
-                { x: 750, y: 30, w: 20, h: 540 },
-                
-                // Divisórias internas e Salas
-                { x: 200, y: 50, w: 20, h: 360 },
-                { x: 200, y: 410, w: 180, h: 20 },
-                { x: 480, y: 220, w: 20, h: 210 },
-                { x: 480, y: 220, w: 160, h: 20 },
+        if (screenId) {
 
-                // Caixas/Obstáculos
-                { x: 260, y: 100, w: 32, h: 32 },
-                { x: 292, y: 100, w: 32, h: 32 }
-            ],
+            const screen =
+                document.getElementById(
+                    screenId
+                );
 
-            init() {
-                this.canvas = document.getElementById('gameCanvas');
-                this.ctx = this.canvas.getContext('2d');
-                
-                Player.init();
-                Enemy.init();
-                MissionSystem.init();
-            },
+            if (screen) {
 
-            startMission() {
-                Player.reset();
-                Enemy.reset();
-                MissionSystem.reset();
-                UISystem.updateStatus("OCULTO", "#c4d0e0");
-                UISystem.updateObjective("OBJETIVO: RECUPERAR ARQUIVO");
-                this.running = true;
-                this.loop();
-            },
+                screen.classList.add(
+                    "active"
+                );
 
-            triggerGameOver() {
-                this.running = false;
-                AudioSystem.playAlertSound();
-                UISystem.showScreen('gameover-screen');
-            },
-
-            triggerVictory() {
-                this.running = false;
-                AudioSystem.playTone(523.25, 'sine', 0.3, 0.2);
-                UISystem.showScreen('victory-screen');
-            },
-
-            update() {
-                if (!this.running) return;
-
-                Player.update(this.walls);
-                Enemy.update();
-                MissionSystem.update(Player);
-
-                const detected = VisionSystem.isPlayerDetected(Player, Enemy, this.walls);
-                if (detected) {
-                    Enemy.alert = true;
-                    UISystem.updateStatus("ALERTA", "#ff2a3f");
-                    this.triggerGameOver();
-                }
-            },
-
-            drawFloor() {
-                // Piso em tom cinza tático com grelha
-                this.ctx.fillStyle = "#2a2d32";
-                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-
-                this.ctx.strokeStyle = "#23262a";
-                this.ctx.lineWidth = 1;
-                const tileSize = 40;
-                for (let x = 0; x < this.canvas.width; x += tileSize) {
-                    for (let y = 0; y < this.canvas.height; y += tileSize) {
-                        this.ctx.strokeRect(x, y, tileSize, tileSize);
-                    }
-                }
-            },
-
-            drawWalls() {
-                for (let wall of this.walls) {
-                    // Detalhe de Caixas
-                    if (wall.w === 32 && wall.h === 32) {
-                        this.ctx.fillStyle = "#3a3f47";
-                        this.ctx.fillRect(wall.x, wall.y, wall.w, wall.h);
-                        this.ctx.strokeStyle = "#1a1c20";
-                        this.ctx.strokeRect(wall.x, wall.y, wall.w, wall.h);
-                        continue;
-                    }
-
-                    // Paredes Brancas/Cinza Claro com topo estilizado
-                    this.ctx.fillStyle = "#0d0e11"; // Sombra projetada
-                    this.ctx.fillRect(wall.x + 4, wall.y + 4, wall.w, wall.h);
-
-                    this.ctx.fillStyle = "#d0d4dc"; // Topo da parede
-                    this.ctx.fillRect(wall.x, wall.y, wall.w, wall.h);
-
-                    this.ctx.fillStyle = "#9aa0ac"; // Borda/Sombra superior
-                    this.ctx.fillRect(wall.x, wall.y + wall.h - 4, wall.w, 4);
-
-                    this.ctx.strokeStyle = "#4b505a";
-                    this.ctx.strokeRect(wall.x, wall.y, wall.w, wall.h);
-                }
-            },
-
-            draw() {
-                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
-                this.drawFloor();
-                this.drawWalls();
-
-                MissionSystem.draw(this.ctx);
-                Enemy.draw(this.ctx);
-                Player.draw(this.ctx);
-            },
-
-            loop() {
-                if (!Game.running) return;
-                Game.update();
-                Game.draw();
-                requestAnimationFrame(Game.loop);
             }
-        };
 
-        /* ----------------------------------------------------------------------
-           MAIN.JS
-           ---------------------------------------------------------------------- */
-        window.addEventListener("DOMContentLoaded", () => {
-            AudioSystem.init();
-            UISystem.init();
-            Game.init();
-        });
-    </script>
-</body>
-</html>
+        }
+
+    },
+
+    updateStatus(
+        text,
+        color = "#c4d0e0"
+    ) {
+
+        const element =
+            document.getElementById(
+                "hud-status"
+            );
+
+        if (element) {
+
+            element.innerText =
+                `STATUS: ${text}`;
+
+            element.style.color =
+                color;
+
+        }
+
+    },
+
+    updateObjective(text) {
+
+        const element =
+            document.getElementById(
+                "hud-objective"
+            );
+
+        if (element) {
+
+            element.innerText =
+                text;
+
+        }
+
+    }
+
+};
+
+
+/* ============================================================
+   GAME.JS
+   ============================================================ */
+
+window.Game = {
+
+    canvas: null,
+
+    ctx: null,
+
+    running: false,
+
+    paused: false,
+
+    loopStarted: false,
+
+    walls: [
+
+        /*
+         * Bordas
+         */
+
+        {
+            x: 30,
+            y: 30,
+            w: 740,
+            h: 20
+        },
+
+        {
+            x: 30,
+            y: 550,
+            w: 740,
+            h: 20
+        },
+
+        {
+            x: 30,
+            y: 30,
+            w: 20,
+            h: 540
+        },
+
+        {
+            x: 750,
+            y: 30,
+            w: 20,
+            h: 540
+        },
+
+        /*
+         * Divisórias
+         */
+
+        {
+            x: 200,
+            y: 50,
+            w: 20,
+            h: 360
+        },
+
+        {
+            x: 200,
+            y: 410,
+            w: 180,
+            h: 20
+        },
+
+        {
+            x: 480,
+            y: 220,
+            w: 20,
+            h: 210
+        },
+
+        {
+            x: 480,
+            y: 220,
+            w: 160,
+            h: 20
+        },
+
+        /*
+         * Obstáculos
+         */
+
+        {
+            x: 260,
+            y: 100,
+            w: 32,
+            h: 32,
+            obstacle: true
+        },
+
+        {
+            x: 292,
+            y: 100,
+            w: 32,
+            h: 32,
+            obstacle: true
+        }
+
+    ],
+
+    init() {
+
+        this.canvas =
+            document.getElementById(
+                "gameCanvas"
+            );
+
+        this.ctx =
+            this.canvas.getContext(
+                "2d"
+            );
+
+        Player.init();
+
+        Enemy.init();
+
+        MissionSystem.init();
+
+        this.draw();
+
+    },
+
+    startMission() {
+
+        Player.reset();
+
+        Enemy.reset();
+
+        MissionSystem.reset();
+
+        this.paused = false;
+
+        this.running = true;
+
+        UISystem.updateStatus(
+            "OCULTO",
+            "#c4d0e0"
+        );
+
+        UISystem.updateObjective(
+            "OBJETIVO: RECUPERAR ARQUIVO"
+        );
+
+        AudioSystem.resume();
+
+        if (!this.loopStarted) {
+
+            this.loopStarted = true;
+
+            requestAnimationFrame(
+                () => this.loop()
+            );
+
+        }
+
+    },
+
+    goToMenu() {
+
+        this.running = false;
+
+        this.paused = false;
+
+        UISystem.showScreen(
+            "menu-screen"
+        );
+
+        this.draw();
+
+    },
+
+    togglePause() {
+
+        if (!this.running) {
+            return;
+        }
+
+        if (this.paused) {
+
+            this.resume();
+
+        } else {
+
+            this.pause();
+
+        }
+
+    },
+
+    pause() {
+
+        if (!this.running) {
+            return;
+        }
+
+        this.paused = true;
+
+        UISystem.showScreen(
+            "pause-screen"
+        );
+
+    },
+
+    resume() {
+
+        this.paused = false;
+
+        UISystem.showScreen(null);
+
+    },
+
+    triggerGameOver() {
+
+        if (!this.running) {
+            return;
+        }
+
+        this.running = false;
+
+        Enemy.alert = true;
+
+        AudioSystem.playAlert();
+
+        UISystem.updateStatus(
+            "ALERTA",
+            "#ff2a3f"
+        );
+
+        UISystem.showScreen(
+            "gameover-screen"
+        );
+
+    },
+
+    triggerVictory() {
+
+        if (!this.running) {
+            return;
+        }
+
+        this.running = false;
+
+        AudioSystem.playVictory();
+
+        UISystem.updateStatus(
+            "CONCLUÍDO",
+            "#00ff66"
+        );
+
+        UISystem.showScreen(
+            "victory-screen"
+        );
+
+    },
+
+    update() {
+
+        if (
+            !this.running ||
+            this.paused
+        ) {
+
+            return;
+
+        }
+
+        Player.update(
+            this.walls
+        );
+
+        Enemy.update(
+            this.walls
+        );
+
+        MissionSystem.update(
+            Player
+        );
+
+        const detected =
+            VisionSystem.isPlayerDetected(
+                Player,
+                Enemy,
+                this.walls
+            );
+
+        if (detected) {
+
+            Enemy.alert = true;
+
+            this.triggerGameOver();
+
+        }
+
+    },
+
+    drawFloor() {
+
+        const ctx =
+            this.ctx;
+
+        ctx.fillStyle =
+            "#2a2d32";
+
+        ctx.fillRect(
+            0,
+            0,
+            this.canvas.width,
+            this.canvas.height
+        );
+
+        /*
+         * Grelha
+         */
+
+        ctx.strokeStyle =
+            "#23262a";
+
+        ctx.lineWidth = 1;
+
+        const tileSize = 40;
+
+        for (
+            let x = 0;
+            x < this.canvas.width;
+            x += tileSize
+        ) {
+
+            for (
+                let y = 0;
+                y < this.canvas.height;
+                y += tileSize
+            ) {
+
+                ctx.strokeRect(
+                    x,
+                    y,
+                    tileSize,
+                    tileSize
+                );
+
+            }
+
+        }
+
+        /*
+         * Algumas áreas de luz.
+         */
+
+        const lights = [
+
+            {
+                x: 120,
+                y: 100
+            },
+
+            {
+                x: 400,
+                y: 100
+            },
+
+            {
+                x: 650,
+                y: 320
+            },
+
+            {
+                x: 350,
+                y: 500
+            }
+
+        ];
+
+        for (const light of lights) {
+
+            const gradient =
+                ctx.createRadialGradient(
+                    light.x,
+                    light.y,
+                    5,
+                    light.x,
+                    light.y,
+                    65
+                );
+
+            gradient.addColorStop(
+                0,
+                "rgba(210,220,235,0.10)"
+            );
+
+            gradient.addColorStop(
+                1,
+                "rgba(210,220,235,0)"
+            );
+
+            ctx.fillStyle =
+                gradient;
+
+            ctx.fillRect(
+                light.x - 65,
+                light.y - 65,
+                130,
+                130
+            );
+
+        }
+
+    },
+
+    drawWalls() {
+
+        const ctx =
+            this.ctx;
+
+        for (
+            const wall of this.walls
+        ) {
+
+            if (
+                wall.obstacle
+            ) {
+
+                ctx.fillStyle =
+                    "#3a3f47";
+
+                ctx.fillRect(
+                    wall.x,
+                    wall.y,
+                    wall.w,
+                    wall.h
+                );
+
+                ctx.strokeStyle =
+                    "#1a1c20";
+
+                ctx.strokeRect(
+                    wall.x,
+                    wall.y,
+                    wall.w,
+                    wall.h
+                );
+
+                continue;
+
+            }
+
+            /*
+             * Sombra
+             */
+
+            ctx.fillStyle =
+                "#0d0e11";
+
+            ctx.fillRect(
+                wall.x + 4,
+                wall.y + 4,
+                wall.w,
+                wall.h
+            );
+
+            /*
+             * Parede
+             */
+
+            ctx.fillStyle =
+                "#d0d4dc";
+
+            ctx.fillRect(
+                wall.x,
+                wall.y,
+                wall.w,
+                wall.h
+            );
+
+            /*
+             * Borda inferior
+             */
+
+            ctx.fillStyle =
+                "#9aa0ac";
+
+            ctx.fillRect(
+                wall.x,
+                wall.y + wall.h - 4,
+                wall.w,
+                4
+            );
+
+            ctx.strokeStyle =
+                "#4b505a";
+
+            ctx.strokeRect(
+                wall.x,
+                wall.y,
+                wall.w,
+                wall.h
+            );
+
+        }
+
+    },
+
+    draw() {
+
+        if (!this.ctx) {
+            return;
+        }
+
+        this.ctx.clearRect(
+            0,
+            0,
+            this.canvas.width,
+            this.canvas.height
+        );
+
+        this.drawFloor();
+
+        this.drawWalls();
+
+        MissionSystem.draw(
+            this.ctx
+        );
+
+        Enemy.draw(
+            this.ctx
+        );
+
+        Player.draw(
+            this.ctx
+        );
+
+    },
+
+    loop() {
+
+        this.update();
+
+        this.draw();
+
+        requestAnimationFrame(
+            () => this.loop()
+        );
+
+    }
+
+};
+
+
+/* ============================================================
+   MAIN.JS
+   ============================================================ */
+
+window.addEventListener(
+    "DOMContentLoaded",
+    () => {
+
+        AudioSystem.init();
+
+        UISystem.init();
+
+        Game.init();
+
+    }
+);
+
+</script></body>
+    </html>
