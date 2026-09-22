@@ -1,56 +1,69 @@
-window.AudioSystem = {
+"use strict";
 
-    enabled: true,
-    ctx: null,
+const AudioSystem = {
 
-    init() {
+    ctx:null,
 
-        try {
+    enabled:true,
 
-            const AudioContext =
-                window.AudioContext ||
-                window.webkitAudioContext;
+    lastStep:0,
 
-            if (AudioContext) {
-                this.ctx = new AudioContext();
-            }
+    ambient:null,
 
-        } catch (error) {
+    init(){
 
-            console.warn(
-                "[AUDIO] Web Audio indisponível."
-            );
+        if(this.ctx)return;
 
+        try{
+
+            this.ctx =
+                new(
+                    window.AudioContext ||
+                    window.webkitAudioContext
+                )();
+
+        }catch(e){
+
+            this.enabled=false;
         }
     },
 
-    playTone(
-        frequency,
-        type = "sine",
-        duration = 0.1,
-        volume = 0.08
-    ) {
+    resume(){
 
-        if (!this.enabled || !this.ctx) {
-            return;
+        if(!this.ctx){
+            this.init();
         }
 
-        if (this.ctx.state === "suspended") {
+        if(
+            this.ctx &&
+            this.ctx.state==="suspended"
+        ){
             this.ctx.resume();
         }
+    },
 
-        const oscillator =
+    tone(
+        frequency,
+        duration,
+        type="sine",
+        volume=.03
+    ){
+
+        if(!this.enabled)return;
+
+        this.resume();
+
+        if(!this.ctx)return;
+
+        const osc =
             this.ctx.createOscillator();
 
         const gain =
             this.ctx.createGain();
 
-        oscillator.type = type;
+        osc.type=type;
 
-        oscillator.frequency.setValueAtTime(
-            frequency,
-            this.ctx.currentTime
-        );
+        osc.frequency.value=frequency;
 
         gain.gain.setValueAtTime(
             volume,
@@ -58,35 +71,167 @@ window.AudioSystem = {
         );
 
         gain.gain.exponentialRampToValueAtTime(
-            0.00001,
-            this.ctx.currentTime + duration
+            .001,
+            this.ctx.currentTime+duration
         );
 
-        oscillator.connect(gain);
-        gain.connect(this.ctx.destination);
+        osc.connect(gain);
 
-        oscillator.start();
+        gain.connect(
+            this.ctx.destination
+        );
 
-        oscillator.stop(
-            this.ctx.currentTime + duration
+        osc.start();
+
+        osc.stop(
+            this.ctx.currentTime+duration
         );
     },
 
-    playAlertSound() {
+    radioOpen(){
 
-        this.playTone(
-            620,
-            "sawtooth",
-            0.18,
-            0.15
+        this.tone(
+            850,.06,"square",.025
         );
 
+        setTimeout(()=>{
+            this.tone(
+                620,.06,"square",.02
+            );
+        },70);
     },
 
-    toggle() {
+    radioClose(){
 
-        this.enabled = !this.enabled;
+        this.tone(
+            480,.08,"square",.02
+        );
+    },
 
-        return this.enabled;
+    step(crouched=false){
+
+        const now=performance.now();
+
+        const interval =
+            crouched
+            ?540
+            :315;
+
+        if(
+            now-this.lastStep<
+            interval
+        )return;
+
+        this.lastStep=now;
+
+        this.tone(
+            crouched?90:125,
+            crouched?.045:.065,
+            "triangle",
+            crouched?.014:.026
+        );
+    },
+
+    objective(){
+
+        this.tone(
+            440,.08,"sine",.025
+        );
+
+        setTimeout(()=>{
+            this.tone(
+                610,.12,"sine",.025
+            );
+        },90);
+    },
+
+    alert(){
+
+        this.tone(
+            310,.08,"square",.04
+        );
+
+        setTimeout(()=>{
+            this.tone(
+                190,.13,"square",.035
+            );
+        },100);
+    },
+
+    action(){
+
+        this.tone(
+            100,.07,"triangle",.025
+        );
+
+        setTimeout(()=>{
+            this.tone(
+                70,.09,"triangle",.018
+            );
+        },80);
+    },
+
+    victory(){
+
+        this.tone(
+            330,.12,"sine",.035
+        );
+
+        setTimeout(()=>{
+            this.tone(
+                495,.12,"sine",.035
+            );
+        },120);
+
+        setTimeout(()=>{
+            this.tone(
+                660,.18,"sine",.035
+            );
+        },240);
+    },
+
+    startAmbient(){
+
+        if(
+            !this.enabled ||
+            !this.ctx ||
+            this.ambient
+        )return;
+
+        const osc =
+            this.ctx.createOscillator();
+
+        const gain =
+            this.ctx.createGain();
+
+        osc.type="sine";
+
+        osc.frequency.value=52;
+
+        gain.gain.value=.008;
+
+        osc.connect(gain);
+
+        gain.connect(
+            this.ctx.destination
+        );
+
+        osc.start();
+
+        this.ambient={
+            osc,
+            gain
+        };
+    },
+
+    stopAmbient(){
+
+        if(!this.ambient)return;
+
+        try{
+            this.ambient.osc.stop();
+        }catch(e){}
+
+        this.ambient=null;
     }
 };
