@@ -1,222 +1,221 @@
-window.UISystem = {
+"use strict";
 
-    init() {
+const UI={
 
-        this.bindEvents();
-        this.bindMobileControls();
+    menu:
+        document.getElementById(
+            "menuScreen"
+        ),
 
-    },
+    options:
+        document.getElementById(
+            "optionsScreen"
+        ),
 
-    bindEvents() {
+    credits:
+        document.getElementById(
+            "creditsScreen"
+        ),
 
-        document
-            .getElementById("btn-start")
-            .addEventListener(
-                "click",
-                () => {
+    gameover:
+        document.getElementById(
+            "gameOverScreen"
+        ),
 
-                    this.showScreen(null);
+    victory:
+        document.getElementById(
+            "victoryScreen"
+        ),
 
-                    Game.startMission();
-                }
-            );
+    hud:
+        document.getElementById(
+            "hud"
+        ),
 
-        document
-            .getElementById("btn-restart")
-            .addEventListener(
-                "click",
-                () => {
+    objective:
+        document.getElementById(
+            "objective"
+        ),
 
-                    this.showScreen(null);
+    status:
+        document.getElementById(
+            "status"
+        ),
 
-                    Game.startMission();
-                }
-            );
+    hideAll(){
 
-        document
-            .getElementById("btn-victory-restart")
-            .addEventListener(
-                "click",
-                () => {
-
-                    this.showScreen(
-                        "menu-screen"
-                    );
-                }
-            );
-
-        document
-            .getElementById("btn-audio")
-            .addEventListener(
-                "click",
-                (event) => {
-
-                    const enabled =
-                        AudioSystem.toggle();
-
-                    event.target.textContent =
-                        `ÁUDIO: ${
-                            enabled
-                                ? "LIGADO"
-                                : "DESLIGADO"
-                        }`;
-                }
-            );
-    },
-
-    bindMobileControls() {
-
-        const mapButton =
-            (id, key) => {
-
-                const button =
-                    document.getElementById(id);
-
-                if (!button) {
-                    return;
-                }
-
-                const press =
-                    (event) => {
-
-                        event.preventDefault();
-
-                        Player.keys[key] =
-                            true;
-                    };
-
-                const release =
-                    (event) => {
-
-                        event.preventDefault();
-
-                        Player.keys[key] =
-                            false;
-                    };
-
-                button.addEventListener(
-                    "pointerdown",
-                    press
-                );
-
-                button.addEventListener(
-                    "pointerup",
-                    release
-                );
-
-                button.addEventListener(
-                    "pointercancel",
-                    release
-                );
-
-                button.addEventListener(
-                    "pointerleave",
-                    release
-                );
-            };
-
-        mapButton("btn-up", "w");
-        mapButton("btn-down", "s");
-        mapButton("btn-left", "a");
-        mapButton("btn-right", "d");
-
-        const crouch =
-            document.getElementById(
-                "btn-crouch"
-            );
-
-        crouch.addEventListener(
-            "pointerdown",
-            (event) => {
-
-                event.preventDefault();
-
-                Player.mobileCrouch =
-                    true;
-            }
-        );
-
-        crouch.addEventListener(
-            "pointerup",
-            (event) => {
-
-                event.preventDefault();
-
-                Player.mobileCrouch =
-                    false;
-            }
-        );
-
-        crouch.addEventListener(
-            "pointercancel",
-            () => {
-
-                Player.mobileCrouch =
-                    false;
-            }
-        );
-    },
-
-    showScreen(screenId) {
-
-        const screens =
-            document.querySelectorAll(
-                ".screen"
-            );
-
-        screens.forEach(
-            screen => {
-
-                screen.classList.remove(
-                    "active"
-                );
-            }
-        );
-
-        if (screenId) {
-
-            const screen =
-                document.getElementById(
-                    screenId
-                );
-
-            if (screen) {
+        [
+            this.menu,
+            this.options,
+            this.credits,
+            this.gameover,
+            this.victory
+        ].forEach(
+            screen=>
                 screen.classList.add(
-                    "active"
-                );
-            }
+                    "hidden"
+                )
+        );
+    },
+
+    show(screen){
+
+        this.hideAll();
+
+        if(screen){
+            screen.classList.remove(
+                "hidden"
+            );
         }
     },
 
-    updateStatus(
-        text,
-        color = "#aeb8c5"
-    ) {
+    setObjective(text){
 
-        const element =
-            document.getElementById(
-                "hud-status"
-            );
-
-        if (!element) return;
-
-        element.textContent =
-            `STATUS: ${text}`;
-
-        element.style.color =
-            color;
+        this.objective.textContent=text;
     },
 
-    updateObjective(text) {
+    setStatus(text){
 
-        const element =
-            document.getElementById(
-                "hud-objective"
-            );
+        this.status.textContent=text;
+    },
 
-        if (element) {
-            element.textContent =
-                text;
-        }
+    startGame(){
+
+        this.show(null);
+
+        this.hud.style.display="flex";
+    },
+
+    endGame(){
+
+        this.hud.style.display="none";
     }
 };
+
+
+let messageTimer=null;
+
+function showMessage(text){
+
+    const element=
+        document.getElementById(
+            "message"
+        );
+
+    element.textContent=text;
+
+    element.style.opacity="1";
+
+    clearTimeout(messageTimer);
+
+    messageTimer=setTimeout(
+        ()=>{
+            element.style.opacity="0";
+        },
+        1700
+    );
+}
+
+
+/* BOTÕES */
+
+document
+    .getElementById("startButton")
+    .addEventListener(
+        "click",
+        ()=>{
+            Game.start();
+        }
+    );
+
+document
+    .getElementById("optionsButton")
+    .addEventListener(
+        "click",
+        ()=>{
+            UI.show(UI.options);
+        }
+    );
+
+document
+    .getElementById("creditsButton")
+    .addEventListener(
+        "click",
+        ()=>{
+            UI.show(UI.credits);
+        }
+    );
+
+document
+    .getElementById("backOptions")
+    .addEventListener(
+        "click",
+        ()=>{
+            UI.show(UI.menu);
+        }
+    );
+
+document
+    .getElementById("backCredits")
+    .addEventListener(
+        "click",
+        ()=>{
+            UI.show(UI.menu);
+        }
+    );
+
+document
+    .getElementById("audioButton")
+    .addEventListener(
+        "click",
+        ()=>{
+
+            AudioSystem.enabled=
+                !AudioSystem.enabled;
+
+            document
+                .getElementById(
+                    "audioButton"
+                )
+                .textContent=
+                    AudioSystem.enabled
+                    ?"ÁUDIO: LIGADO"
+                    :"ÁUDIO: DESLIGADO";
+        }
+    );
+
+document
+    .getElementById("restartButton")
+    .addEventListener(
+        "click",
+        ()=>{
+            Game.start();
+        }
+    );
+
+document
+    .getElementById("menuButton")
+    .addEventListener(
+        "click",
+        ()=>{
+            UI.show(UI.menu);
+        }
+    );
+
+document
+    .getElementById("victoryRestart")
+    .addEventListener(
+        "click",
+        ()=>{
+            Game.start();
+        }
+    );
+
+document
+    .getElementById("victoryMenu")
+    .addEventListener(
+        "click",
+        ()=>{
+            UI.show(UI.menu);
+        }
+    );
