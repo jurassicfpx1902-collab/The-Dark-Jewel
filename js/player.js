@@ -1,389 +1,366 @@
-window.Player = {
+"use strict";
 
-    x: 80,
-    y: 500,
+const Player={
 
-    w: 20,
-    h: 24,
+    x:55,
+    y:515,
 
-    speed: 2.2,
+    w:20,
+    h:20,
 
-    direction: "down",
+    speed:2.0,
 
-    isCrouching: false,
+    angle:0,
 
-    animTimer: 0,
-    animFrame: 0,
+    crouched:false,
 
-    mobileCrouch: false,
+    moving:false,
 
-    keys: {},
+    animationTime:0,
 
-    init() {
+    frame:0,
 
-        this.reset();
+    center(){
 
-        window.addEventListener(
-            "keydown",
-            (event) => {
-
-                this.keys[
-                    event.key.toLowerCase()
-                ] = true;
-
-            }
-        );
-
-        window.addEventListener(
-            "keyup",
-            (event) => {
-
-                this.keys[
-                    event.key.toLowerCase()
-                ] = false;
-
-            }
-        );
+        return{
+            x:this.x+this.w/2,
+            y:this.y+this.h/2
+        };
     },
 
-    reset() {
+    reset(){
 
-        this.x = 80;
-        this.y = 500;
+        this.x=55;
+        this.y=515;
 
-        this.direction = "up";
+        this.angle=0;
 
-        this.isCrouching = false;
+        this.crouched=false;
 
-        this.animTimer = 0;
-        this.animFrame = 0;
+        this.animationTime=0;
+        this.frame=0;
     },
 
-    update(walls) {
+    update(objects){
 
-        let vx = 0;
-        let vy = 0;
+        let dx=0;
+        let dy=0;
 
-        if (
-            this.keys["w"] ||
-            this.keys["arrowup"]
-        ) {
-            vy -= 1;
+        if(keys["w"]||keys["arrowup"])dy-=1;
+        if(keys["s"]||keys["arrowdown"])dy+=1;
+        if(keys["a"]||keys["arrowleft"])dx-=1;
+        if(keys["d"]||keys["arrowright"])dx+=1;
+
+        dx+=Joystick.x;
+        dy+=Joystick.y;
+
+        const length=Math.hypot(dx,dy);
+
+        this.moving=length>.12;
+
+        if(length>1){
+
+            dx/=length;
+            dy/=length;
         }
 
-        if (
-            this.keys["s"] ||
-            this.keys["arrowdown"]
-        ) {
-            vy += 1;
-        }
+        this.crouched=
+            keys["c"]||
+            keys["shift"]||
+            MobileControls.crouch;
 
-        if (
-            this.keys["a"] ||
-            this.keys["arrowleft"]
-        ) {
-            vx -= 1;
-        }
+        const speed=
+            this.crouched
+            ?this.speed*.52
+            :this.speed;
 
-        if (
-            this.keys["d"] ||
-            this.keys["arrowright"]
-        ) {
-            vx += 1;
-        }
+        if(this.moving){
 
-        this.isCrouching =
-            !!(
-                this.keys["c"] ||
-                this.keys["shift"] ||
-                this.mobileCrouch
+            CollisionSystem.move(
+                this,
+                dx*speed,
+                dy*speed,
+                objects
             );
 
-        const moving =
-            vx !== 0 ||
-            vy !== 0;
+            this.angle=Math.atan2(dy,dx);
 
-        if (moving) {
+            this.animationTime+=
+                this.crouched?.07:.13;
 
-            if (Math.abs(vx) > Math.abs(vy)) {
+            if(this.animationTime>1){
 
-                this.direction =
-                    vx > 0
-                        ? "right"
-                        : "left";
+                this.animationTime=0;
 
-            } else {
-
-                this.direction =
-                    vy > 0
-                        ? "down"
-                        : "up";
+                this.frame=
+                    (this.frame+1)%4;
             }
 
-            this.animTimer += 0.15;
+            AudioSystem.step(
+                this.crouched
+            );
 
-            if (this.animTimer >= 1) {
+        }else{
 
-                this.animFrame =
-                    (this.animFrame + 1) % 4;
-
-                this.animTimer = 0;
-            }
-
-        } else {
-
-            this.animFrame = 0;
+            this.frame=0;
         }
 
-        const currentSpeed =
-            this.isCrouching
-                ? this.speed * 0.5
-                : this.speed;
-
-        if (
-            vx !== 0 &&
-            vy !== 0
-        ) {
-
-            vx *= 0.7071;
-            vy *= 0.7071;
-        }
-
-        /*
-         * Movimento horizontal
-         */
-        this.x += vx * currentSpeed;
-
-        if (
-            CollisionSystem.checkWallCollision(
-                this,
-                walls
-            )
-        ) {
-            this.x -= vx * currentSpeed;
-        }
-
-        /*
-         * Movimento vertical
-         */
-        this.y += vy * currentSpeed;
-
-        if (
-            CollisionSystem.checkWallCollision(
-                this,
-                walls
-            )
-        ) {
-            this.y -= vy * currentSpeed;
-        }
-
-        /*
-         * Limites do mapa
-         */
-        this.x = Math.max(
-            0,
-            Math.min(
-                800 - this.w,
-                this.x
-            )
+        this.x=Math.max(
+            31,
+            Math.min(749,this.x)
         );
 
-        this.y = Math.max(
-            0,
-            Math.min(
-                600 - this.h,
-                this.y
-            )
+        this.y=Math.max(
+            31,
+            Math.min(549,this.y)
         );
     },
 
-    draw(ctx) {
+    direction(){
+
+        let angle=this.angle;
+
+        while(angle<0)
+            angle+=Math.PI*2;
+
+        if(
+            angle<Math.PI*.25||
+            angle>Math.PI*1.75
+        )return"right";
+
+        if(angle<Math.PI*.75)
+            return"down";
+
+        if(angle<Math.PI*1.25)
+            return"left";
+
+        return"up";
+    },
+
+    draw(){
+
+        const p=this.center();
+
+        const direction=this.direction();
+
+        const swing=
+            this.moving
+            ?Math.sin(
+                this.frame*Math.PI/2
+            )
+            :0;
 
         ctx.save();
 
-        const centerX =
-            this.x + this.w / 2;
+        ctx.translate(p.x,p.y);
 
-        const centerY =
-            this.y + this.h / 2;
+        const bob=
+            this.moving
+            ?Math.abs(swing)*.8
+            :0;
 
-        ctx.translate(
-            Math.round(centerX),
-            Math.round(centerY)
+        ctx.translate(0,bob);
+
+        this.drawBody(
+            direction,
+            swing,
+            false
         );
 
-        /*
-         * Pequena sombra.
-         */
-        ctx.fillStyle =
-            "rgba(0,0,0,0.35)";
+        ctx.restore();
+    },
 
-        ctx.fillRect(
-            -8,
-            9,
-            16,
-            4
-        );
+    drawBody(direction,swing,enemy){
 
-        /*
-         * Mochila.
-         */
-        ctx.fillStyle =
-            "#252c34";
+        const skin=
+            enemy
+            ?"#1b2228"
+            :"#cba88e";
 
-        if (
-            this.direction === "down"
-        ) {
+        const hair=
+            enemy
+            ?"#141a1f"
+            :"#c9b687";
 
-            ctx.fillRect(
-                -9,
-                -5,
-                18,
-                10
-            );
+        const uniform=
+            enemy
+            ?"#171e24"
+            :"#182027";
 
-        } else {
+        const gear=
+            enemy
+            ?"#28323a"
+            :"#25313a";
 
-            ctx.fillRect(
-                -10,
-                -7,
-                6,
-                14
-            );
+        ctx.fillStyle="rgba(0,0,0,.35)";
+
+        ctx.fillRect(-9,9,18,4);
+
+        if(direction==="up"){
+
+            ctx.fillStyle=gear;
+            ctx.fillRect(-8,-2,16,15);
+
+            ctx.fillStyle=
+                enemy?"#222b32":"#2d3941";
+
+            ctx.fillRect(-6,-1,12,10);
+
+            ctx.fillStyle=uniform;
+
+            ctx.fillRect(-10,-1,4,10);
+            ctx.fillRect(6,-1,4,10);
+
+            ctx.fillStyle=skin;
+
+            if(!enemy){
+
+                ctx.fillRect(-5,-11,10,8);
+
+                ctx.fillStyle=hair;
+
+                ctx.fillRect(-5,-12,10,4);
+
+            }else{
+
+                ctx.fillStyle="#222a30";
+
+                ctx.fillRect(-6,-12,12,9);
+            }
+
+        }else{
+
+            ctx.fillStyle=uniform;
+
+            ctx.fillRect(-7,-3,14,15);
+
+            ctx.fillStyle=gear;
+
+            ctx.fillRect(-10,-2,4,8);
+            ctx.fillRect(6,-2,4,8);
+
+            ctx.fillStyle=uniform;
+
+            ctx.fillRect(-10,2+swing*2,4,9);
+            ctx.fillRect(6,2-swing*2,4,9);
+
+            ctx.fillRect(-6,9+swing*2,5,9);
+            ctx.fillRect(1,9-swing*2,5,9);
+
+            if(enemy){
+
+                ctx.fillStyle="#20282f";
+
+                ctx.fillRect(-6,-13,12,10);
+
+                ctx.fillStyle="#56636c";
+
+                ctx.fillRect(-5,-10,10,3);
+
+            }else{
+
+                ctx.fillStyle=skin;
+
+                ctx.fillRect(-5,-12,10,9);
+
+                ctx.fillStyle=hair;
+
+                ctx.fillRect(-5,-13,10,4);
+                ctx.fillRect(-6,-11,2,5);
+
+                if(direction==="down"){
+
+                    ctx.fillStyle="#6e91b5";
+
+                    ctx.fillRect(-4,-8,2,2);
+                    ctx.fillRect(2,-8,2,2);
+                }
+            }
         }
 
-        /*
-         * Corpo.
-         */
-        ctx.fillStyle =
-            this.isCrouching
-                ? "#202a35"
-                : "#29333f";
+        if(
+            direction==="right"||
+            direction==="left"
+        ){
 
-        ctx.fillRect(
-            -7,
-            -4,
-            14,
-            14
-        );
-
-        /*
-         * Pequenos detalhes do traje.
-         */
-        ctx.fillStyle =
-            "#11171d";
-
-        ctx.fillRect(
-            -5,
-            1,
-            10,
-            3
-        );
-
-        /*
-         * Cabeça.
-         */
-        ctx.fillStyle =
-            "#c5a27f";
-
-        ctx.fillRect(
-            -5,
-            -10,
-            10,
-            8
-        );
-
-        /*
-         * Cabelo loiro discreto.
-         */
-        ctx.fillStyle =
-            "#b78c5e";
-
-        if (
-            this.direction === "up"
-        ) {
+            ctx.fillStyle=gear;
 
             ctx.fillRect(
-                -5,
-                -11,
-                10,
-                4
-            );
-
-        } else {
-
-            ctx.fillRect(
-                -5,
-                -11,
-                10,
-                3
-            );
-        }
-
-        /*
-         * Elemento visual da mão.
-         * Pequeno e sem função nesta versão.
-         */
-        ctx.fillStyle =
-            "#111316";
-
-        if (
-            this.direction === "right"
-        ) {
-
-            ctx.fillRect(
-                5,
-                1,
-                9,
-                3
-            );
-
-        } else if (
-            this.direction === "left"
-        ) {
-
-            ctx.fillRect(
-                -14,
-                1,
-                9,
-                3
-            );
-
-        } else {
-
-            ctx.fillRect(
+                direction==="right"?-8:5,
+                -1,
                 4,
-                2,
+                12
+            );
+
+            ctx.fillStyle=
+                enemy
+                ?"#303b43"
+                :"#33414a";
+
+            ctx.fillRect(
+                direction==="right"?8:-15,
+                2+swing,
                 7,
                 3
             );
         }
+    },
 
-        /*
-         * Pequena animação das pernas.
-         */
-        if (
-            this.animFrame % 2 === 1
-        ) {
+    action(enemies){
 
-            ctx.fillStyle =
-                "#161c23";
+        const p=this.center();
 
-            ctx.fillRect(
-                -6,
-                9,
-                4,
-                4
-            );
+        for(const enemy of enemies){
 
-            ctx.fillRect(
-                2,
-                8,
-                4,
-                4
-            );
+            if(enemy.eliminated)
+                continue;
+
+            const e=enemy.center();
+
+            const distance=
+                Math.hypot(
+                    e.x-p.x,
+                    e.y-p.y
+                );
+
+            if(distance>38)
+                continue;
+
+            const angleToBuck=
+                Math.atan2(
+                    p.y-e.y,
+                    p.x-e.x
+                );
+
+            let difference=
+                angleToBuck-
+                (enemy.angle+Math.PI);
+
+            while(difference>Math.PI)
+                difference-=Math.PI*2;
+
+            while(difference<-Math.PI)
+                difference+=Math.PI*2;
+
+            if(
+                Math.abs(difference)<
+                Math.PI*.65
+            ){
+
+                enemy.eliminated=true;
+
+                AudioSystem.action();
+
+                showMessage(
+                    "ALVO NEUTRALIZADO"
+                );
+
+                return;
+            }
         }
 
-        ctx.restore();
+        showMessage(
+            "POSIÇÃO INADEQUADA"
+        );
     }
 };
