@@ -1,205 +1,145 @@
-window.MissionSystem = {
+"use strict";
 
-    name:
-        "OPERATION // NO DARK",
+const MissionSystem={
 
-    id:
-        "MISSION 01",
-
-    location:
-        "BASE DINAMARQUESA",
-
-    agent:
-        "BUCK",
-
-    hasDocument:
-        false,
-
-    documentArea: {
-        x: 420,
-        y: 300,
-        w: 28,
-        h: 28
+    file:{
+        x:270,
+        y:45,
+        w:30,
+        h:28
     },
 
-    extractionArea: {
-        x: 700,
-        y: 500,
-        w: 45,
-        h: 45
+    extraction:{
+        x:700,
+        y:505,
+        w:48,
+        h:48
     },
 
-    init() {
-        this.reset();
+    hasFile:false,
+
+    reset(){
+
+        this.hasFile=false;
+
+        UI.setObjective(
+            "OBJETIVO: ENCONTRAR O ARQUIVO CENTRAL"
+        );
+
+        UI.setStatus(
+            "INFILTRAÇÃO"
+        );
     },
 
-    reset() {
+    update(){
 
-        this.hasDocument =
-            false;
-    },
+        if(!this.hasFile){
 
-    update(player) {
-
-        if (!this.hasDocument) {
-
-            if (
-                CollisionSystem.rectsOverlap(
-                    player,
-                    this.documentArea
+            if(
+                CollisionSystem.overlap(
+                    Player,
+                    this.file
                 )
-            ) {
+            ){
 
-                this.hasDocument =
-                    true;
+                this.hasFile=true;
 
-                AudioSystem.playTone(
-                    880,
-                    "sine",
-                    0.15,
-                    0.12
+                AudioSystem.objective();
+
+                UI.setObjective(
+                    "OBJETIVO: IR ATÉ O PONTO DE EXTRAÇÃO"
                 );
 
-                UISystem.updateObjective(
-                    "OBJETIVO: VÁ PARA A EXTRAÇÃO"
+                UI.setStatus(
+                    "ARQUIVO RECUPERADO"
+                );
+
+                showMessage(
+                    "ARQUIVO CENTRAL RECUPERADO"
+                );
+
+                Radio.show(
+                    "Muito bem Buck, agora vá até o ponto de extração.",
+                    ()=>{
+                        UI.setStatus(
+                            "EXTRAÇÃO"
+                        );
+                    }
                 );
             }
 
-        } else {
+        }else{
 
-            if (
-                CollisionSystem.rectsOverlap(
-                    player,
-                    this.extractionArea
+            if(
+                CollisionSystem.overlap(
+                    Player,
+                    this.extraction
                 )
-            ) {
+            ){
 
-                Game.triggerVictory();
+                Game.complete();
             }
         }
     },
 
-    draw(ctx) {
+    draw(){
 
-        /*
-         * OBJETIVO
-         */
-        if (!this.hasDocument) {
+        if(!this.hasFile){
 
-            const cx =
-                this.documentArea.x + 14;
-
-            const cy =
-                this.documentArea.y + 14;
-
-            ctx.save();
-
-            ctx.shadowColor =
-                "#5b9bd5";
-
-            ctx.shadowBlur = 10;
-
-            ctx.fillStyle =
-                "#5b9bd5";
-
-            ctx.beginPath();
-
-            ctx.moveTo(
-                cx,
-                cy - 11
-            );
-
-            ctx.lineTo(
-                cx + 9,
-                cy
-            );
-
-            ctx.lineTo(
-                cx,
-                cy + 11
-            );
-
-            ctx.lineTo(
-                cx - 9,
-                cy
-            );
-
-            ctx.closePath();
-
-            ctx.fill();
-
-            ctx.shadowBlur = 0;
-
-            ctx.fillStyle =
-                "#e1e8ef";
+            ctx.fillStyle="#273b4a";
 
             ctx.fillRect(
-                cx - 2,
-                cy - 2,
-                4,
-                4
+                this.file.x,
+                this.file.y,
+                this.file.w,
+                this.file.h
             );
 
-            ctx.restore();
+            ctx.strokeStyle="#70b5ff";
+
+            ctx.strokeRect(
+                this.file.x,
+                this.file.y,
+                this.file.w,
+                this.file.h
+            );
+
+            ctx.fillStyle="#8bcaff";
+
+            ctx.fillRect(
+                this.file.x+9,
+                this.file.y+7,
+                12,
+                12
+            );
         }
 
-        /*
-         * EXTRAÇÃO
-         */
-        const ext =
-            this.extractionArea;
+        ctx.strokeStyle=
+            this.hasFile
+            ?"#63b4ff"
+            :"#48535a";
 
-        ctx.fillStyle =
-            this.hasDocument
-                ? "rgba(110,180,135,0.14)"
-                : "rgba(80,90,100,0.08)";
-
-        ctx.fillRect(
-            ext.x,
-            ext.y,
-            ext.w,
-            ext.h
-        );
-
-        ctx.strokeStyle =
-            this.hasDocument
-                ? "#72b88a"
-                : "#59616b";
-
-        ctx.lineWidth = 2;
+        ctx.lineWidth=2;
 
         ctx.strokeRect(
-            ext.x,
-            ext.y,
-            ext.w,
-            ext.h
+            this.extraction.x,
+            this.extraction.y,
+            this.extraction.w,
+            this.extraction.h
         );
 
-        /*
-         * Símbolo de saída.
-         */
-        ctx.fillStyle =
-            this.hasDocument
-                ? "#72b88a"
-                : "#59616b";
+        ctx.lineWidth=1;
 
-        ctx.beginPath();
+        if(this.hasFile){
 
-        ctx.moveTo(
-            ext.x + 13,
-            ext.y + 11
-        );
+            ctx.fillStyle="#67b8ff";
 
-        ctx.lineTo(
-            ext.x + 30,
-            ext.y + 22
-        );
-
-        ctx.lineTo(
-            ext.x + 13,
-            ext.y + 33
-        );
-
-        ctx.fill();
+            ctx.fillRect(
+                this.extraction.x+17,
+                this.extraction.y+6,
+                14,
+                3
+            );
+        }
     }
 };
