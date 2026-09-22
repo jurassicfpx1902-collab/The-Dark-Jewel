@@ -1,462 +1,281 @@
-window.Game = {
+"use strict";
 
-    canvas: null,
-    ctx: null,
+const WORLD={
+    width:800,
+    height:600
+};
 
-    running: false,
+const canvas=
+    document.getElementById(
+        "gameCanvas"
+    );
 
-    walls: [
+const ctx=
+    canvas.getContext("2d");
 
-        /* Bordas */
 
-        {
-            x: 30,
-            y: 30,
-            w: 740,
-            h: 20
-        },
+const Game={
 
-        {
-            x: 30,
-            y: 550,
-            w: 740,
-            h: 20
-        },
+    running:false,
 
-        {
-            x: 30,
-            y: 30,
-            w: 20,
-            h: 540
-        },
+    paused:false,
 
-        {
-            x: 750,
-            y: 30,
-            w: 20,
-            h: 540
-        },
+    radioOpen:false,
 
-        /* Sala esquerda */
+    enemies:[],
 
-        {
-            x: 200,
-            y: 50,
-            w: 20,
-            h: 360
-        },
+    init(){
 
-        {
-            x: 200,
-            y: 410,
-            w: 180,
-            h: 20
-        },
+        this.draw();
 
-        /* Divisão central */
-
-        {
-            x: 480,
-            y: 220,
-            w: 20,
-            h: 210
-        },
-
-        {
-            x: 480,
-            y: 220,
-            w: 160,
-            h: 20
-        },
-
-        /* Obstáculos */
-
-        {
-            x: 260,
-            y: 100,
-            w: 32,
-            h: 32,
-            obstacle: true
-        },
-
-        {
-            x: 292,
-            y: 100,
-            w: 32,
-            h: 32,
-            obstacle: true
-        }
-    ],
-
-    lights: [
-
-        {
-            x: 130,
-            y: 75,
-            radius: 90
-        },
-
-        {
-            x: 390,
-            y: 180,
-            radius: 80
-        },
-
-        {
-            x: 610,
-            y: 100,
-            radius: 95
-        },
-
-        {
-            x: 680,
-            y: 450,
-            radius: 85
-        }
-
-    ],
-
-    init() {
-
-        this.canvas =
-            document.getElementById(
-                "gameCanvas"
-            );
-
-        this.ctx =
-            this.canvas.getContext(
-                "2d"
-            );
-
-        Player.init();
-        Enemy.init();
-        MissionSystem.init();
-
-        console.log(
-            "[GAME] Sistema inicializado."
+        requestAnimationFrame(
+            ()=>this.loop()
         );
     },
 
-    startMission() {
+    start(){
+
+        AudioSystem.init();
+
+        AudioSystem.resume();
+
+        AudioSystem.startAmbient();
 
         Player.reset();
-        Enemy.reset();
+
         MissionSystem.reset();
 
-        UISystem.updateStatus(
-            "OCULTO",
-            "#aeb8c5"
+        this.enemies=[
+
+            new Enemy([
+                {x:70,y:90},
+                {x:145,y:90},
+                {x:145,y:130},
+                {x:70,y:130}
+            ]),
+
+            new Enemy([
+                {x:450,y:70},
+                {x:530,y:70},
+                {x:530,y:125},
+                {x:450,y:125}
+            ]),
+
+            new Enemy([
+                {x:620,y:240},
+                {x:700,y:240},
+                {x:700,y:270},
+                {x:620,y:270}
+            ])
+        ];
+
+        NavigationSystem.build(
+            this.collisionObjects()
         );
 
-        UISystem.updateObjective(
-            "OBJETIVO: RECUPERAR ARQUIVO"
+        for(
+            const enemy of this.enemies
+        ){
+
+            enemy.rebuildPath(
+                this.collisionObjects()
+            );
+        }
+
+        this.running=true;
+
+        this.paused=false;
+
+        UI.startGame();
+
+        UI.setStatus(
+            "COMUNICAÇÃO"
         );
 
-        this.running = true;
+        Radio.show(
+            "Prossiga até encontrar um dos arquivos centrais, depois... Saia daí o mais rápido possível!",
+            ()=>{
+                UI.setStatus(
+                    "INFILTRAÇÃO"
+                );
 
-        this.loop();
+                showMessage(
+                    "OPERAÇÃO NO DARK INICIADA"
+                );
+            }
+        );
     },
 
-    triggerGameOver() {
+    pause(){
 
-        this.running = false;
-
-        AudioSystem.playAlertSound();
-
-        UISystem.showScreen(
-            "gameover-screen"
-        );
-    },
-
-    triggerVictory() {
-
-        this.running = false;
-
-        AudioSystem.playTone(
-            523.25,
-            "sine",
-            0.3,
-            0.12
-        );
-
-        UISystem.showScreen(
-            "victory-screen"
-        );
-    },
-
-    update() {
-
-        if (!this.running) {
+        if(
+            !this.running||
+            this.radioOpen
+        ){
             return;
         }
 
-        Player.update(
-            this.walls
+        this.paused=!this.paused;
+
+        UI.setStatus(
+            this.paused
+            ?"PAUSADO"
+            :(
+                MissionSystem.hasFile
+                ?"EXTRAÇÃO"
+                :"INFILTRAÇÃO"
+            )
         );
-
-        Enemy.update(
-            this.walls
-        );
-
-        MissionSystem.update(
-            Player
-        );
-
-        const detected =
-            VisionSystem.isPlayerDetected(
-                Player,
-                Enemy,
-                this.walls
-            );
-
-        if (detected) {
-
-            Enemy.alert = true;
-
-            UISystem.updateStatus(
-                "ALERTA",
-                "#d74752"
-            );
-
-            this.triggerGameOver();
-        }
     },
 
-    drawFloor() {
+    fail(){
 
-        const ctx =
-            this.ctx;
+        if(!this.running)
+            return;
 
-        /*
-         * Piso principal.
-         */
-        ctx.fillStyle =
-            "#292d32";
+        this.running=false;
 
-        ctx.fillRect(
-            0,
-            0,
-            this.canvas.width,
-            this.canvas.height
+        AudioSystem.alert();
+
+        AudioSystem.stopAmbient();
+
+        UI.endGame();
+
+        UI.show(
+            UI.gameover
         );
+    },
 
-        /*
-         * Placas do piso.
-         */
-        const tile =
-            40;
+    complete(){
 
-        ctx.strokeStyle =
-            "#33383e";
+        if(!this.running)
+            return;
 
-        ctx.lineWidth =
-            1;
+        this.running=false;
 
-        for (
-            let x = 0;
-            x < this.canvas.width;
-            x += tile
-        ) {
+        AudioSystem.stopAmbient();
 
-            for (
-                let y = 0;
-                y < this.canvas.height;
-                y += tile
-            ) {
+        UI.endGame();
 
-                ctx.strokeRect(
-                    x,
-                    y,
-                    tile,
-                    tile
+        Radio.show(
+            "Muito bem, aguarde mais ordens.",
+            ()=>{
+                AudioSystem.victory();
+
+                UI.show(
+                    UI.victory
                 );
             }
-        }
+        );
     },
 
-    drawLights() {
+    collisionObjects(){
 
-        const ctx =
-            this.ctx;
-
-        for (const light of this.lights) {
-
-            const gradient =
-                ctx.createRadialGradient(
-                    light.x,
-                    light.y,
-                    0,
-                    light.x,
-                    light.y,
-                    light.radius
-                );
-
-            gradient.addColorStop(
-                0,
-                "rgba(210,220,230,0.12)"
-            );
-
-            gradient.addColorStop(
-                0.55,
-                "rgba(170,180,190,0.04)"
-            );
-
-            gradient.addColorStop(
-                1,
-                "rgba(0,0,0,0)"
-            );
-
-            ctx.fillStyle =
-                gradient;
-
-            ctx.fillRect(
-                light.x - light.radius,
-                light.y - light.radius,
-                light.radius * 2,
-                light.radius * 2
-            );
-
-            /*
-             * Pequena lâmpada.
-             */
-            ctx.fillStyle =
-                "#b8c0c8";
-
-            ctx.fillRect(
-                light.x - 12,
-                light.y - 2,
-                24,
-                4
-            );
-        }
+        return MapSystem.collisionObjects();
     },
 
-    drawWalls() {
+    update(){
 
-        const ctx =
-            this.ctx;
+        if(
+            !this.running||
+            this.paused||
+            this.radioOpen
+        ){
+            return;
+        }
 
-        for (const wall of this.walls) {
+        const objects=
+            this.collisionObjects();
 
-            if (wall.obstacle) {
+        Player.update(objects);
 
-                ctx.fillStyle =
-                    "#3b4148";
+        for(
+            const enemy of this.enemies
+        ){
 
-                ctx.fillRect(
-                    wall.x,
-                    wall.y,
-                    wall.w,
-                    wall.h
+            enemy.update(objects);
+
+            if(
+                VisionSystem.detects(
+                    Player,
+                    enemy,
+                    MapSystem.walls
+                )
+            ){
+
+                UI.setStatus(
+                    "DETECÇÃO"
                 );
 
-                ctx.strokeStyle =
-                    "#1b1f24";
+                this.fail();
 
-                ctx.strokeRect(
-                    wall.x,
-                    wall.y,
-                    wall.w,
-                    wall.h
-                );
-
-                continue;
+                return;
             }
-
-            /*
-             * Sombra.
-             */
-            ctx.fillStyle =
-                "#111419";
-
-            ctx.fillRect(
-                wall.x + 4,
-                wall.y + 4,
-                wall.w,
-                wall.h
-            );
-
-            /*
-             * Parede clara.
-             */
-            ctx.fillStyle =
-                "#c3c8cf";
-
-            ctx.fillRect(
-                wall.x,
-                wall.y,
-                wall.w,
-                wall.h
-            );
-
-            /*
-             * Parte inferior.
-             */
-            ctx.fillStyle =
-                "#8d949d";
-
-            ctx.fillRect(
-                wall.x,
-                wall.y + wall.h - 4,
-                wall.w,
-                4
-            );
-
-            ctx.strokeStyle =
-                "#4a5058";
-
-            ctx.strokeRect(
-                wall.x,
-                wall.y,
-                wall.w,
-                wall.h
-            );
         }
+
+        MissionSystem.update();
     },
 
-    draw() {
-
-        const ctx =
-            this.ctx;
+    draw(){
 
         ctx.clearRect(
             0,
             0,
-            this.canvas.width,
-            this.canvas.height
+            WORLD.width,
+            WORLD.height
         );
 
-        this.drawFloor();
+        MapSystem.draw();
 
-        this.drawLights();
+        MissionSystem.draw();
 
-        this.drawWalls();
+        for(
+            const enemy of this.enemies
+        ){
 
-        MissionSystem.draw(
-            ctx
+            enemy.draw();
+        }
+
+        Player.draw();
+
+        const vignette=
+            ctx.createRadialGradient(
+                400,
+                300,
+                170,
+                400,
+                300,
+                500
+            );
+
+        vignette.addColorStop(
+            0,
+            "rgba(0,0,0,0)"
         );
 
-        Enemy.draw(
-            ctx
+        vignette.addColorStop(
+            1,
+            "rgba(0,0,0,.48)"
         );
 
-        Player.draw(
-            ctx
+        ctx.fillStyle=vignette;
+
+        ctx.fillRect(
+            0,
+            0,
+            800,
+            600
         );
     },
 
-    loop() {
-
-        if (!this.running) {
-            return;
-        }
+    loop(){
 
         this.update();
 
         this.draw();
 
         requestAnimationFrame(
-            () => this.loop()
+            ()=>this.loop()
         );
     }
 };
