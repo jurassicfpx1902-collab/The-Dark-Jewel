@@ -1,343 +1,398 @@
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-
-    user-select: none;
-    -webkit-user-select: none;
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    -webkit-tap-highlight-color:transparent;
 }
 
 html,
-body {
-    width: 100%;
-    height: 100%;
-
-    background: #05070a;
-    color: #c4d0e0;
-
-    font-family:
-        "Courier New",
-        Courier,
-        monospace;
-
-    overflow: hidden;
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
+body{
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    background:#05070a;
+    color:#d8e0e5;
+    font-family:Arial,Helvetica,sans-serif;
+    touch-action:none;
 }
 
-#game-container {
-    position: relative;
+#game{
+    width:100vw;
+    height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    position:relative;
+}
 
-    width: 800px;
-    height: 600px;
+canvas{
+    width:min(100vw,1066px);
+    height:auto;
+    max-height:100vh;
+    aspect-ratio:4/3;
+    background:#171b1e;
+    border:1px solid #303940;
+    image-rendering:auto;
+}
 
-    background: #15181d;
+#scanlines{
+    position:absolute;
+    inset:0;
+    pointer-events:none;
 
-    border: 2px solid #536170;
+    background:
+        repeating-linear-gradient(
+            to bottom,
+            rgba(255,255,255,.018) 0px,
+            rgba(255,255,255,.018) 1px,
+            transparent 1px,
+            transparent 4px
+        );
 
-    overflow: hidden;
+    mix-blend-mode:screen;
+}
+
+.screen{
+    position:absolute;
+    inset:0;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    pointer-events:none;
+}
+
+.panel{
+    width:min(92%,440px);
+
+    background:rgba(4,7,10,.95);
+
+    border:1px solid #46525b;
 
     box-shadow:
-        0 0 25px rgba(0, 0, 0, 0.8);
+        0 0 35px rgba(0,0,0,.7);
+
+    padding:28px;
+
+    pointer-events:auto;
 }
 
-canvas {
-    display: block;
-
-    width: 100%;
-    height: 100%;
-
-    background: #272a2f;
-
-    image-rendering: pixelated;
+.logo{
+    text-align:center;
+    font-size:clamp(27px,7vw,54px);
+    letter-spacing:5px;
+    font-weight:900;
+    margin-bottom:6px;
 }
 
-/* =====================================================
-   SCANLINES
-   ===================================================== */
-
-#scanlines {
-    position: absolute;
-
-    inset: 0;
-
-    pointer-events: none;
-
-    background:
-        linear-gradient(
-            rgba(0, 0, 0, 0) 50%,
-            rgba(0, 0, 0, 0.18) 50%
-        );
-
-    background-size: 100% 4px;
-
-    z-index: 10;
+.logoBlue{
+    color:#4f9eff;
 }
 
-/* =====================================================
-   VINHETA
-   ===================================================== */
-
-#vignette {
-    position: absolute;
-
-    inset: 0;
-
-    pointer-events: none;
-
-    background:
-        radial-gradient(
-            circle,
-            transparent 48%,
-            rgba(0, 0, 0, 0.78) 100%
-        );
-
-    z-index: 11;
+.logoRed{
+    color:#e14c59;
 }
 
-/* =====================================================
-   TELAS
-   ===================================================== */
-
-.screen {
-    position: absolute;
-
-    inset: 0;
-
-    display: none;
-
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-
-    text-align: center;
-
-    padding: 20px;
-
-    background:
-        rgba(5, 7, 10, 0.94);
-
-    z-index: 20;
+.subtitle{
+    text-align:center;
+    color:#78858e;
+    font-size:11px;
+    letter-spacing:4px;
+    margin-bottom:30px;
 }
 
-.screen.active {
-    display: flex;
+button{
+    width:100%;
+    min-height:48px;
+    margin:6px 0;
+
+    background:#11181d;
+    border:1px solid #3c484f;
+    color:#dce3e7;
+
+    font-weight:bold;
+    letter-spacing:1px;
+    cursor:pointer;
 }
 
-h1 {
-    color: #d5dbe4;
-
-    font-size: 1.8rem;
-
-    letter-spacing: 3px;
-
-    margin-bottom: 10px;
+button:active{
+    background:#28343b;
 }
 
-.subtitle {
-    color: #5b9bd5;
-
-    font-size: 0.8rem;
-
-    letter-spacing: 2px;
-
-    margin-bottom: 25px;
+button:hover{
+    border-color:#6a7881;
+    background:#182127;
 }
 
-.screen p {
-    color: #8995a5;
-
-    font-size: 0.8rem;
-
-    margin: 3px;
+.hidden{
+    display:none!important;
 }
 
-.danger {
-    color: #d94a55;
+/* RADIO */
+
+#radioPanel{
+    width:min(92%,560px);
+
+    background:rgba(3,6,9,.96);
+
+    border:1px solid #40505b;
+
+    box-shadow:
+        0 0 40px rgba(0,0,0,.8);
+
+    padding:22px;
+
+    pointer-events:auto;
 }
 
-.success {
-    color: #72b88a;
+.radioHeader{
+    color:#6faeff;
+    font-size:11px;
+    letter-spacing:3px;
+    margin-bottom:15px;
 }
 
-/* =====================================================
-   BOTÕES
-   ===================================================== */
-
-.btn {
-    min-width: 210px;
-
-    padding: 11px 20px;
-
-    margin-top: 12px;
-
-    background: #171d25;
-
-    color: #8bb9df;
-
-    border: 1px solid #536b82;
-
-    font-family: inherit;
-
-    font-size: 0.9rem;
-
-    cursor: pointer;
-
-    transition:
-        background 0.15s,
-        color 0.15s,
-        border 0.15s;
+.radioLine{
+    border-left:2px solid #4f9eff;
+    padding:12px 15px;
+    background:rgba(60,90,110,.08);
+    line-height:1.6;
+    min-height:70px;
 }
 
-.btn:hover {
-    background: #273746;
-
-    color: #dcecff;
-
-    border-color: #719bc0;
+.radioName{
+    color:#81baff;
+    font-weight:bold;
+    font-size:12px;
+    margin-bottom:5px;
 }
 
-.btn:active {
-    transform: translateY(1px);
+.radioText{
+    color:#cbd4d9;
+    font-size:14px;
 }
 
-/* =====================================================
-   HUD
-   ===================================================== */
+/* HUD */
 
-#hud {
-    position: absolute;
+#hud{
+    position:absolute;
+    top:10px;
+    left:10px;
+    right:10px;
 
-    top: 10px;
-    left: 10px;
-    right: 10px;
+    display:none;
 
-    display: flex;
+    justify-content:space-between;
 
-    justify-content: space-between;
+    pointer-events:none;
 
-    gap: 8px;
-
-    pointer-events: none;
-
-    z-index: 15;
-
-    font-size: 0.72rem;
+    font-size:11px;
 }
 
-.hud-panel {
-    padding: 5px 8px;
-
-    background:
-        rgba(7, 9, 12, 0.75);
-
-    border:
-        1px solid rgba(130, 150, 170, 0.3);
-
-    color: #aeb8c5;
-
-    white-space: nowrap;
+.hudBox{
+    background:rgba(3,6,8,.78);
+    border:1px solid #39454d;
+    padding:8px 10px;
 }
 
-/* =====================================================
-   CONTROLES MOBILE
-   ===================================================== */
-
-#mobile-controls {
-    position: absolute;
-
-    bottom: 12px;
-    left: 12px;
-    right: 12px;
-
-    display: none;
-
-    justify-content: space-between;
-    align-items: flex-end;
-
-    z-index: 16;
-
-    pointer-events: none;
+#objective{
+    max-width:340px;
 }
 
-#dpad {
-    display: grid;
-
-    grid-template-columns:
-        repeat(3, 42px);
-
-    gap: 5px;
-
-    pointer-events: auto;
+#status{
+    color:#72b2ff;
+    margin-top:3px;
 }
 
-.touch-btn {
-    width: 42px;
-    height: 42px;
-
-    display: flex;
-
-    justify-content: center;
-    align-items: center;
-
-    background:
-        rgba(45, 58, 72, 0.85);
-
-    color: #cbd6e2;
-
-    border:
-        1px solid #697c8e;
-
-    border-radius: 3px;
-
-    font-family: inherit;
-
-    touch-action: none;
+.optionDescription{
+    color:#8a969d;
+    font-size:13px;
+    line-height:1.6;
+    margin:20px 0;
 }
 
-.touch-btn:active {
-    background: #4b5d6d;
+.creditsText{
+    margin-top:22px;
+    line-height:1.8;
+    color:#aeb9bf;
 }
 
-.crouch {
-    width: 64px;
-    height: 64px;
-
-    font-size: 0.65rem;
-
-    pointer-events: auto;
+.dangerTitle{
+    color:#df4c59;
 }
 
-/* =====================================================
-   MOBILE
-   ===================================================== */
+.gameOverText{
+    color:#909ba1;
+    margin:20px 0;
+}
 
-@media (max-width: 812px) {
+.victoryTitle{
+    color:#62b4ff;
+}
 
-    #game-container {
-        width: 100vw;
-        height: 100vh;
+.victoryText{
+    color:#a0adb4;
+    margin:20px 0;
+}
 
-        border: none;
+/* CONTROLES */
+
+#mobileControls{
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    display:none;
+}
+
+#joystick{
+    position:absolute;
+
+    left:20px;
+    bottom:24px;
+
+    width:132px;
+    height:132px;
+
+    border-radius:50%;
+
+    background:rgba(90,105,115,.14);
+
+    border:2px solid rgba(170,185,195,.28);
+
+    pointer-events:auto;
+    touch-action:none;
+}
+
+#joystick::after{
+    content:"";
+
+    position:absolute;
+    inset:14px;
+
+    border-radius:50%;
+
+    border:1px solid rgba(200,210,220,.10);
+}
+
+#stick{
+    position:absolute;
+
+    width:52px;
+    height:52px;
+
+    left:38px;
+    top:38px;
+
+    border-radius:50%;
+
+    background:rgba(95,120,135,.52);
+
+    border:2px solid rgba(200,210,220,.42);
+
+    box-shadow:0 0 14px rgba(0,0,0,.45);
+
+    z-index:2;
+}
+
+.mobileButton{
+    position:absolute;
+
+    width:62px;
+    height:62px;
+
+    border-radius:50%;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    background:rgba(16,21,25,.82);
+
+    border:1px solid rgba(185,195,205,.38);
+
+    color:#dce4e8;
+
+    font-size:10px;
+
+    pointer-events:auto;
+
+    user-select:none;
+}
+
+#actionButton{
+    right:25px;
+    bottom:100px;
+}
+
+#crouchButton{
+    right:98px;
+    bottom:28px;
+}
+
+#pauseButton{
+    right:22px;
+    top:22px;
+
+    width:44px;
+    height:44px;
+
+    font-size:14px;
+}
+
+/* MENSAGEM */
+
+#message{
+    position:absolute;
+
+    left:50%;
+    bottom:28px;
+
+    transform:translateX(-50%);
+
+    background:rgba(3,6,8,.9);
+
+    border:1px solid #45515a;
+
+    padding:9px 16px;
+
+    color:#cbd4d9;
+
+    font-size:11px;
+
+    opacity:0;
+
+    transition:opacity .2s;
+
+    pointer-events:none;
+}
+
+@media(max-width:800px){
+
+    #mobileControls{
+        display:block;
     }
 
-    #mobile-controls {
-        display: flex;
+    #hud{
+        font-size:9px;
     }
 
-    #hud {
-        font-size: 0.55rem;
-
-        flex-wrap: wrap;
+    #objective{
+        max-width:235px;
     }
 
-    .hud-panel {
-        padding: 4px 5px;
+    .panel{
+        padding:20px;
     }
 
-    h1 {
-        font-size: 1.35rem;
+    .radioText{
+        font-size:13px;
+    }
+}
+
+@media(min-width:801px){
+
+    #mobileControls{
+        display:none!important;
     }
 }
