@@ -1,277 +1,325 @@
-window.Enemy = {
+"use strict";
 
-    x: 620,
-    y: 180,
+class Enemy{
 
-    w: 22,
-    h: 26,
+    constructor(waypoints){
 
-    angle: Math.PI,
+        this.waypoints=waypoints;
 
-    viewDist: 220,
+        this.x=waypoints[0].x;
+        this.y=waypoints[0].y;
 
-    fov:
-        Math.PI * 0.75,
+        this.w=20;
+        this.h=20;
 
-    alert: false,
+        this.targetIndex=1;
 
-    speed: 1.0,
+        this.speed=.28;
 
-    animTimer: 0,
-    animFrame: 0,
+        this.angle=0;
 
-    waypoints: [
+        this.viewDist=155;
 
-        { x: 620, y: 180 },
-        { x: 700, y: 180 },
-        { x: 700, y: 500 },
-        { x: 620, y: 500 }
+        this.fov=Math.PI*.58;
 
-    ],
+        this.animationTime=0;
+        this.frame=0;
 
-    targetIdx: 0,
+        this.eliminated=false;
 
-    init() {
-        this.reset();
-    },
+        this.path=[];
+        this.pathIndex=0;
 
-    reset() {
+        this.repathTimer=0;
 
-        this.x =
-            this.waypoints[0].x;
+        this.motionPhase=
+            Math.random()*Math.PI*2;
+    }
 
-        this.y =
-            this.waypoints[0].y;
+    center(){
 
-        this.targetIdx = 1;
+        return{
+            x:this.x+this.w/2,
+            y:this.y+this.h/2
+        };
+    }
 
-        this.alert = false;
+    getTarget(){
 
-        this.animFrame = 0;
-    },
+        return this.waypoints[
+            this.targetIndex
+        ];
+    }
 
-    update(walls) {
+    rebuildPath(objects){
 
-        const target =
-            this.waypoints[
-                this.targetIdx
-            ];
+        NavigationSystem.build(objects);
 
-        const dx =
-            target.x - this.x;
+        this.path=
+            NavigationSystem.findPath(
+                this.center(),
+                this.getTarget()
+            );
 
-        const dy =
-            target.y - this.y;
+        this.pathIndex=0;
 
-        const distance =
-            Math.hypot(dx, dy);
+        if(!this.path.length){
+            this.repathTimer=40;
+        }
+    }
 
-        if (distance < 4) {
+    update(objects){
 
-            this.targetIdx =
-                (this.targetIdx + 1) %
+        if(this.eliminated)
+            return;
+
+        this.repathTimer--;
+
+        const target=this.getTarget();
+
+        const center=this.center();
+
+        const distanceToTarget=
+            Math.hypot(
+                target.x-center.x,
+                target.y-center.y
+            );
+
+        if(distanceToTarget<14){
+
+            this.targetIndex=
+                (
+                    this.targetIndex+1
+                )%
                 this.waypoints.length;
+
+            this.path=[];
+            this.pathIndex=0;
+            this.repathTimer=0;
 
             return;
         }
 
-        const angle =
-            Math.atan2(dy, dx);
+        if(
+            !this.path.length||
+            this.pathIndex>=this.path.length||
+            this.repathTimer<=0
+        ){
 
-        this.angle = angle;
+            this.rebuildPath(objects);
 
-        const oldX = this.x;
-        const oldY = this.y;
-
-        this.x +=
-            Math.cos(angle) *
-            this.speed;
-
-        this.y +=
-            Math.sin(angle) *
-            this.speed;
-
-        /*
-         * Inimigo agora respeita paredes.
-         */
-        if (
-            CollisionSystem.checkWallCollision(
-                {
-                    x: this.x - this.w / 2,
-                    y: this.y - this.h / 2,
-                    w: this.w,
-                    h: this.h
-                },
-                walls
-            )
-        ) {
-
-            this.x = oldX;
-            this.y = oldY;
-
-            this.targetIdx =
-                (this.targetIdx + 1) %
-                this.waypoints.length;
+            this.repathTimer=75;
         }
 
-        this.animTimer += 0.12;
+        const node=
+            this.path[
+                this.pathIndex
+            ];
 
-        if (this.animTimer >= 1) {
+        if(!node)
+            return;
 
-            this.animFrame =
-                (this.animFrame + 1) % 4;
+        const dx=node.x-center.x;
+        const dy=node.y-center.y;
 
-            this.animTimer = 0;
+        const distance=
+            Math.hypot(dx,dy);
+
+        if(distance<5){
+
+            this.pathIndex++;
+
+            return;
         }
-    },
 
-    draw(ctx) {
+        const nx=dx/distance;
+        const ny=dy/distance;
 
-        VisionSystem.drawGuardVisionCone(
-            ctx,
-            this
+        const sideX=-ny;
+        const sideY=nx;
+
+        const drift=
+            Math.sin(
+                performance.now()*.0025+
+                this.motionPhase
+            )*.035;
+
+        const finalX=
+            nx+sideX*drift;
+
+        const finalY=
+            ny+sideY*drift;
+
+        const oldX=this.x;
+        const oldY=this.y;
+
+        CollisionSystem.move(
+            this,
+            finalX*this.speed,
+            finalY*this.speed,
+            objects
         );
+
+        const movedX=this.x-oldX;
+        const movedY=this.y-oldY;
+
+        const moved=
+            Math.hypot(
+                movedX,
+                movedY
+            );
+
+        if(moved>.01){
+
+            this.angle=
+                Math.atan2(
+                    movedY,
+                    movedX
+                );
+
+            this.animationTime+=.115;
+
+            if(this.animationTime>=1){
+
+                this.animationTime=0;
+
+                this.frame=
+                    (this.frame+1)%4;
+            }
+
+        }else{
+
+            this.repathTimer=0;
+        }
+    }
+
+    direction(){
+
+        let angle=this.angle;
+
+        while(angle<0)
+            angle+=Math.PI*2;
+
+        if(
+            angle<Math.PI*.25||
+            angle>Math.PI*1.75
+        ){
+            return"right";
+        }
+
+        if(angle<Math.PI*.75)
+            return"down";
+
+        if(angle<Math.PI*1.25)
+            return"left";
+
+        return"up";
+    }
+
+    drawVision(){
+
+        const p=this.center();
 
         ctx.save();
 
         ctx.translate(
-            Math.round(this.x),
-            Math.round(this.y)
+            p.x,
+            p.y
         );
 
-        /*
-         * Rotação apenas para o equipamento
-         * acompanhar a direção.
-         */
-        ctx.rotate(this.angle);
-
-        /*
-         * Sombra.
-         */
-        ctx.fillStyle =
-            "rgba(0,0,0,0.45)";
-
-        ctx.fillRect(
-            -9,
-            10,
-            18,
-            4
+        ctx.rotate(
+            this.angle
         );
 
-        /*
-         * Mochila.
-         */
-        ctx.fillStyle =
-            "#15191e";
+        ctx.beginPath();
 
-        ctx.fillRect(
-            -11,
-            -7,
-            5,
-            14
+        ctx.moveTo(0,0);
+
+        ctx.arc(
+            0,
+            0,
+            this.viewDist,
+            -this.fov/2,
+            this.fov/2
         );
 
-        /*
-         * Corpo protegido.
-         */
-        ctx.fillStyle =
-            this.alert
-                ? "#40272b"
-                : "#20252c";
+        ctx.closePath();
 
-        ctx.fillRect(
-            -7,
-            -5,
-            14,
-            15
-        );
-
-        /*
-         * Proteção dos ombros.
-         */
-        ctx.fillStyle =
-            "#15191e";
-
-        ctx.fillRect(
-            -10,
-            -4,
-            4,
-            8
-        );
-
-        ctx.fillRect(
-            6,
-            -4,
-            4,
-            8
-        );
-
-        /*
-         * Cabeça completamente coberta.
-         */
-        ctx.fillStyle =
-            "#12161b";
-
-        ctx.fillRect(
-            -6,
-            -11,
-            12,
-            8
-        );
-
-        /*
-         * Visor.
-         */
-        ctx.fillStyle =
-            this.alert
-                ? "#d74752"
-                : "#596b7c";
-
-        ctx.fillRect(
-            4,
-            -7,
-            3,
-            5
-        );
-
-        /*
-         * Equipamento visual compacto.
-         */
-        ctx.fillStyle =
-            "#0d1013";
-
-        ctx.fillRect(
-            5,
-            3,
-            14,
-            3
-        );
-
-        /*
-         * Pequena animação.
-         */
-        if (
-            this.animFrame % 2 === 1
-        ) {
-
-            ctx.fillStyle =
-                "#14191f";
-
-            ctx.fillRect(
-                -5,
-                10,
-                4,
-                4
+        const gradient=
+            ctx.createRadialGradient(
+                0,
+                0,
+                8,
+                0,
+                0,
+                this.viewDist
             );
 
-            ctx.fillRect(
-                2,
-                10,
-                4,
-                4
-            );
-        }
+        gradient.addColorStop(
+            0,
+            "rgba(220,45,58,.17)"
+        );
+
+        gradient.addColorStop(
+            .55,
+            "rgba(220,45,58,.065)"
+        );
+
+        gradient.addColorStop(
+            1,
+            "rgba(220,45,58,0)"
+        );
+
+        ctx.fillStyle=gradient;
+
+        ctx.fill();
 
         ctx.restore();
     }
-};
+
+    draw(){
+
+        if(this.eliminated){
+
+            ctx.fillStyle="#30373b";
+
+            ctx.fillRect(
+                this.x-4,
+                this.y+7,
+                29,
+                7
+            );
+
+            return;
+        }
+
+        this.drawVision();
+
+        const p=this.center();
+
+        const direction=this.direction();
+
+        const swing=
+            Math.sin(
+                this.frame*Math.PI/2
+            )*.75;
+
+        const bob=
+            Math.abs(swing)*.7;
+
+        ctx.save();
+
+        ctx.translate(
+            p.x,
+            p.y+bob
+        );
+
+        Player.drawBody(
+            direction,
+            swing,
+            true
+        );
+
+        ctx.restore();
+    }
+}
