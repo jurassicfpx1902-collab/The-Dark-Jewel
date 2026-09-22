@@ -1,0 +1,23 @@
+# Legacy duplicate folders from earlier prototype versions
+js/js/
+js/js/**
+js/css/
+js/css/**
+js/js/ js/
+js/js/ js/**
+
+# Old/fallback file names kept only for historical reference
+**/colisao.js
+**/controles.js
+**/jogador.js
+**/visao.js
+**/missoes.js
+**/inimigo.js
+**/jogo.js
+**/mapa.js
+**/mapa.*
+**/estilo.css
+
+# Local editor/OS noise
+.DS_Store
+Thumbs.db
