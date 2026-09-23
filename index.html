@@ -9,22 +9,21 @@
   <link rel="stylesheet" href="css/mission.css">
 </head>
 <body>
-  <main class="menu-shell" aria-labelledby="game-title">
-    <div class="ambient ambient-one" aria-hidden="true"></div>
-    <div class="ambient ambient-two" aria-hidden="true"></div>
-
+  <main class="game-root" aria-live="polite">
     <section class="menu-panel" id="main-menu">
       <header class="brand">
         <p class="eyebrow" data-i18n="eyebrow">W.B. GLOBAL DEFENSE // SECURE CHANNEL</p>
         <h1 id="game-title"><span>THE DARK</span> <strong>JEWEL</strong></h1>
         <p class="subtitle" data-i18n="subtitle">OPERATION // NO DARK</p>
       </header>
+
       <nav class="main-menu" aria-label="Main menu">
         <button class="menu-button menu-button-primary" type="button" data-action="start" data-i18n="start">START</button>
         <button class="menu-button" type="button" data-action="settings" data-i18n="settings">SETTINGS</button>
         <button class="menu-button" type="button" data-action="credits" data-i18n="credits">CREDITS</button>
         <button class="menu-button menu-button-muted" type="button" data-action="exit" data-i18n="exit">EXIT</button>
       </nav>
+
       <p class="version">PROTOTYPE 0.0 // <span data-i18n="offline">OFFLINE BUILD</span></p>
     </section>
 
@@ -47,6 +46,107 @@
       </div>
     </section>
 
+    <section class="scene-screen hidden" id="scene-screen" aria-labelledby="briefing-title" aria-hidden="true">
+      <div class="scene-panel">
+        <div class="scene-top-grid">
+          <div class="sprite-card">
+            <h3>BUCK <span>(JOGADOR)</span></h3>
+            <p>Traje tático escuro | Mochila | Pistola (na mão)</p>
+            <div class="sprite-row">
+              <div class="sprite-demo player-demo front"></div>
+              <div class="sprite-demo player-demo right"></div>
+              <div class="sprite-demo player-demo back"></div>
+              <div class="sprite-demo player-demo left"></div>
+            </div>
+            <p class="meta-label">Animação de movimento (exemplo - 4 quadros)</p>
+            <div class="walk-strip">
+              <div class="sprite-demo player-walk w1"></div>
+              <div class="sprite-demo player-walk w2"></div>
+              <div class="sprite-demo player-walk w3"></div>
+              <div class="sprite-demo player-walk w4"></div>
+            </div>
+          </div>
+
+          <div class="sprite-card">
+            <h3>INIMIGO <span>(AGENTE DA DARK OBSIDIAN)</span></h3>
+            <p>Traje completo de proteção | Capacete/Vísor | Fuzil tático</p>
+            <div class="sprite-row">
+              <div class="sprite-demo enemy-demo front"></div>
+              <div class="sprite-demo enemy-demo right"></div>
+              <div class="sprite-demo enemy-demo back"></div>
+              <div class="sprite-demo enemy-demo left"></div>
+            </div>
+            <p class="meta-label">Animação de movimento (exemplo - 4 quadros)</p>
+            <div class="walk-strip">
+              <div class="sprite-demo enemy-walk w1"></div>
+              <div class="sprite-demo enemy-walk w2"></div>
+              <div class="sprite-demo enemy-walk w3"></div>
+              <div class="sprite-demo enemy-walk w4"></div>
+            </div>
+          </div>
+
+          <aside class="palette-card">
+            <h3>PALETA DE CORES</h3>
+            <div class="palette-block">
+              <span class="swatch buck"></span>
+              <span class="swatch buck2"></span>
+              <span class="swatch buck3"></span>
+              <span class="swatch buck4"></span>
+            </div>
+            <div class="palette-block enemy-block">
+              <span class="swatch enemy"></span>
+              <span class="swatch enemy2"></span>
+              <span class="swatch enemy3"></span>
+              <span class="swatch enemy4"></span>
+            </div>
+          </aside>
+        </div>
+
+        <div class="map-grid">
+          <div class="map-asset-panel">
+            <h3>CENÁRIO / MAPA</h3>
+            <div class="tile-grid">
+              <div class="mini-tile"><span>Piso (cinza)</span></div>
+              <div class="mini-tile"><span>Paredes (brancas)</span></div>
+              <div class="mini-tile light"><span>Iluminação (pouca)</span></div>
+            </div>
+            <div class="tile-grid objects-row">
+              <div class="mini-tile object"><span>Porta</span></div>
+              <div class="mini-tile object"><span>Caixa</span></div>
+              <div class="mini-tile object"><span>Computador</span></div>
+              <div class="mini-tile object"><span>Câmera</span></div>
+              <div class="mini-tile object"><span>Objetivo</span></div>
+              <div class="mini-tile object"><span>Saída</span></div>
+            </div>
+            <h4>EXEMPLO DE MAPA (VISÃO SUPERIOR)</h4>
+            <div class="map-preview">
+              <div class="room-layout">
+                <div class="room-wall wall-a"></div>
+                <div class="room-wall wall-b"></div>
+                <div class="room-wall wall-c"></div>
+                <div class="room-wall wall-d"></div>
+                <div class="corridor door-left"></div>
+                <div class="corridor door-right"></div>
+                <div class="objective-orb"></div>
+                <div class="camera"></div>
+                <div class="entity entity-player"></div>
+                <div class="entity entity-enemy"></div>
+                <div class="detection-cone"></div>
+              </div>
+            </div>
+            <div class="footer-tags"><span>THE DARK JEWEL</span><span>INFILTRAÇÃO</span><span>OBSTÁCULO</span><span>OBJETIVO</span></div>
+          </div>
+
+          <div class="scene-demo-panel">
+            <h3>EXEMPLO NO JOGO</h3>
+            <div class="game-room">
+              <canvas id="gameCanvas" width="760" height="420" aria-label="Jogo em tempo real"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section class="modal hidden" id="settings-modal" aria-labelledby="settings-title" aria-hidden="true">
       <div class="modal-card">
         <div class="modal-heading"><p class="eyebrow">SYSTEM</p><h2 id="settings-title" data-i18n="settings">SETTINGS</h2></div>
@@ -59,6 +159,7 @@
     <section class="modal hidden" id="credits-modal" aria-labelledby="credits-title" aria-hidden="true">
       <div class="modal-card credits-card"><div class="modal-heading"><p class="eyebrow">PROJECT FILE // 000</p><h2 id="credits-title" data-i18n="credits">CREDITS</h2></div><dl class="credits-list"><div><dt data-i18n="partnershipLabel">PARTNERSHIP</dt><dd>GitHub</dd></div><div><dt data-i18n="authorLabel">AUTHOR</dt><dd data-i18n="author">O Escritor</dd></div><div><dt data-i18n="creatorLabel">CREATOR</dt><dd>Felipe</dd></div></dl><button class="close-button" type="button" data-close="credits" data-i18n="back">BACK</button></div>
     </section>
+
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
   </main>
   <script src="js/main.js"></script>
