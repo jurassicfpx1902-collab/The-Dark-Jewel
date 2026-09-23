@@ -160,17 +160,20 @@ let gameState = {
   started: false,
   keys: {},
   player: null,
-  enemies: [],
+  enemy: null,
   objective: null,
   walls: [],
   lastTs: 0,
-  alert: false,
   won: false,
   lost: false
 };
 
 function rectsIntersect(a, b) {
   return a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
+}
+
+function clamp(value, min, max) {
+  return Math.min(Math.max(value, min), max);
 }
 
 function startGame() {
@@ -215,10 +218,6 @@ function startGame() {
   ];
 
   requestAnimationFrame(gameLoop);
-}
-
-function clamp(value, min, max) {
-  return Math.min(Math.max(value, min), max);
 }
 
 function moveEntity(entity, dx, dy) {
@@ -282,85 +281,126 @@ function updateEnemy() {
   }
 }
 
+function drawCharacter(x, y, palette, isEnemy = false) {
+  const ctx = gameState.ctx;
+  const bodyW = 14;
+  const bodyH = 18;
+  const headR = 5;
+
+  ctx.fillStyle = isEnemy ? palette.helmet : palette.skin;
+  ctx.beginPath();
+  ctx.arc(x, y - 9, headR, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.fillStyle = isEnemy ? palette.armor : palette.armor;
+  ctx.fillRect(x - bodyW / 2, y + 1, bodyW, bodyH);
+
+  ctx.fillStyle = isEnemy ? palette.dark : palette.dark;
+  ctx.fillRect(x - bodyW / 2 + 2, y + 7, 4, 10);
+  ctx.fillRect(x + bodyW / 2 - 6, y + 7, 4, 10);
+
+  ctx.fillStyle = isEnemy ? "#a7b1b8" : "#d8dccf";
+  ctx.fillRect(x - 4, y + 1, 8, 5);
+  ctx.fillStyle = isEnemy ? "#30393d" : "#1f2a2e";
+  ctx.fillRect(x - bodyW / 2, y + 18, 4, 8);
+  ctx.fillRect(x + bodyW / 2 - 4, y + 18, 4, 8);
+}
+
+function drawObjective() {
+  const ctx = gameState.ctx;
+  const { x, y } = gameState.objective;
+  ctx.save();
+  ctx.translate(x, y);
+  for (let i = 0; i < 3; i++) {
+    ctx.beginPath();
+    ctx.arc(0, 0, 10 + i * 7, 0, Math.PI * 2);
+    ctx.strokeStyle = `rgba(93, 215, 255, ${0.8 - i * 0.2})`;
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+  }
+  ctx.fillStyle = "#7ce4ff";
+  ctx.beginPath();
+  ctx.arc(0, 0, 6, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+}
+
 function drawWalls() {
   const ctx = gameState.ctx;
-  ctx.fillStyle = "#919397";
+  ctx.fillStyle = "#a7b3b7";
   for (const wall of gameState.walls) {
     ctx.fillRect(wall.x, wall.y, wall.w, wall.h);
-    ctx.fillStyle = "rgba(0,0,0,0.12)";
+    ctx.fillStyle = "rgba(0,0,0,0.18)";
     ctx.fillRect(wall.x, wall.y + wall.h - 4, wall.w, 4);
-    ctx.fillStyle = "#919397";
+    ctx.fillStyle = "#a7b3b7";
   }
 }
 
 function drawMap() {
   const ctx = gameState.ctx;
-  ctx.clearRect(0, 0, gameState.canvas.width, gameState.canvas.height);
-  ctx.fillStyle = "#212b2f";
-  ctx.fillRect(0, 0, gameState.canvas.width, gameState.canvas.height);
+  const canvas = gameState.canvas;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = "#1e2b30";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  ctx.fillStyle = "rgba(180,190,191,0.12)";
-  for (let x = 0; x < gameState.canvas.width; x += 32) {
-    ctx.fillRect(x, 0, 1, gameState.canvas.height);
+  for (let x = 0; x < canvas.width; x += 26) {
+    ctx.fillStyle = "rgba(255,255,255,0.05)";
+    ctx.fillRect(x, 0, 1, canvas.height);
   }
-  for (let y = 0; y < gameState.canvas.height; y += 32) {
-    ctx.fillRect(0, y, gameState.canvas.width, 1);
+  for (let y = 0; y < canvas.height; y += 26) {
+    ctx.fillStyle = "rgba(255,255,255,0.04)";
+    ctx.fillRect(0, y, canvas.width, 1);
   }
+
+  ctx.fillStyle = "rgba(186,192,195,0.30)";
+  ctx.fillRect(30, 30, 700, 360);
 
   drawWalls();
+  drawObjective();
 
-  ctx.fillStyle = "#5dd7ff";
+  const p = gameState.player;
+  drawCharacter(p.x, p.y, { skin: "#d8c8a4", armor: "#2b364d", dark: "#111c24" }, false);
+
+  const e = gameState.enemy;
+  drawCharacter(e.x, e.y, { skin: "#c5ccd1", armor: "#3a4d5d", dark: "#242d35" }, true);
+
+  ctx.fillStyle = "rgba(255, 60, 60, 0.14)";
   ctx.beginPath();
-  ctx.arc(gameState.objective.x, gameState.objective.y, 12, 0, Math.PI * 2);
+  ctx.moveTo(560, 100);
+  ctx.lineTo(760, 0);
+  ctx.lineTo(760, 190);
+  ctx.closePath();
   ctx.fill();
 
-  const player = gameState.player;
-  ctx.fillStyle = "#d6c7a6";
-  ctx.beginPath();
-  ctx.arc(player.x, player.y - 4, 8, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.fillStyle = "#222f38";
-  ctx.fillRect(player.x - 8, player.y + 4, 16, 18);
-
-  const enemy = gameState.enemy;
-  ctx.fillStyle = "#7a7f85";
-  ctx.beginPath();
-  ctx.arc(enemy.x, enemy.y - 4, 8, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.fillStyle = "#252d31";
-  ctx.fillRect(enemy.x - 9, enemy.y + 4, 18, 18);
-  ctx.fillStyle = "#90bfe8";
-  ctx.fillRect(enemy.x - 4, enemy.y + 6, 8, 4);
-
-  ctx.fillStyle = "#f5f5f5";
+  ctx.fillStyle = "#dfe7e9";
   ctx.font = "12px 'Share Tech Mono', monospace";
-  ctx.fillText("OBJECTIVE", 620, 30);
-  ctx.fillText("ALERT", 28, 30);
+  ctx.fillText("OPERATION: NO DARK", 16, 22);
+  ctx.fillText("OBJECTIVE", 620, 24);
+  ctx.fillText("ALERT", 26, 390);
 
   if (gameState.lost) {
-    ctx.fillStyle = "rgba(14, 20, 24, 0.8)";
-    ctx.fillRect(0, 0, gameState.canvas.width, gameState.canvas.height);
+    ctx.fillStyle = "rgba(10, 16, 20, 0.78)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = "#f3f3f3";
-    ctx.font = "bold 32px 'Share Tech Mono', monospace";
-    ctx.fillText("DETECTED", 255, 210);
+    ctx.font = "bold 30px 'Share Tech Mono', monospace";
+    ctx.fillText("DETECTED", 250, 200);
     ctx.font = "16px 'Share Tech Mono', monospace";
-    ctx.fillText("PRESS ESC TO RETURN", 250, 250);
+    ctx.fillText("PRESS ESC TO RETURN", 240, 244);
   }
 
   if (gameState.won) {
-    ctx.fillStyle = "rgba(11, 28, 18, 0.76)";
-    ctx.fillRect(0, 0, gameState.canvas.width, gameState.canvas.height);
+    ctx.fillStyle = "rgba(12, 30, 17, 0.8)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = "#dfeadf";
     ctx.font = "bold 28px 'Share Tech Mono', monospace";
-    ctx.fillText("MISSION ACCOMPLISHED", 190, 205);
+    ctx.fillText("MISSION ACCOMPLISHED", 150, 210);
     ctx.font = "16px 'Share Tech Mono', monospace";
-    ctx.fillText("EXTRACTION READY", 285, 245);
+    ctx.fillText("EXTRACTION READY", 260, 246);
   }
 }
 
 function gameLoop(ts) {
   if (!gameState.started) return;
-
   if (!gameState.lastTs) gameState.lastTs = ts;
   const delta = ts - gameState.lastTs;
   gameState.lastTs = ts;
