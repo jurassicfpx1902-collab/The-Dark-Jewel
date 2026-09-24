@@ -11,58 +11,19 @@
 <body>
   <main class="game-root" aria-live="polite">
     <section class="menu-panel" id="main-menu">
-      <header class="brand">
-        <p class="eyebrow" data-i18n="eyebrow">W.B. GLOBAL DEFENSE // SECURE CHANNEL</p>
-        <h1 id="game-title"><span>THE DARK</span> <strong>JEWEL</strong></h1>
-        <p class="subtitle" data-i18n="subtitle">OPERATION // NO DARK</p>
-      </header>
-      <nav class="main-menu" aria-label="Main menu">
-        <button class="menu-button menu-button-primary" type="button" data-action="start" data-i18n="start">START</button>
-        <button class="menu-button" type="button" data-action="settings" data-i18n="settings">SETTINGS</button>
-        <button class="menu-button" type="button" data-action="credits" data-i18n="credits">CREDITS</button>
-        <button class="menu-button menu-button-muted" type="button" data-action="exit" data-i18n="exit">EXIT</button>
-      </nav>
+      <header class="brand"><p class="eyebrow" data-i18n="eyebrow">W.B. GLOBAL DEFENSE // SECURE CHANNEL</p><h1 id="game-title"><span>THE DARK</span> <strong>JEWEL</strong></h1><p class="subtitle" data-i18n="subtitle">OPERATION // NO DARK</p></header>
+      <nav class="main-menu" aria-label="Main menu"><button class="menu-button menu-button-primary" type="button" data-action="start" data-i18n="start">START</button><button class="menu-button" type="button" data-action="settings" data-i18n="settings">SETTINGS</button><button class="menu-button" type="button" data-action="credits" data-i18n="credits">CREDITS</button><button class="menu-button menu-button-muted" type="button" data-action="exit" data-i18n="exit">EXIT</button></nav>
       <p class="version">PROTOTYPE 0.0 // <span data-i18n="offline">OFFLINE BUILD</span></p>
     </section>
 
-    <section class="mission-screen hidden" id="mission-screen" aria-labelledby="mission-title" aria-hidden="true">
-      <div class="mission-card">
-        <p class="mission-classification" data-i18n="classification">CLASSIFIED // MISSION BRIEFING</p>
-        <div class="mission-title-block">
-          <h2 id="mission-title" data-i18n="operationTitle">OPERATION: NO DARK</h2>
-          <p><span data-i18n="agentLabel">AGENT:</span> <strong>BUCK KOSMATOV</strong></p>
-          <p data-i18n="department">GLOBAL DEFENSE DEPARTMENT / CIA</p>
-        </div>
-        <div class="mission-divider" aria-hidden="true"></div>
-        <div class="radio-console">
-          <p class="radio-console-heading" data-i18n="radioInteraction">RADIO INTERACTION</p>
-          <p class="radio-meta"><span data-i18n="secureChannel">SECURE CHANNEL</span><br>D.D.G / CIA<br><strong>KATHERINE</strong></p>
-          <p class="radio-message" data-i18n="radioMessage">— Buck, recover the files and proceed to the extraction point.</p>
-        </div>
-        <button class="mission-button" type="button" data-action="mission-continue" data-i18n="continue">CONTINUE</button>
-        <button class="mission-back" type="button" data-action="mission-back" data-i18n="back">BACK</button>
-      </div>
-    </section>
+    <section class="mission-screen hidden" id="mission-screen" aria-labelledby="mission-title" aria-hidden="true"><div class="mission-card"><p class="mission-classification" data-i18n="classification">CLASSIFIED // MISSION BRIEFING</p><div class="mission-title-block"><h2 id="mission-title" data-i18n="operationTitle">OPERATION: NO DARK</h2><p><span data-i18n="agentLabel">AGENT:</span> <strong>BUCK KOSMATOV</strong></p><p data-i18n="department">GLOBAL DEFENSE DEPARTMENT / CIA</p></div><div class="mission-divider"></div><div class="radio-console"><p class="radio-console-heading" data-i18n="radioInteraction">RADIO INTERACTION</p><p class="radio-meta"><span data-i18n="secureChannel">SECURE CHANNEL</span><br>D.D.G / CIA<br><strong>KATHERINE</strong></p><p class="radio-message" data-i18n="radioMessage">— Buck, recover the files and proceed to the extraction point.</p></div><button class="mission-button" type="button" data-action="mission-continue" data-i18n="continue">CONTINUE</button><button class="mission-back" type="button" data-action="mission-back" data-i18n="back">BACK</button></div></section>
 
-    <section class="scene-screen hidden" id="scene-screen" aria-labelledby="briefing-title" aria-hidden="true">
-      <div class="scene-panel">
-        <div class="scene-top-grid">
-          <div class="sprite-card"><h3>BUCK <span>(JOGADOR)</span></h3><p>Traje tático escuro | Mochila | Pistola</p><div class="sprite-row"><div class="sprite-demo player-demo front"></div><div class="sprite-demo player-demo right"></div><div class="sprite-demo player-demo back"></div><div class="sprite-demo player-demo left"></div></div><p class="meta-label">Animação de movimento (4 quadros)</p><div class="walk-strip"><div class="sprite-demo player-walk w1"></div><div class="sprite-demo player-walk w2"></div><div class="sprite-demo player-walk w3"></div><div class="sprite-demo player-walk w4"></div></div></div>
-          <div class="sprite-card"><h3>INIMIGO <span>(AGENTE DA DARK OBSIDIAN)</span></h3><p>Proteção completa | Capacete/Vísor | Fuzil tático</p><div class="sprite-row"><div class="sprite-demo enemy-demo front"></div><div class="sprite-demo enemy-demo right"></div><div class="sprite-demo enemy-demo back"></div><div class="sprite-demo enemy-demo left"></div></div><p class="meta-label">Animação de movimento (4 quadros)</p><div class="walk-strip"><div class="sprite-demo enemy-walk w1"></div><div class="sprite-demo enemy-walk w2"></div><div class="sprite-demo enemy-walk w3"></div><div class="sprite-demo enemy-walk w4"></div></div></div>
-          <aside class="palette-card"><h3>PALETA DE CORES</h3><div class="palette-block"><span class="swatch buck"></span><span class="swatch buck2"></span><span class="swatch buck3"></span><span class="swatch buck4"></span></div><div class="palette-block enemy-block"><span class="swatch enemy"></span><span class="swatch enemy2"></span><span class="swatch enemy3"></span><span class="swatch enemy4"></span></div></aside>
-        </div>
-        <div class="map-grid">
-          <div class="map-asset-panel"><h3>CENÁRIO / MAPA</h3><div class="tile-grid"><div class="mini-tile">Piso (cinza)</div><div class="mini-tile">Paredes</div><div class="mini-tile light">Iluminação</div></div><div class="tile-grid objects-row"><div class="mini-tile object">Porta</div><div class="mini-tile object">Caixa</div><div class="mini-tile object">Computador</div><div class="mini-tile object">Câmera</div><div class="mini-tile object">Objetivo</div><div class="mini-tile object">Saída</div></div><h4>EXEMPLO DE MAPA (VISÃO SUPERIOR)</h4><div class="map-preview"><div class="room-layout"><div class="room-wall wall-a"></div><div class="room-wall wall-b"></div><div class="room-wall wall-c"></div><div class="room-wall wall-d"></div><div class="corridor door-left"></div><div class="corridor door-right"></div><div class="objective-orb"></div><div class="camera"></div><div class="entity entity-player"></div><div class="entity entity-enemy"></div><div class="detection-cone"></div></div></div><div class="footer-tags"><span>THE DARK JEWEL</span><span>INFILTRAÇÃO</span><span>OBSTÁCULO</span><span>OBJETIVO</span></div></div>
-          <div class="scene-demo-panel"><h3>MISSION 01 // NO DARK</h3><div class="game-room"><canvas id="gameCanvas" width="760" height="420" aria-label="Área de missão jogável"></canvas></div></div>
-        </div>
-      </div>
-    </section>
+    <section class="scene-screen hidden" id="scene-screen" aria-label="Mission 01" aria-hidden="true"><div class="scene-panel"><div class="scene-demo-panel mission-game-panel"><h3>MISSION 01 // NO DARK</h3><div class="mission-hud"><span>BUCK // ACTIVE</span><span>OBJECTIVE: RECOVER FILES</span><span>WASD / ARROWS</span></div><div class="game-room"><canvas id="gameCanvas" width="760" height="420" aria-label="Área de missão jogável"></canvas></div><p class="scene-help">Move Buck through the facility. Reach the blue objective marker. ESC returns to briefing.</p></div></div></section>
 
-    <section class="modal hidden" id="settings-modal" aria-labelledby="settings-title" aria-hidden="true"><div class="modal-card"><div class="modal-heading"><p class="eyebrow">SYSTEM</p><h2 id="settings-title" data-i18n="settings">SETTINGS</h2></div><div class="setting-row"><span data-i18n="language">LANGUAGE</span><div class="segmented-control" role="group"><button type="button" data-language="en">ENGLISH</button><button type="button" data-language="pt">PORTUGUÊS</button></div></div><div class="setting-row"><span data-i18n="audio">AUDIO</span><button class="toggle" id="audio-toggle" type="button" aria-pressed="true"><span class="toggle-indicator"></span><span id="audio-state">ON</span></button></div><button class="close-button" type="button" data-close="settings" data-i18n="back">BACK</button></div></section>
-    <section class="modal hidden" id="credits-modal" aria-labelledby="credits-title" aria-hidden="true"><div class="modal-card credits-card"><div class="modal-heading"><p class="eyebrow">PROJECT FILE // 000</p><h2 id="credits-title" data-i18n="credits">CREDITS</h2></div><dl class="credits-list"><div><dt data-i18n="partnershipLabel">PARTNERSHIP</dt><dd>GitHub</dd></div><div><dt data-i18n="authorLabel">AUTHOR</dt><dd data-i18n="author">O Escritor</dd></div><div><dt data-i18n="creatorLabel">CREATOR</dt><dd>Felipe</dd></div></dl><button class="close-button" type="button" data-close="credits" data-i18n="back">BACK</button></div></section>
+    <section class="modal hidden" id="settings-modal" aria-labelledby="settings-title" aria-hidden="true"><div class="modal-card"><div class="modal-heading"><p class="eyebrow">SYSTEM</p><h2 id="settings-title" data-i18n="settings">SETTINGS</h2></div><div class="setting-row"><span data-i18n="language">LANGUAGE</span><div class="segmented-control"><button type="button" data-language="en">ENGLISH</button><button type="button" data-language="pt">PORTUGUÊS</button></div></div><div class="setting-row"><span data-i18n="audio">AUDIO</span><button class="toggle" id="audio-toggle" type="button" aria-pressed="true"><span class="toggle-indicator"></span><span id="audio-state">ON</span></button></div><button class="close-button" type="button" data-close="settings" data-i18n="back">BACK</button></div></section>
+    <section class="modal hidden" id="credits-modal" aria-labelledby="credits-title" aria-hidden="true"><div class="modal-card"><div class="modal-heading"><p class="eyebrow">PROJECT FILE // 000</p><h2 id="credits-title" data-i18n="credits">CREDITS</h2></div><dl class="credits-list"><div><dt data-i18n="partnershipLabel">PARTNERSHIP</dt><dd>GitHub</dd></div><div><dt data-i18n="authorLabel">AUTHOR</dt><dd data-i18n="author">O Escritor</dd></div><div><dt data-i18n="creatorLabel">CREATOR</dt><dd>Felipe</dd></div></dl><button class="close-button" type="button" data-close="credits" data-i18n="back">BACK</button></div></section>
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
   </main>
-  <script src="js/main.js"></script>
-  <script src="js/mission-loader.js"></script>
+  <script src="js/player.js"></script><script src="js/enemy.js"></script><script src="js/map.js"></script><script src="js/camera.js"></script><script src="js/mission.js"></script><script src="js/main.js"></script><script src="js/mission-loader.js"></script>
 </body>
 </html>
