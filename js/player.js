@@ -1,24 +1,4 @@
 "use strict";
-
-window.TDJPlayer = function createPlayer(x, y) {
-  return { x, y, radius: 12, speed: 2.5, color: "#2b364d", hair: "#d8c8a4" };
-};
-
-window.updatePlayer = function updatePlayer(player, keys, map) {
-  let x = 0; let y = 0;
-  if (keys.ArrowLeft || keys.a) x -= 1;
-  if (keys.ArrowRight || keys.d) x += 1;
-  if (keys.ArrowUp || keys.w) y -= 1;
-  if (keys.ArrowDown || keys.s) y += 1;
-  const length = Math.hypot(x, y) || 1;
-  if (x || y) map.move(player, x / length * player.speed, y / length * player.speed);
-};
-
-window.drawPlayer = function drawPlayer(ctx, player, camera) {
-  const x = player.x - camera.x; const y = player.y - camera.y;
-  ctx.fillStyle = player.hair; ctx.beginPath(); ctx.arc(x, y - 10, 6, 0, Math.PI * 2); ctx.fill();
-  ctx.fillStyle = player.color; ctx.fillRect(x - 8, y - 2, 16, 20);
-  ctx.fillStyle = "#111c24"; ctx.fillRect(x - 8, y + 18, 5, 9); ctx.fillRect(x + 3, y + 18, 5, 9);
-  ctx.fillStyle = "#d8dccf"; ctx.fillRect(x - 4, y - 1, 8, 5);
-  ctx.fillStyle = "#0b1218"; ctx.fillRect(x + 8, y + 3, 13, 3);
-};
+window.TDJPlayer=function(x,y){return{x,y,r:14,speed:3.1};};
+window.drawPlayer=function(ctx,p,c){const x=p.x-c.x,y=p.y-c.y;ctx.save();ctx.fillStyle='#ead8b4';ctx.beginPath();ctx.arc(x,y-17,8,0,Math.PI*2);ctx.fill();ctx.fillStyle='#d8b76d';ctx.fillRect(x-8,y-24,16,5);ctx.fillStyle='#151c23';ctx.fillRect(x-11,y-8,22,25);ctx.fillStyle='#303c4b';ctx.fillRect(x-15,y-5,5,17);ctx.fillRect(x+10,y-5,5,17);ctx.fillStyle='#0b1116';ctx.fillRect(x-9,y+17,7,14);ctx.fillRect(x+2,y+17,7,14);ctx.fillStyle='#778c91';ctx.fillRect(x-6,y-5,12,7);ctx.fillStyle='#111820';ctx.fillRect(x+12,y-1,19,4);ctx.restore();};
+window.updatePlayer=function(p,keys,map){let x=(keys.ArrowRight||keys.d?1:0)-(keys.ArrowLeft||keys.a?1:0),y=(keys.ArrowDown||keys.s?1:0)-(keys.ArrowUp||keys.w?1:0),n=Math.hypot(x,y)||1;if(x||y)map.move(p,x/n*p.speed,y/n*p.speed);};

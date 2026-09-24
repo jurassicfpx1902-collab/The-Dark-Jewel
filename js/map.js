@@ -1,19 +1,6 @@
 "use strict";
-
-window.TDJMap = function createMap(width, height) {
-  const walls = [
-    { x: 0, y: 0, w: width, h: 22 }, { x: 0, y: 0, w: 22, h: height }, { x: width - 22, y: 0, w: 22, h: height }, { x: 0, y: height - 22, w: width, h: 22 },
-    { x: 110, y: 78, w: 170, h: 18 }, { x: 110, y: 270, w: 170, h: 18 }, { x: 350, y: 78, w: 150, h: 18 }, { x: 350, y: 270, w: 150, h: 18 },
-    { x: 295, y: 135, w: 18, h: 150 }, { x: 525, y: 112, w: 18, h: 150 }, { x: 590, y: 65, w: 92, h: 18 }, { x: 605, y: 325, w: 100, h: 18 }, { x: 210, y: 335, w: 110, h: 18 }
-  ];
-  const intersects = (a, b) => a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
-  return {
-    walls,
-    objective: { x: 690, y: 285, radius: 13 },
-    move(entity, dx, dy) {
-      const test = { x: entity.x + dx - entity.radius, y: entity.y + dy - entity.radius, w: entity.radius * 2, h: entity.radius * 2 };
-      if (walls.some((wall) => intersects(test, wall))) return false;
-      entity.x = Math.max(entity.radius + 2, Math.min(width - entity.radius - 2, entity.x + dx)); entity.y = Math.max(entity.radius + 2, Math.min(height - entity.radius - 2, entity.y + dy)); return true;
-    }
-  };
-};
+window.TDJMap = function(width,height){
+  const walls=[{x:0,y:0,w:width,h:28},{x:0,y:0,w:28,h:height},{x:width-28,y:0,w:28,h:height},{x:0,y:height-28,w:width,h:28},{x:100,y:100,w:360,h:24},{x:100,y:330,w:360,h:24},{x:600,y:100,w:310,h:24},{x:600,y:330,w:310,h:24},{x:490,y:100,w:24,h:260},{x:930,y:100,w:24,h:260},{x:1020,y:90,w:190,h:24},{x:1040,y:520,w:170,h:24},{x:250,y:520,w:250,h:24},{x:700,y:470,w:24,h:170},{x:500,y:430,w:110,h:22}];
+  const obstacles=[{x:180,y:170,w:45,h:45},{x:350,y:180,w:55,h:35},{x:700,y:170,w:52,h:44},{x:820,y:210,w:40,h:60},{x:1080,y:180,w:42,h:55},{x:350,y:410,w:48,h:42},{x:840,y:510,w:55,h:42}];
+  const hit=(a,b)=>a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y;
+  return {width,height,walls,obstacles,objective:{x:1120,y:610,r:16},move(e,dx,dy){const box={x:e.x+dx-e.r,y:e.y+dy-e.r,w:e.r*2,h:e.r*2};if(walls.some(w=>hit(box,w))||obstacles.some(o=>hit(box,o)))return false;e.x=Math.max(e.r+2,Math.min(width-e.r-2,e.x+dx));e.y=Math.max(e.r+2,Math.min(height-e.r-2,e.y+dy));return true;},draw(ctx,c){ctx.fillStyle='#555b5b';ctx.fillRect(0,0,width,height);for(let y=28;y<height-28;y+=32){ctx.fillStyle=y%64?'rgba(20,25,26,.16)':'rgba(255,255,255,.035)';ctx.fillRect(28,y,width-56,1)}for(let x=28;x<width-28;x+=32){ctx.fillStyle='rgba(20,25,26,.12)';ctx.fillRect(x,28,1,height-56)}walls.forEach(w=>{ctx.fillStyle='#a9874d';ctx.fillRect(w.x-c.x,w.y-c.y,w.w,w.h);ctx.fillStyle='#d1b06c';ctx.fillRect(w.x-c.x,w.y-c.y,w.w,4);ctx.fillStyle='rgba(40,29,18,.55)';ctx.fillRect(w.x-c.x,w.y+w.h-5-c.y,w.w,5)});obstacles.forEach(o=>{ctx.fillStyle='#343b3e';ctx.fillRect(o.x-c.x,o.y-c.y,o.w,o.h);ctx.strokeStyle='#85837b';ctx.strokeRect(o.x-c.x,o.y-c.y,o.w,o.h);ctx.fillStyle='rgba(0,0,0,.35)';ctx.fillRect(o.x+7-c.x,o.y+7-c.y,o.w-14,o.h-14)});for(const door of [{x:480,y:200,w:34,h:30},{x:920,y:200,w:34,h:30},{x:730,y:330,w:30,h:34}]){ctx.fillStyle='#6c7a76';ctx.fillRect(door.x-c.x,door.y-c.y,door.w,door.h);ctx.strokeStyle='#d1b06c';ctx.strokeRect(door.x-c.x,door.y-c.y,door.w,door.h)}}};

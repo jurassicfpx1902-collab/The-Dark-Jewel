@@ -1,18 +1,4 @@
 "use strict";
-
-window.TDJEnemy = function createEnemy(x, y, patrol) {
-  return { x, y, radius: 13, speed: 1.05, patrol, target: 0, armor: "#252d35", helmet: "#68737b" };
-};
-
-window.updateEnemy = function updateEnemy(enemy, map) {
-  const point = enemy.patrol[enemy.target]; const dx = point.x - enemy.x; const dy = point.y - enemy.y; const distance = Math.hypot(dx, dy);
-  if (distance < 3) enemy.target = (enemy.target + 1) % enemy.patrol.length;
-  else map.move(enemy, dx / distance * enemy.speed, dy / distance * enemy.speed);
-};
-
-window.drawEnemy = function drawEnemy(ctx, enemy, camera) {
-  const x = enemy.x - camera.x; const y = enemy.y - camera.y;
-  ctx.fillStyle = enemy.helmet; ctx.fillRect(x - 7, y - 16, 14, 9); ctx.fillStyle = enemy.armor; ctx.fillRect(x - 10, y - 7, 20, 23);
-  ctx.fillStyle = "#11161a"; ctx.fillRect(x - 11, y - 1, 4, 15); ctx.fillRect(x + 7, y - 1, 4, 15); ctx.fillRect(x - 8, y + 16, 6, 11); ctx.fillRect(x + 2, y + 16, 6, 11);
-  ctx.fillStyle = "#9daab1"; ctx.fillRect(x - 5, y - 13, 10, 3); ctx.fillStyle = "#171e23"; ctx.fillRect(x + 9, y + 1, 17, 4);
-};
+window.TDJEnemy=function(x,y,patrol){return{x,y,r:16,speed:1.05,patrol,target:0,heading:0};};
+window.updateEnemy=function(e,map){const t=e.patrol[e.target],dx=t.x-e.x,dy=t.y-e.y,d=Math.hypot(dx,dy)||1;if(d<4)e.target=(e.target+1)%e.patrol.length;else{e.heading=Math.atan2(dy,dx);map.move(e,dx/d*e.speed,dy/d*e.speed);}};
+window.drawEnemy=function(ctx,e,c){const x=e.x-c.x,y=e.y-c.y;ctx.save();ctx.fillStyle='#252b30';ctx.fillRect(x-10,y-20,20,12);ctx.fillStyle='#11161b';ctx.fillRect(x-14,y-12,28,29);ctx.fillStyle='#56616a';ctx.fillRect(x-9,y-17,18,4);ctx.fillStyle='#0a0e12';ctx.fillRect(x-18,y-8,6,20);ctx.fillRect(x+12,y-8,6,20);ctx.fillRect(x-11,y+17,8,15);ctx.fillRect(x+3,y+17,8,15);ctx.fillStyle='#9aabb1';ctx.fillRect(x-6,y-14,12,3);ctx.fillStyle='#0c1116';ctx.fillRect(x+14,y-4,23,5);ctx.restore();};
