@@ -1,4 +1,0 @@
-"use strict";
-window.TDJEnemy=function(x,y,patrol){return{x,y,r:16,speed:1.05,patrol,target:0,heading:0};};
-window.updateEnemy=function(e,map){const t=e.patrol[e.target],dx=t.x-e.x,dy=t.y-e.y,d=Math.hypot(dx,dy)||1;if(d<4)e.target=(e.target+1)%e.patrol.length;else{e.heading=Math.atan2(dy,dx);map.move(e,dx/d*e.speed,dy/d*e.speed);}};
-window.drawEnemy=function(ctx,e,c){const x=e.x-c.x,y=e.y-c.y;ctx.save();ctx.fillStyle='#252b30';ctx.fillRect(x-10,y-20,20,12);ctx.fillStyle='#11161b';ctx.fillRect(x-14,y-12,28,29);ctx.fillStyle='#56616a';ctx.fillRect(x-9,y-17,18,4);ctx.fillStyle='#0a0e12';ctx.fillRect(x-18,y-8,6,20);ctx.fillRect(x+12,y-8,6,20);ctx.fillRect(x-11,y+17,8,15);ctx.fillRect(x+3,y+17,8,15);ctx.fillStyle='#9aabb1';ctx.fillRect(x-6,y-14,12,3);ctx.fillStyle='#0c1116';ctx.fillRect(x+14,y-4,23,5);ctx.restore();};

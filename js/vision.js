@@ -1,2 +1,0 @@
-"use strict";
-window.TDJVision={check(player,enemies){for(const e of enemies){const d=Math.hypot(player.x-e.x,player.y-e.y);if(d<150){const a=Math.atan2(player.y-e.y,player.x-e.x),diff=Math.atan2(Math.sin(a-e.heading),Math.cos(a-e.heading));if(Math.abs(diff)<.7)return e;}}return null;},draw(ctx,e,c){ctx.save();ctx.translate(e.x-c.x,e.y-c.y);ctx.rotate(e.heading);ctx.fillStyle='rgba(190,45,48,.22)';ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(150,-55);ctx.lineTo(150,55);ctx.closePath();ctx.fill();ctx.restore();}};
